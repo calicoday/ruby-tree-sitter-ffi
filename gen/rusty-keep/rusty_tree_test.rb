@@ -197,7 +197,7 @@ def test_tree_cursor()
         .parse(
             "
                 struct Stuff {
-                    a: A
+                    a: A;
                     b: Option<B>,
                 }
             ",
@@ -220,7 +220,7 @@ def test_tree_cursor()
 
     assert!(cursor.goto_next_sibling())
     assert_eq!(cursor.node().type(), "field_declaration_list")
-    assert_eq!(cursor.node().is_named(), true);
+    assert_eq!(cursor.node().is_named(), true)
 end
 
 def test_tree_cursor_fields()
@@ -255,7 +255,7 @@ def test_tree_cursor_fields()
 
     cursor.goto_next_sibling()
     assert_eq!(cursor.node().type(), "formal_parameters")
-    assert_eq!(cursor.field_name(), ("parameters"));
+    assert_eq!(cursor.field_name(), ("parameters"))
 end
 
 def test_tree_cursor_child_for_point()
@@ -360,7 +360,7 @@ def test_tree_cursor_child_for_point()
     assert_array_eq!(
         [c.node().type(), c.node().start_point()],
         ["object", TreeSitterFFI::Point.new(2, 8)]
-    );
+    )
 end
 
 def test_tree_node_equality()
@@ -371,7 +371,7 @@ def test_tree_node_equality()
     node2 = tree.root_node()
     assert_eq!(node1, node2)
     assert_eq!(node1.child(0), node2.child(0))
-    assert_ne!(node1.child(0), node2);
+    assert_ne!(node1.child(0), node2)
 end
 
 =begin

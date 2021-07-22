@@ -114,7 +114,7 @@ def test_node_child()
     assert_eq!(false_node.parent(), array_node)
     assert_eq!(object_node.parent(), array_node)
     assert_eq!(array_node.parent(), tree.root_node())
-    assert_eq!(tree.root_node().parent(), nil);
+    assert_eq!(tree.root_node().parent(), nil)
 end
 
 =begin
@@ -145,7 +145,7 @@ def test_node_children()
 #             .map(|n| n.type())
 #             .TreeSitterFFI::collect.<Vec<_>>(),
 #         &["{", "pair", "}",]
-#     );
+#     )
 end
 =end
 
@@ -174,7 +174,7 @@ def test_node_children_by_field_name()
 #     assert_eq!(
 #         alternative_texts.TreeSitterFFI::collect.<Vec<_>>(),
 #         &["two", "three", "four",]
-#     );
+#     )
 end
 =end
 
@@ -193,7 +193,7 @@ def test_node_parent_of_child_by_field_name()
     assert_eq!(
         call_node.child_by_field_name("function").parent(),
         (call_node)
-    );
+    )
 end
 
 def test_node_field_name_for_child()
@@ -215,7 +215,7 @@ def test_node_field_name_for_child()
         ("right")
     )
     # Negative test - Not a valid child index
-    assert_eq!(binary_expression_node.field_name_for_child(3), nil);
+    assert_eq!(binary_expression_node.field_name_for_child(3), nil)
 end
 
 def test_node_child_by_field_name_with_extra_hidden_children()
@@ -232,7 +232,7 @@ def test_node_child_by_field_name_with_extra_hidden_children()
     assert_eq!(
         while_node.child_by_field_name("body"),
         while_node.child(3),
-    );
+    )
 end
 
 def test_node_named_child()
@@ -304,7 +304,7 @@ def test_node_named_child()
     assert_eq!(false_node.parent(), array_node)
     assert_eq!(object_node.parent(), array_node)
     assert_eq!(array_node.parent(), tree.root_node())
-    assert_eq!(tree.root_node().parent(), nil);
+    assert_eq!(tree.root_node().parent(), nil)
 end
 
 =begin
@@ -324,7 +324,7 @@ def test_node_named_child_with_aliases_and_extras()
     assert_eq!(root.named_child(1).type(), "comment")
     assert_eq!(root.named_child(2).type(), "B")
     assert_eq!(root.named_child(3).type(), "comment")
-    assert_eq!(root.named_child(4).type(), "C");
+    assert_eq!(root.named_child(4).type(), "C")
 end
 =end
 
@@ -426,7 +426,7 @@ def test_node_descendant_for_range()
     assert_eq!(pair_node.start_byte(), string_index)
     assert_eq!(pair_node.end_byte(), string_index + 9)
     assert_eq!(pair_node.start_point(), TreeSitterFFI::Point.new(6, 4))
-    assert_eq!(pair_node.end_point(), TreeSitterFFI::Point.new(6, 13));
+    assert_eq!(pair_node.end_point(), TreeSitterFFI::Point.new(6, 13))
 end
 
 =begin
@@ -434,7 +434,7 @@ def test_node_edit()
     code = JSON_EXAMPLE.as_bytes().to_vec()
     tree = parse_json_example()
     rand = TreeSitterFFI::Rand.new(0)
-# 
+
 #     for _ in 0..10 {
 #         nodes_before = get_all_nodes(&tree)
 
@@ -444,7 +444,7 @@ def test_node_edit()
 #         for node in nodes_before.iter_mut() {
 #             node.edit(&edit)
 #         }
-# 
+
 #         nodes_after = get_all_nodes(&tree2)
         for (i, node) in nodes_before.into_iter().enumerate() {
             assert_eq!(
@@ -473,7 +473,7 @@ def test_node_is_extra()
     assert_eq!(root_node.type(), "program")
     assert_eq!(comment_node.type(), "comment")
     assert!(!root_node.is_extra())
-    assert!(comment_node.is_extra());
+    assert!(comment_node.is_extra())
 end
 
 def test_node_sexp()
@@ -489,166 +489,166 @@ def test_node_sexp()
     assert_eq!(paren_node.type(), "(")
     assert_eq!(paren_node.to_sexp(), "(\"(\")")
     assert_eq!(identifier_node.type(), "identifier")
-    assert_eq!(identifier_node.to_sexp(), "(identifier)");
+    assert_eq!(identifier_node.to_sexp(), "(identifier)")
 end
 
 =begin
 def test_node_field_names()
-    (parser_name, parser_code) = generate_parser_for_grammar(
-        <<-HEREDOC
-        {
-            "name": "test_grammar_with_fields",
-            "extras": [
-                {"type": "PATTERN", "value": "\\s+"}
-            ],
-            "rules": {
-                "rule_a": {
-                    "type": "SEQ",
-                    "members": [
-                        {
-                            "type": "FIELD",
-                            "name": "field_1",
-                            "content": {"type": "STRING", "value": "child-0"}
-                        },
-                        {
-                            "type": "CHOICE",
-                            "members": [
-                                {"type": "STRING", "value": "child-1"},
-                                {"type": "BLANK"},
+    # (parser_name, parser_code) = generate_parser_for_grammar(
+#         <<-HEREDOC
+#         {
+#             "name": "test_grammar_with_fields",
+#             "extras": [
+#                 {"type": "PATTERN", "value": "\\s+"}
+#             ],
+#             "rules": {
+#                 "rule_a": {
+#                     "type": "SEQ",
+#                     "members": [
+#                         {
+#                             "type": "FIELD",
+#                             "name": "field_1",
+#                             "content": {"type": "STRING", "value": "child-0"}
+#                         },
+#                         {
+#                             "type": "CHOICE",
+#                             "members": [
+#                                 {"type": "STRING", "value": "child-1"},
+#                                 {"type": "BLANK"},
 
-                                # This isn't used in the test, but prevents `_hidden_rule1`
-                                # from being eliminated as a unit reduction.
-                                {
-                                    "type": "ALIAS",
-                                    "value": "x",
-                                    "named": true,
-                                    "content": {
-                                        "type": "SYMBOL",
-                                        "name": "_hidden_rule1"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "FIELD",
-                            "name": "field_2",
-                            "content": {"type": "SYMBOL", "name": "_hidden_rule1"}
-                        },
-                        {"type": "SYMBOL", "name": "_hidden_rule2"}
-                    ]
-                },
+#                                 # This isn't used in the test, but prevents `_hidden_rule1`
+#                                 # from being eliminated as a unit reduction.
+#                                 {
+#                                     "type": "ALIAS",
+#                                     "value": "x",
+#                                     "named": true,
+#                                     "content": {
+#                                         "type": "SYMBOL",
+#                                         "name": "_hidden_rule1"
+#                                     }
+#                                 }
+#                             ]
+#                         },
+#                         {
+#                             "type": "FIELD",
+#                             "name": "field_2",
+#                             "content": {"type": "SYMBOL", "name": "_hidden_rule1"}
+#                         },
+#                         {"type": "SYMBOL", "name": "_hidden_rule2"}
+#                     ]
+#                 },
 
-                # Fields pointing to hidden nodes with a single child resolve to the child.
-                "_hidden_rule1": {
-                    "type": "CHOICE",
-                    "members": [
-                        {"type": "STRING", "value": "child-2"},
-                        {"type": "STRING", "value": "child-2.5"}
-                    ]
-                },
+#                 # Fields pointing to hidden nodes with a single child resolve to the child.
+#                 "_hidden_rule1": {
+#                     "type": "CHOICE",
+#                     "members": [
+#                         {"type": "STRING", "value": "child-2"},
+#                         {"type": "STRING", "value": "child-2.5"}
+#                     ]
+#                 },
 
-                # Fields within hidden nodes can be referenced through the parent node.
-                "_hidden_rule2": {
-                    "type": "SEQ",
-                    "members": [
-                        {"type": "STRING", "value": "child-3"},
-                        {
-                            "type": "FIELD",
-                            "name": "field_3",
-                            "content": {"type": "STRING", "value": "child-4"}
-                        }
-                    ]
-                }
-            }
-        }
-    HEREDOC
-    ,
-    )
+#                 # Fields within hidden nodes can be referenced through the parent node.
+#                 "_hidden_rule2": {
+#                     "type": "SEQ",
+#                     "members": [
+#                         {"type": "STRING", "value": "child-3"},
+#                         {
+#                             "type": "FIELD",
+#                             "name": "field_3",
+#                             "content": {"type": "STRING", "value": "child-4"}
+#                         }
+#                     ]
+#                 }
+#             }
+#         }
+#     HEREDOC
+#     ,
+#     );
 
-    parser = TreeSitterFFI.parser()
-#     language = get_test_language(&parser_name, &parser_code, nil)
-    parser.set_language(language)
+#     parser = TreeSitterFFI.parser();
+#     language = get_test_language(&parser_name, &parser_code, nil);
+#     parser.set_language(language);
 
-    tree = parser
-        .parse("child-0 child-1 child-2 child-3 child-4", nil)
-    root_node = tree.root_node()
+#     tree = parser
+#         .parse("child-0 child-1 child-2 child-3 child-4", nil);
+#     root_node = tree.root_node();
 
-    assert_eq!(root_node.child_by_field_name("field_1"), root_node.child(0))
-    assert_eq!(root_node.child_by_field_name("field_2"), root_node.child(2))
-    assert_eq!(root_node.child_by_field_name("field_3"), root_node.child(4))
-    assert_eq!(
-        root_node.child(0).child_by_field_name("field_1"),
-        nil
-    )
-    assert_eq!(root_node.child_by_field_name("not_a_real_field"), nil)
+#     assert_eq!(root_node.child_by_field_name("field_1"), root_node.child(0));
+#     assert_eq!(root_node.child_by_field_name("field_2"), root_node.child(2));
+#     assert_eq!(root_node.child_by_field_name("field_3"), root_node.child(4));
+#     assert_eq!(
+#         root_node.child(0).child_by_field_name("field_1"),
+#         nil
+#     );
+#     assert_eq!(root_node.child_by_field_name("not_a_real_field"), nil);
 
-    cursor = root_node.walk()
-    assert_eq!(cursor.field_name(), nil)
-    cursor.goto_first_child()
-    assert_eq!(cursor.node().type(), "child-0")
-    assert_eq!(cursor.field_name(), ("field_1"))
-    cursor.goto_next_sibling()
-    assert_eq!(cursor.node().type(), "child-1")
-    assert_eq!(cursor.field_name(), nil)
-    cursor.goto_next_sibling()
-    assert_eq!(cursor.node().type(), "child-2")
-    assert_eq!(cursor.field_name(), ("field_2"))
-    cursor.goto_next_sibling()
-    assert_eq!(cursor.node().type(), "child-3")
-    assert_eq!(cursor.field_name(), nil)
-    cursor.goto_next_sibling()
-    assert_eq!(cursor.node().type(), "child-4")
-    assert_eq!(cursor.field_name(), ("field_3"));
+#     cursor = root_node.walk();
+#     assert_eq!(cursor.field_name(), nil);
+#     cursor.goto_first_child();
+#     assert_eq!(cursor.node().type(), "child-0");
+#     assert_eq!(cursor.field_name(), ("field_1"));
+#     cursor.goto_next_sibling();
+#     assert_eq!(cursor.node().type(), "child-1");
+#     assert_eq!(cursor.field_name(), nil);
+#     cursor.goto_next_sibling();
+#     assert_eq!(cursor.node().type(), "child-2");
+#     assert_eq!(cursor.field_name(), ("field_2"));
+#     cursor.goto_next_sibling();
+#     assert_eq!(cursor.node().type(), "child-3");
+#     assert_eq!(cursor.field_name(), nil);
+#     cursor.goto_next_sibling();
+#     assert_eq!(cursor.node().type(), "child-4");
+#     assert_eq!(cursor.field_name(), ("field_3"))
 end
 =end
 
 =begin
 def test_node_field_calls_in_language_without_fields()
-    (parser_name, parser_code) = generate_parser_for_grammar(
-        <<-HEREDOC
-        {
-            "name": "test_grammar_with_no_fields",
-            "extras": [
-                {"type": "PATTERN", "value": "\\s+"}
-            ],
-            "rules": {
-                "a": {
-                    "type": "SEQ",
-                    "members": [
-                        {
-                            "type": "STRING",
-                            "value": "b"
-                        },
-                        {
-                            "type": "STRING",
-                            "value": "c"
-                        },
-                        {
-                            "type": "STRING",
-                            "value": "d"
-                        }
-                    ]
-                }
-            }
-        }
-    HEREDOC
-    ,
-    )
+    # (parser_name, parser_code) = generate_parser_for_grammar(
+#         <<-HEREDOC
+#         {
+#             "name": "test_grammar_with_no_fields",
+#             "extras": [
+#                 {"type": "PATTERN", "value": "\\s+"}
+#             ],
+#             "rules": {
+#                 "a": {
+#                     "type": "SEQ",
+#                     "members": [
+#                         {
+#                             "type": "STRING",
+#                             "value": "b"
+#                         },
+#                         {
+#                             "type": "STRING",
+#                             "value": "c"
+#                         },
+#                         {
+#                             "type": "STRING",
+#                             "value": "d"
+#                         }
+#                     ]
+#                 }
+#             }
+#         }
+#     HEREDOC
+#     ,
+#     );
 
-    parser = TreeSitterFFI.parser()
-#     language = get_test_language(&parser_name, &parser_code, nil)
-    parser.set_language(language)
+#     parser = TreeSitterFFI.parser();
+#     language = get_test_language(&parser_name, &parser_code, nil);
+#     parser.set_language(language);
 
-    tree = parser.parse("b c d", nil)
+#     tree = parser.parse("b c d", nil);
 
-    root_node = tree.root_node()
-    assert_eq!(root_node.type(), "a")
-    assert_eq!(root_node.child_by_field_name("something"), nil)
+#     root_node = tree.root_node();
+#     assert_eq!(root_node.type(), "a");
+#     assert_eq!(root_node.child_by_field_name("something"), nil)
 
     cursor = root_node.walk()
     assert_eq!(cursor.field_name(), nil)
     assert_eq!(cursor.goto_first_child(), true)
-    assert_eq!(cursor.field_name(), nil);
+    assert_eq!(cursor.field_name(), nil)
 end
 =end
 
@@ -678,7 +678,7 @@ def test_node_is_named_but_aliased_as_anonymous()
     assert!(!aliased.is_named())
     assert_eq!(aliased.type(), "the-alias")
 
-    assert_eq!(root_node.named_child(0).type(), "c");
+    assert_eq!(root_node.named_child(0).type(), "c")
 end
 =end
 
@@ -730,7 +730,7 @@ def test_node_numeric_symbols_respect_simple_aliases()
 
     binary_minus_node = binary_node.child_by_field_name("operator")
     assert_eq!(binary_minus_node.type(), "-")
-    assert_eq!(unary_minus_node.type_id(), binary_minus_node.type_id());
+    assert_eq!(unary_minus_node.type_id(), binary_minus_node.type_id())
 end
 
 =begin
@@ -750,7 +750,7 @@ def get_all_nodes(tree: &Tree)
             break
         }
     }
-    return result;
+    return result
 end
 =end
 

@@ -1,0 +1,32 @@
+test_node_child()
+test_node_children()
+test_node_children_by_field_name()
+test_node_parent_of_child_by_field_name()
+test_node_field_name_for_child()
+test_node_child_by_field_name_with_extra_hidden_children()
+test_node_named_child()
+test_node_named_child_with_aliases_and_extras()
+test_node_descendant_for_range()
+test_node_edit()
+test_node_is_extra()
+test_node_sexp()
+test_node_field_names()
+test_node_field_calls_in_language_without_fields()
+test_node_is_named_but_aliased_as_anonymous()
+test_node_numeric_symbols_respect_simple_aliases()
+get_all_nodes(tree: &Tree)
+parse_json_example()
+test_tree_edit()
+test_tree_cursor()
+test_tree_cursor_fields()
+test_tree_cursor_child_for_point()
+test_tree_node_equality()
+test_get_changed_ranges()
+index_of(text: &Vec<u8>, substring: &str)
+range_of(text: &Vec<u8>, substring: &str)
+get_changed_ranges(
+    parser: &mut Parser,
+    tree: &mut Tree,
+    source_code: &mut Vec<u8>,
+    edit: Edit,
+)
