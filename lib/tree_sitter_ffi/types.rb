@@ -17,9 +17,9 @@ module TreeSitterFFI
 # typedef struct TSQuery TSQuery;
 # typedef struct TSQueryCursor TSQueryCursor;
 
-	InputEncoding = enum(:utf8, :utf16)
+	EnumInputEncoding = enum(:utf8, :utf16)
 
-	SymbolType = enum(:regular, :anonymous, :auxiliary)
+	EnumSymbolType = enum(:regular, :anonymous, :auxiliary)
 
 	class Point < FFI::Struct
 		layout(
@@ -84,7 +84,7 @@ module TreeSitterFFI
 			:payload, :pointer,
 			# can these pointers be more specific???
 			:read, callback([:pointer, :uint32, Point.by_value, :uint32_p], :pointer), # ret :string???
-			:encoding, InputEncoding,
+			:encoding, EnumInputEncoding,
 			)
 		### TMP!!!
 # 		arg_1 = FFI::MemoryPointer.new(:uint32, 1)
@@ -101,7 +101,7 @@ module TreeSitterFFI
 		end
 	end
 
-	LogType = enum(:parse, :lex)
+	EnumLogType = enum(:parse, :lex)
 
 # typedef struct {
 #   void *payload;
@@ -111,8 +111,8 @@ module TreeSitterFFI
 		layout(
 			:payload, :pointer,
 			### lily
-			:log, callback([:pointer, LogType, :pointer], :void)
-# 			:log, callback([:pointer, LogType, :string], :void)
+			:log, callback([:pointer, EnumLogType, :pointer], :void)
+# 			:log, callback([:pointer, EnumLogType, :string], :void)
 			)
 		def initialize(len=256)
 			super()
@@ -135,15 +135,15 @@ module TreeSitterFFI
 			)
 	end
 
-	QueryPredicateStepType = enum(:done, :capture, :string)
+	EnumQueryPredicateStepType = enum(:done, :capture, :string)
 
 	class QueryPredicateStep < FFI::Struct
 		layout(
-			:type, QueryPredicateStepType,
+			:type, EnumQueryPredicateStepType,
 			:value_id, :uint32
 			)
 	end
-	QueryError = enum(:none, 0, :syntax, :node_type, :field, :capture, :structure)
+	EnumQueryError = enum(:none, 0, :syntax, :node_type, :field, :capture, :structure)
 
 
 end

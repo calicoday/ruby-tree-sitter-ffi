@@ -16,7 +16,7 @@ describe "query_spec.rb" do
 # 		len = arg_0.get(:uint32, 0)
 		@err_offset_p = FFI::MemoryPointer.new(:uint32, 1)
 		@err_type_p = FFI::MemoryPointer.new(:uint32, 1) # enum!!!
-# 		@err_type_p = FFI::MemoryPointer.new(TreeSitterFFI::QueryError, 1) # enum!!!
+# 		@err_type_p = FFI::MemoryPointer.new(TreeSitterFFI::EnumQueryError, 1) # enum!!!
 		@query = TreeSitterFFI.ts_query_new(@json, @sexp, @sexp.length, 
 			@err_offset_p, @err_type_p)
 # 		puts "err_offset: #{@err_offset_p.get(:uint32, 0)}"

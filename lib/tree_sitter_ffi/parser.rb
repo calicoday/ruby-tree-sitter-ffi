@@ -27,7 +27,7 @@ module TreeSitterFFI
 			[:ts_parser_parse, [Parser, Tree, Input.by_value], Tree],
 			[:ts_parser_parse_string, [Parser, Tree, :string, :uint32], Tree],
 			[:ts_parser_parse_string_encoding, 
-				[Parser, Tree, :string, :uint32, InputEncoding], 
+				[Parser, Tree, :string, :uint32, EnumInputEncoding], 
 				Tree],
 
 			[:ts_parser_reset, [Parser], :void],
@@ -76,8 +76,8 @@ module TreeSitterFFI
 		end
 		
 		# prev:  --
-		# now:   parse_with(String, Tree=nil, InputEncoding=nil)
-		# still: parse_string_encoding(Tree, :string, :uint32, InputEncoding) => Tree
+		# now:   parse_with(String, Tree=nil, EnumInputEncoding=nil)
+		# still: parse_string_encoding(Tree, :string, :uint32, EnumInputEncoding) => Tree
 		def parse_with(src, *args)
 			old_tree = encoding = nil
 			case args.length

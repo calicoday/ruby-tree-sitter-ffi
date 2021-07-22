@@ -59,7 +59,7 @@ describe "parser_spec.rb" do
 		ret.is_a?(TreeSitterFFI::Tree).should == true
 	end
 
-	it "parse_string_encoding(Tree, String, Integer, InputEncoding) # => Tree" do
+	it "parse_string_encoding(Tree, String, Integer, EnumInputEncoding) # => Tree" do
 		ret = @pars.parse_string_encoding(@tree, "blurg", 5, :utf8)
 		ret.should_not == nil
 		ret.is_a?(TreeSitterFFI::Tree).should == true

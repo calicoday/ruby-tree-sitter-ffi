@@ -18,7 +18,7 @@ module TreeSitterFFI
 			[:ts_language_field_count, [Language], :uint32],
 			[:ts_language_field_name_for_id, [Language, :field_id], :string],
 			[:ts_language_field_id_for_name, [Language, :string, :uint32], :field_id],
-			[:ts_language_symbol_type, [Language, :symbol], SymbolType],
+			[:ts_language_symbol_type, [Language, :symbol], EnumSymbolType],
 			[:ts_language_version, [Language], :uint32],
 			])
 	

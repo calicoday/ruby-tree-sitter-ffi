@@ -140,7 +140,7 @@ include BindRusty
 
 require 'awesome_print'
 
-QueryErrorKind = TreeSitterFFI::QueryError
+QueryErrorKind = TreeSitterFFI::EnumQueryError
 class StuntQueryError
 	attr_accessor :row, :column, :offset, :message, :kind
 	def initialize(h)
