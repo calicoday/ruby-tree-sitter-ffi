@@ -13,7 +13,9 @@ def put_more(o)
 	end
 end
 
-def put_note(result, expect, from, &b)
+# def put_note(result, expect, from, &b)
+def put_note(result, expect, from, msg=nil, &b)
+  return puts "#{from}: #{msg}" if msg # handy during dev
 	success = yield(result, expect)
 	msg = (success ? 'ok' : 'failed')
 	return puts "#{from}: #{msg}" if success #yield(result, expect)

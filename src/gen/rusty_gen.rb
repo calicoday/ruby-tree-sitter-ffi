@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'erb'
-# require './fresh/gen-step/rusty_gen_query.rb'
+require './src/gen/rusty_gen_query.rb'
 
 require 'awesome_print'
 
@@ -19,8 +19,8 @@ def gen()
 # 	bosslist = ["node", "tree"]
 	$log = File.open(outdir + '/rusty-log.rb', 'w')
 # 	bosslist = ["node"] # only node so smaller log
-	bosslist = ["node", "tree"]
-# 	bosslist = ["node", "tree", "query"]
+# 	bosslist = ["node", "tree"]
+	bosslist = ["node", "tree", "query"]
 # 	bosslist = ["query"]
 	g.gen_tests(bosslist)
 
@@ -43,7 +43,6 @@ module GenUtils
 		@srcdir = srcdir
 		@outdir = outdir
 		Dir.mkdir(gendir) unless Dir.exists?(gendir)
-		# PROB don't care about past rusty but doesn't hurt to be clear about it
 		if Dir.exists?(outdir) && !$womping
 # 		if Dir.exists?(outdir)
 			raise "#{outdir}-keep dir exists. exitting." if Dir.exists?(outdir + "-keep")
