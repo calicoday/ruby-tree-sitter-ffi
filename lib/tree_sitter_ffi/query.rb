@@ -38,11 +38,11 @@ module TreeSitterFFI
 			])
 
 		# currently not implemented
-		def ts_query_capture_name_for_id(*args) nope_not_impl(__callee__) end
-		def capture_name_for_id(*args) nope_not_impl(__callee__) end
-
-		def ts_query_string_value_for_id(*args) nope_not_impl(__callee__) end
-		def string_value_for_id(*args) nope_not_impl(__callee__) end
+# 		def ts_query_capture_name_for_id(*args) nope_not_impl(__callee__) end
+# 		def capture_name_for_id(*args) nope_not_impl(__callee__) end
+# 
+# 		def ts_query_string_value_for_id(*args) nope_not_impl(__callee__) end
+# 		def string_value_for_id(*args) nope_not_impl(__callee__) end
 	
 	end
 
