@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 #   s.extensions = ['ext/simple_clipboard/extconf.rb']
   s.files = [
     'lib/tree_sitter_ffi.rb',
+    'lib/tree_sitter_ffi/unit_memory.rb',
     'lib/tree_sitter_ffi/boss.rb',
     'lib/tree_sitter_ffi/types.rb',
     'lib/tree_sitter_ffi/node.rb',

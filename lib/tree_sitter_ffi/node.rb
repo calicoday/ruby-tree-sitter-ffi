@@ -11,6 +11,7 @@ module TreeSitterFFI
 			:context, [:uint32, 4],
 			:id, :pointer,
 			:tree, :pointer
+# 			:tree, Tree #???
 		)
 
 		wrap_attach(:ts_node_, [
@@ -102,6 +103,30 @@ module TreeSitterFFI
 # 	def inspect() 
 # 		"<Node context: #{self[:context].to_a}, id: #{self[:id]}, tree: #{self[:tree]}>" 
 # 	end
+
+### chimp
+    ### rusty bindings TMP!!! 
+    def utf8_text(input)
+#       puts "$$$ input.inspect: #{input.inspect}"
+#       puts "  self.inspect: #{self.inspect}, null?: #{self.null?}"
+      ###return 'self is null node' if self.null? || self.is_null
+      return '' if self.null? || self.is_null
+      input[self.start_byte...self.end_byte]
+    end
+
+	  def copy_values(from)
+# 	    puts "=== Node#copy_values"
+# # 	    puts "  self: #{self.inspect}"
+# 	    puts "  from: #{from.inspect}"
+	    4.times.each{|i| self[:context][i] = from[:context][i]}
+	    self[:id] = from[:id]
+	    self[:tree] = from[:tree]    
+	  end
+	  def context()
+	    4.times.map{|i| self[:context][i]}
+	  end
+# 	  def tree() Tree.new(self[:tree]) end
+		def inspect() four11(self, [:context, :id, :tree]) end
 	end
 
 end

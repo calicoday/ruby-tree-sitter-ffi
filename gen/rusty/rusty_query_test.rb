@@ -723,7 +723,7 @@ def test_query_matches_with_named_wildcard()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -881,7 +881,6 @@ def test_query_matches_with_last_named_child()
     #     })
 end
 
-=begin
 def test_query_matches_with_negated_fields()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -944,9 +943,7 @@ def test_query_matches_with_negated_fields()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_field_at_root()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -963,9 +960,7 @@ def test_query_matches_with_field_at_root()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_repeated_leaf_nodes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1026,9 +1021,7 @@ def test_query_matches_with_repeated_leaf_nodes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_optional_nodes_inside_of_repetitions()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1047,9 +1040,7 @@ def test_query_matches_with_optional_nodes_inside_of_repetitions()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_top_level_repetitions()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1079,9 +1070,7 @@ def test_query_matches_with_top_level_repetitions()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_non_terminal_repetitions_within_root()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1099,9 +1088,7 @@ def test_query_matches_with_non_terminal_repetitions_within_root()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_nested_repetitions()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1133,7 +1120,6 @@ def test_query_matches_with_nested_repetitions()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern()
@@ -1184,7 +1170,6 @@ def test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pa
 end
 =end
 
-=begin
 def test_query_matches_with_trailing_repetitions_of_last_child()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1196,23 +1181,21 @@ def test_query_matches_with_trailing_repetitions_of_last_child()
             ",
         )
 
-#         assert_query_matches(
-#             language,
-#             query,
-#             "
-#             a = typeof (!b && ~c);
-#             ",
-#             [
-#                 [0, [["operand", "b"]]],
-#                 [0, [["operand", "c"]]],
-#                 [0, [["operand", "(!b && ~c)"]]],
-#             ],
-#         )
+        assert_query_matches(
+            language,
+            query,
+            "
+            a = typeof (!b && ~c);
+            ",
+            [
+                [0, [["operand", "b"]]],
+                [0, [["operand", "c"]]],
+                [0, [["operand", "(!b && ~c)"]]],
+            ],
+        )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1263,9 +1246,7 @@ def test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_trailing_optional_nodes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1298,9 +1279,7 @@ def test_query_matches_with_trailing_optional_nodes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_nested_optional_nodes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1340,9 +1319,7 @@ def test_query_matches_with_nested_optional_nodes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_repeated_internal_nodes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1370,9 +1347,7 @@ def test_query_matches_with_repeated_internal_nodes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_simple_alternatives()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1409,9 +1384,7 @@ def test_query_matches_with_simple_alternatives()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_alternatives_in_repetitions()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1445,9 +1418,7 @@ def test_query_matches_with_alternatives_in_repetitions()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_alternatives_at_root()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1486,9 +1457,7 @@ def test_query_matches_with_alternatives_at_root()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_alternatives_under_fields()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1521,9 +1490,7 @@ def test_query_matches_with_alternatives_under_fields()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_in_language_with_simple_aliases()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("html")
@@ -1553,9 +1520,7 @@ def test_query_matches_in_language_with_simple_aliases()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_different_tokens_with_the_same_string_value()
     # TreeSitterFFI::allocations.record(|| {
         # In Rust, there are two '<' tokens: one for the binary operator,
@@ -1582,7 +1547,6 @@ def test_query_matches_with_different_tokens_with_the_same_string_value()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_matches_with_too_many_permutations_to_track()
@@ -1601,10 +1565,10 @@ def test_query_matches_with_too_many_permutations_to_track()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
         cursor.set_match_limit(32)
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
 
         # For this pathological query, some match permutations will be dropped.
         # Just check that a subset of the results are returned, and crash or
@@ -1643,10 +1607,10 @@ def test_query_matches_with_alternatives_and_too_many_permutations_to_track()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
         cursor.set_match_limit(32)
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source.as_str()),
@@ -1657,35 +1621,32 @@ def test_query_matches_with_alternatives_and_too_many_permutations_to_track()
 end
 =end
 
-=begin
 def test_query_matches_with_anonymous_tokens()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
-#         query = TreeSitterFFI::Query.make(
-#             language,
-#             %q%
-#             ";" @punctuation
-#             "&&" @operator
-#             "\"" @quote
-#             % ,
-#         )
+        query = TreeSitterFFI::Query.make(
+            language,
+            %q%
+            ";" @punctuation
+            "&&" @operator
+            "\"" @quote
+            % ,
+        )
 
-#         assert_query_matches(
-#             language,
-#             query,
-#             %q%foo(a && "b");% ,
-#             [
-#                 [1, [["operator", "&&"]]],
-#                 [2, [["quote", "\""]]],
-#                 [2, [["quote", "\""]]],
-#                 [0, [["punctuation", ";"]]],
-#             ],
-#         )
+        assert_query_matches(
+            language,
+            query,
+            %q%foo(a && "b");% ,
+            [
+                [1, [["operator", "&&"]]],
+                [2, [["quote", "\""]]],
+                [2, [["quote", "\""]]],
+                [0, [["punctuation", ";"]]],
+            ],
+        )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_supertypes()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("python")
@@ -1725,9 +1686,7 @@ def test_query_matches_with_supertypes()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_within_byte_range()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -1737,14 +1696,14 @@ def test_query_matches_within_byte_range()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         matches =
-#             cursor
-#                 .set_byte_range(0..8)
-#                 .matches(&query, tree.root_node(), source.as_bytes())
+        matches =
+            cursor
+                .set_byte_range(0...8)
+                .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1755,10 +1714,10 @@ def test_query_matches_within_byte_range()
             ]
         )
 
-#         matches =
-#             cursor
-#                 .set_byte_range(5..15)
-#                 .matches(&query, tree.root_node(), source.as_bytes())
+        matches =
+            cursor
+                .set_byte_range(5...15)
+                .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1769,10 +1728,10 @@ def test_query_matches_within_byte_range()
             ]
         )
 
-#         matches =
-#             cursor
-#                 .set_byte_range(12..0)
-#                 .matches(&query, tree.root_node(), source.as_bytes())
+        matches =
+            cursor
+                .set_byte_range(12...0)
+                .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1784,7 +1743,6 @@ def test_query_matches_within_byte_range()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_matches_within_point_range()
@@ -1796,13 +1754,13 @@ def test_query_matches_within_point_range()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         matches = cursor
-#             .set_point_range(TreeSitterFFI::Point.new(0, 0)..TreeSitterFFI::Point.new(1, 3))
-#             .matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor
+            .set_point_range(TreeSitterFFI::Point.new(0, 0)..TreeSitterFFI::Point.new(1, 3))
+            .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1813,9 +1771,9 @@ def test_query_matches_within_point_range()
             ]
         )
 
-#         matches = cursor
-#             .set_point_range(TreeSitterFFI::Point.new(1, 0)..TreeSitterFFI::Point.new(2, 3))
-#             .matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor
+            .set_point_range(TreeSitterFFI::Point.new(1, 0)..TreeSitterFFI::Point.new(2, 3))
+            .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1826,9 +1784,9 @@ def test_query_matches_within_point_range()
             ]
         )
 
-#         matches = cursor
-#             .set_point_range(TreeSitterFFI::Point.new(2, 1)..TreeSitterFFI::Point.new(0, 0))
-#             .matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor
+            .set_point_range(TreeSitterFFI::Point.new(2, 1)..TreeSitterFFI::Point.new(0, 0))
+            .matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -1861,12 +1819,12 @@ def test_query_captures_within_byte_range()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
         cursor = TreeSitterFFI::QueryCursor.make()
 #         captures =
 #             cursor
-#                 .set_byte_range(3..27)
+#                 .set_byte_range(3...27)
 #                 .captures(&query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
@@ -1881,7 +1839,6 @@ def test_query_captures_within_byte_range()
 end
 =end
 
-=begin
 def test_query_matches_with_unrooted_patterns_intersecting_byte_range()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("rust")
@@ -1897,16 +1854,16 @@ def test_query_matches_with_unrooted_patterns_intersecting_byte_range()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
         # within the type parameter list
         offset = source.index("D: E>")
-#         matches = cursor.set_byte_range(offset..offset).matches(
-#             &query,
-#             tree.root_node(),
-#             source.as_bytes(),
-#         )
+        matches = cursor.set_byte_range(offset..offset).matches(
+            query,
+            tree.root_node(),
+            source.as_bytes(),
+        )
         assert_eq!(
             collect_matches(matches, query, source),
             [
@@ -1918,11 +1875,11 @@ def test_query_matches_with_unrooted_patterns_intersecting_byte_range()
         # from within the type parameter list to within the function body
         start_offset = source.index("D: E>")
         end_offset = source.index("g(f)")
-#         matches = cursor.set_byte_range(start_offset..end_offset).matches(
-#             &query,
-#             tree.root_node(),
-#             source.as_bytes(),
-#         )
+        matches = cursor.set_byte_range(start_offset..end_offset).matches(
+            query,
+            tree.root_node(),
+            source.as_bytes(),
+        )
         assert_eq!(
             collect_matches(matches, query, source),
             [
@@ -1933,7 +1890,6 @@ def test_query_matches_with_unrooted_patterns_intersecting_byte_range()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_captures_within_byte_range_assigned_after_iterating()
@@ -1973,7 +1929,7 @@ def test_query_captures_within_byte_range_assigned_after_iterating()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
 
@@ -2021,7 +1977,6 @@ def test_query_captures_within_byte_range_assigned_after_iterating()
 end
 =end
 
-=begin
 def test_query_matches_different_queries_same_cursor()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2053,15 +2008,15 @@ def test_query_matches_different_queries_same_cursor()
         cursor = TreeSitterFFI::QueryCursor.make()
 
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
-#         matches = cursor.matches(&query1, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query1, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query1, source),
             [[0, [["id1", "a"]]],]
         )
 
-#         matches = cursor.matches(&query3, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query3, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query3, source),
             [
@@ -2071,14 +2026,13 @@ def test_query_matches_different_queries_same_cursor()
             ]
         )
 
-#         matches = cursor.matches(&query2, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query2, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query2, source),
             [[0, [["id1", "a"]]], [1, [["id2", "b"]]],]
         )
     #     })
 end
-=end
 
 =begin
 def test_query_matches_with_multiple_captures_on_a_node()
@@ -2096,9 +2050,9 @@ def test_query_matches_with_multiple_captures_on_a_node()
         cursor = TreeSitterFFI::QueryCursor.make()
 
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query, source),
             [[
@@ -2116,7 +2070,7 @@ def test_query_matches_with_multiple_captures_on_a_node()
         # disabling captures still works when there are multiple captures on a
         # single node.
         query.disable_capture("name2")
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query, source),
             [[
@@ -2184,10 +2138,10 @@ def test_query_matches_with_captured_wildcard_at_root()
         parser = TreeSitterFFI.parser()
         cursor = TreeSitterFFI::QueryCursor.make()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
 #         match_capture_names_and_rows = cursor
-#             .matches(&query, tree.root_node(), source.as_bytes())
+#             .matches(query, tree.root_node(), source.as_bytes())
 #             .map(|m| {
 #                 m.captures
 #                     .iter()
@@ -2220,7 +2174,6 @@ def test_query_matches_with_captured_wildcard_at_root()
 end
 =end
 
-=begin
 def test_query_matches_with_no_captures()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2240,17 +2193,15 @@ def test_query_matches_with_no_captures()
             b = 'bye';
             ",
             [
-                (0, vec![]),
+                [0, []],
                 [1, [["s", "'hi'"]]],
-                (0, vec![]),
+                [0, []],
                 [1, [["s", "'bye'"]]],
             ],
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_repeated_fields()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("c")
@@ -2275,9 +2226,7 @@ def test_query_matches_with_repeated_fields()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_deeply_nested_patterns_with_fields()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("python")
@@ -2363,9 +2312,7 @@ def test_query_matches_with_deeply_nested_patterns_with_fields()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_matches_with_indefinite_step_containing_no_captures()
     # TreeSitterFFI::allocations.record(|| {
         # This pattern depends on the field declarations within the
@@ -2413,7 +2360,6 @@ def test_query_matches_with_indefinite_step_containing_no_captures()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_captures_basic()
@@ -2450,9 +2396,9 @@ def test_query_captures_basic()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_matches(matches, query, source),
@@ -2522,7 +2468,7 @@ def test_query_captures_with_text_conditions()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
@@ -2661,7 +2607,7 @@ def test_query_captures_with_duplicates()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
@@ -2705,14 +2651,14 @@ def test_query_captures_with_many_nested_results_without_fields()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
 #         captures = collect_captures(captures, &query, &source)
 
 #         assert_eq!(
-#             &captures[0..13],
+#             &captures[0...13],
 #             [
 #                 ["colon", ":"],
 #                 ["method-def", "method0"],
@@ -2765,14 +2711,14 @@ def test_query_captures_with_many_nested_results_with_fields()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
 #         captures = collect_captures(captures, &query, &source)
 
 #         assert_eq!(
-#             &captures[0..20],
+#             &captures[0...20],
 #             [
 #                 ["left", "y0"],
 #                 ["right", "y0"],
@@ -2863,14 +2809,14 @@ def test_query_captures_with_too_many_nested_results()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
         cursor.set_match_limit(32)
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
 #         captures = collect_captures(captures, &query, &source)
 
 #         assert_eq!(
-#             &captures[0..4],
+#             &captures[0...4],
 #             [
 #                 ["template-call", "b.c0().d0 `😄`"],
 #                 ["method-name", "c0"],
@@ -2879,7 +2825,7 @@ def test_query_captures_with_too_many_nested_results()
 #             ]
 #         )
 #         assert_eq!(
-#             &captures[36..40],
+#             &captures[36...40],
 #             [
 #                 ["template-call", "b.c9().d9 `😄`"],
 #                 ["method-name", "c9"],
@@ -2926,7 +2872,7 @@ def test_query_captures_with_definite_pattern_containing_many_nested_matches()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
@@ -2962,7 +2908,7 @@ def test_query_captures_ordered_by_both_start_and_end_positions()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
@@ -2997,13 +2943,13 @@ def test_query_captures_with_matches_removed()
             % ,
         )
 
-#         source = "
-#           a === b && c > d && e < f;
-#         "
+        source = "
+          a === b && c > d && e < f;
+        "
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captured_strings = TreeSitterFFI::Vec.new()
@@ -3042,7 +2988,7 @@ def test_query_captures_and_matches_iterators_are_fused()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 #         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
 
@@ -3054,7 +3000,7 @@ def test_query_captures_and_matches_iterators_are_fused()
         assert!(captures.next().is_none())
         drop(captures)
 
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
         assert_eq!(matches.next().captures[0].index, 0)
         assert_eq!(matches.next().captures[0].index, 0)
         assert_eq!(matches.next().captures[0].index, 0)
@@ -3090,8 +3036,8 @@ def test_query_text_callback_returns_chunks()
             offset = 0
             source_chunks.iter().filter_map(move |chunk| {
                 end_offset = offset + chunk.len()
-#                 if offset < range.end && range.start < end_offset {
-#                     end_in_chunk = (range.end - offset).min(chunk.len())
+                if offset < range.end && range.start < end_offset {
+                    end_in_chunk = (range.end - offset).min(chunk.len())
                     start_in_chunk = range.start.max(offset) - offset
                     offset = end_offset
 #                     (&chunk[start_in_chunk..end_in_chunk])
@@ -3102,13 +3048,13 @@ def test_query_text_callback_returns_chunks()
             })
         }
         assert_eq!(
-            chunks_in_range(0..9)
+            chunks_in_range(0...9)
                 .map(|c| TreeSitterFFI::std.TreeSitterFFI::str.from_utf8(c))
                 .TreeSitterFFI::collect.<String>(),
             "SOMETHING",
         )
         assert_eq!(
-            chunks_in_range(15..24)
+            chunks_in_range(15...24)
                 .map(|c| TreeSitterFFI::std.TreeSitterFFI::str.from_utf8(c))
                 .TreeSitterFFI::collect.<String>(),
             "transform",
@@ -3116,7 +3062,7 @@ def test_query_text_callback_returns_chunks()
 
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 #         captures = cursor.captures(&query, tree.root_node(), |node: Node| {
 #             chunks_in_range(node.byte_range())
@@ -3221,7 +3167,7 @@ def test_query_lifetime_is_separate_from_nodes_lifetime()
         language = get_language("javascript")
         parser = TreeSitterFFI.parser()
         parser.set_language(language)
-#         tree = parser.parse(&source, nil)
+        tree = parser.parse(source, nil)
 
 #         fn take_first_node_from_captures<'tree>(
 #             source: &str,
@@ -3233,11 +3179,11 @@ def test_query_lifetime_is_separate_from_nodes_lifetime()
 #             language = get_language("javascript")
             query = TreeSitterFFI::Query.make(language, query)
             cursor = TreeSitterFFI::QueryCursor.make()
-#             node = cursor
-#                 .matches(&query, node, source.as_bytes())
-#                 .next()
-#                 .captures[0]
-#                 .node
+            node = cursor
+                .matches(query, node, source.as_bytes())
+                .next()
+                .captures[0]
+                .node
             node
         }
 
@@ -3278,7 +3224,6 @@ def test_query_with_no_patterns()
 end
 =end
 
-=begin
 def test_query_comments()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -3298,16 +3243,14 @@ def test_query_comments()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query, source),
             [[0, [["fn-name", "one"]]],],
         )
     #     })
 end
-=end
 
-=begin
 def test_query_disable_pattern()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -3334,7 +3277,7 @@ def test_query_disable_pattern()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+        matches = cursor.matches(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_matches(matches, query, source),
             [
@@ -3344,9 +3287,7 @@ def test_query_disable_pattern()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_alternative_predicate_prefix()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("c")
@@ -3377,7 +3318,6 @@ def test_query_alternative_predicate_prefix()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_step_is_definite()
@@ -3679,7 +3619,7 @@ def assert_query_matches(
     parser.set_language(language)
     tree = parser.parse(source, nil)
     cursor = TreeSitterFFI::QueryCursor.make()
-#     matches = cursor.matches(&query, tree.root_node(), source.as_bytes())
+    matches = cursor.matches(query, tree.root_node(), source.as_bytes())
     assert_eq!(collect_matches(matches, query, source), expected)
     assert_eq!(cursor.did_exceed_match_limit(), false)
 end

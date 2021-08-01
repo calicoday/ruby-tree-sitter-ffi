@@ -17,7 +17,8 @@ task :build_and_install do
 	puts "build tree_sitter_ffi gem."
 	`gem build tree_sitter_ffi.gemspec`
 	puts "install tree_sitter_ffi gem."
-	`gem install --no-document tree_sitter_ffi-0.0.2.gem` ### gem num!!!
+# 	`gem install --no-document tree_sitter_ffi-0.0.2.gem` ### gem num!!!
+	`gem install --no-document tree_sitter_ffi-0.0.3.gem` ### gem num!!!
 	puts "done."
 end
 

@@ -102,7 +102,9 @@ class RustyGen
 
 		bosslist.each do |e|
 			@boss = e
+			
 			puts "boss: #{boss}"
+			$log << "#{boss}...\n"
 			
 			@srcfile = srcdir + "/#{boss}_test.rs"
 			s = File.read(srcfile)
@@ -114,14 +116,14 @@ class RustyGen
 				_, m, rem = fn.split(/\A([^\(]*\([^\)]*\))[^{]*{\s*/)
 				next unless m
 
-			if m == 'test_node_children()'
-				puts "%%%#{rem}%%%"
-# 				puts "  %%% $pre: #{$pre}, rem: "
-# 				ap rem
-# 				puts "%%%" 
-			end
+				if m == 'test_node_children()'
+					puts "%%%#{rem}%%%"
+	# 				puts "  %%% $pre: #{$pre}, rem: "
+	# 				ap rem
+	# 				puts "%%%" 
+				end
 
-			$log << "#{m}\n"
+				$log << "#{m}\n"
 				
 				skip = skip_fn(boss, m)
 				rem = preprocess(boss, rem, m) # 02 preprocess back in
@@ -130,6 +132,8 @@ class RustyGen
 # 				testdefs << [m, rem, skip] # 00 change nothing for zero!!!
 				
 				puts "#{m}: #{skip ? 'skip' : ''}"
+				$log << "  - skipped\n" if skip
+
 				m
 			end.compact # remove nils where we nexted
 			
@@ -148,6 +152,9 @@ class RustyGen
 			@testcalls << {
 				bossreq: outfile,
 				tests: tests_string}
+				
+			$log << "\n"
+
 		end
 
 		tmplt = File.read(devdir + '/rusty_run.rb.erb')
@@ -276,6 +283,14 @@ def split_atomic(s)
 				.gsub('Some(', '(')
 				.gsub(/&InputEdit\s*({[^}]*})/, 'TreeSitterFFI::InputEdit.from_hash(\1)')
 				
+			# sigh. rust and ruby Range have opposite ../...
+			# rust .. excludes end, ... or ..= includes end
+			# ruby .. includes end, ... excludes end
+# 			expr = expr.gsub(/([\(\[]\s*)(\d+)\.\.\.(\d+)(\s*[\]\)])/, '\1(\2..\3)\4')
+# 				.gsub(/([\(\[]\s*)(\d+)\.\.(\d+)(\s*[\]\)])/, '\1(\2...\3)\4')
+			expr = expr.gsub(/([\(\[]\s*\d+)\.\.\.(\d+\s*[\]\)])/, '\1..\2')
+				.gsub(/([\(\[]\s*\d+)\.\.(\d+\s*[\]\)])/, '\1...\2')
+				
 			# do better!!!
 # 			expr = expr.gsub(/r#"/, '<<-HEREDOC')
 # 				.gsub(/"#/, "HEREDOC\n    ") 
@@ -317,7 +332,9 @@ def split_atomic(s)
 # 			end
 
 			# disable any asserts that contain '&', 'Vec' 
-			if expr =~ /&|Vec/ || expr =~ /.repeat(count)/
+# 			if expr =~ /&|Vec/ || expr =~ /.repeat(count)/
+			if expr =~ /[^&]&[^&]|Vec/ 
+				$log << "  - suppress &|Vec\n"
 # 				expr = expr.split("\n").map{|e| e.gsub(/^/, '# ')}.join("\n")
 				expr = expr.split("\n", -1).map{|e| e.gsub(/^/, '# ') unless e == ''}.join("\n")
 			end

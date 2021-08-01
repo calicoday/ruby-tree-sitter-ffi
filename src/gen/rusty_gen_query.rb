@@ -67,18 +67,19 @@ class RustyGen
 
 		re_string_pairs = /(#{re_string_pair}\s*,?\s*)+/
 
-		re_vec = /vec!\[(\s*#{re_string_pairs})\]/
+    # or empty vec!
+		re_vec = /vec!\[(\s*#{re_string_pairs}?)\]/ # re_string_pairs now opt
 		re_vec_flat = /vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)+)\]/
-# 		re_vec_flat = /vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\]/
+#    chgd + to * -->                                                 ^
+# 		re_vec = /vec!\[(\s*#{re_string_pairs})\]/
+# 		re_vec_flat = /vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)+)\]/
 
 		# allow poss , after vec ]
     # allow poss , after ) but don't capture \s* needed for next start match: \s(\d+
 		     re = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(#{re_vec})(\s*,?\s*)\)(\s*,?)/
-		re_flat = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)+)\])(\s*,?\s*)\)(\s*,?)/
-
-		was_re_flat = /([^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\])(\s*,?\s*)\)(\s*,?)/
-# 		     re = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(#{re_vec})(\s*,?\s*)\)/
-# 		re_flat = /([^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\])(\s*,?\s*)\)/
+		re_flat = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)*)\])(\s*,?\s*)\)(\s*,?)/
+#        ^  <-- chgd + to *
+# 		re_flat = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)+)\])(\s*,?\s*)\)(\s*,?)/
 
 		s = s.gsubb(re) do |md|
 			count = md[2]
@@ -141,10 +142,16 @@ class RustyGen
 # 		re_square_pairs_flat = 
 # 			/(vec!|&)?\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\]/
 
+    # or empty vec!
 		re_square_pairs = 
-			/(vec!|&)?\[(\s*#{re_string_pairs})\](\s*,?\s*)/
+			/(vec!|&)?\[(\s*#{re_string_pairs}?)\](\s*,?\s*)/ # re_string_pairs now opt
 		re_square_pairs_flat = 
-			/(vec!|&)?\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\](\s*,?\s*)/
+			/(vec!|&)?\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)*)\](\s*,?\s*)/
+#    chgd + to * -->                                                       ^
+# 		re_square_pairs = 
+# 			/(vec!|&)?\[(\s*#{re_string_pairs})\](\s*,?\s*)/
+# 		re_square_pairs_flat = 
+# 			/(vec!|&)?\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*\)\s*,?\s*)+)\](\s*,?\s*)/
 
 		s.gsubb(re_square_pairs) do |md|
 		# capture full () and trim ends, pair[1...-1]
@@ -183,25 +190,28 @@ class RustyGen
 		# and the string_pair seqs outside captures, if any
 		s = preprocess_square_pairs(s, m)
 		
-		# now rm any remaining & in assert_(eq/matches params, guard strings
+		# now rm any remaining & in assert_(eq/matches) params, guard strings
 		re_asserts = /assert_(eq!|query_matches)\((("(\\"|[^"])*"|[^;])*);/
 		s = s.gsubb(re_asserts) do |md|
-# 			puts "%%% assert: #{md[1]}, #{md[2][0...30]}"
-			# not in string, look for /(^|\s)&([\w\["])/, '\1\2'
-			# actually only one case in query_test!!!
-			###tidy = md[2].split(/(&("(\\"|[^"])*")|\w+|\[)/).each_slice(4).map do |oth, _, str, _| 
-			
-# 			tidy = md[2].split(/(&?("(\\"|[^"])*"))/).each_slice(4).map do |oth, _, str, _| 
-# 				# group by 2 specified captures plus split-keep-separator
-# # 				[oth.gsub(/(^|\s)&([\w\["])/, '\1\2'), str]
-# 				[oth, str]
-# 			end.flatten.join
 			tidy = md[2]
 			
       tidy = tidy.gsub(/&(\w+\s*,)/, '\1')
         .gsub(/&\[/, '[')
 
 			"assert_#{md[1]}(#{tidy};" # put back ; now and cut it in one sweep
+		end
+
+		# also rm any remaining & in method call params, guard strings
+		# (capture 'matches' to keep capture numbers the same as re_asserts)
+		# list methods for now... cursor.matches, parser.parse
+		re_call_params = /\.(matches|parse)\((("(\\"|[^"])*"|[^;])*);/
+		s = s.gsubb(re_call_params) do |md|
+			tidy = md[2]
+			
+      tidy = tidy.gsub(/&(\w+\s*,)/, '\1')
+        .gsub(/&\[/, '[')
+
+			".#{md[1]}(#{tidy};" # put back ; now and cut it in one sweep
 		end
 		
 #     tidy = md[2].split(/(&?("(\\"|[^"])*"))/).each_slice(4).map do |oth, _, str, _| 
@@ -217,7 +227,7 @@ class RustyGen
 
   # leave this until main guts bc we'll break again guarding string, comment anyway!!!
 		s = s.gsub(/r#"(("[^#]|[^"])*)"#/, '%q%\1% ') # bc % not in rust src
-
+		
 			# find all r#str with ; => 6
 			# r#"(("[^#;]|[^";])*"?;("[^#]|[^"])*)"#
 			# all together => 78
@@ -260,7 +270,9 @@ class RustyGen
 			# query, prob need to recreate these
 	# 		"test_query_errors_on_invalid_syntax",
 	# 		"test_query_errors_on_invalid_symbols",
+	
 			"test_query_errors_on_invalid_predicates",
+	
 	# 		"test_query_errors_on_impossible_patterns",
 	# 		"test_query_verifies_possible_patterns_with_aliased_parent_nodes",
 	# 		"test_query_matches_with_simple_pattern",
@@ -277,45 +289,52 @@ class RustyGen
 	# 		"test_query_matches_with_immediate_siblings",
 	# 		"test_query_matches_with_last_named_child",
 
-			"test_query_matches_with_negated_fields",
-			"test_query_matches_with_field_at_root",
-			"test_query_matches_with_repeated_leaf_nodes",
-			"test_query_matches_with_optional_nodes_inside_of_repetitions",
-			"test_query_matches_with_top_level_repetitions",
-			"test_query_matches_with_non_terminal_repetitions_within_root",
-			"test_query_matches_with_nested_repetitions",
-			"test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern",
-			"test_query_matches_with_trailing_repetitions_of_last_child",
-			"test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes",
-			"test_query_matches_with_trailing_optional_nodes",
-			"test_query_matches_with_nested_optional_nodes",
-			"test_query_matches_with_repeated_internal_nodes",
-			"test_query_matches_with_simple_alternatives",
-			"test_query_matches_with_alternatives_in_repetitions",
-			"test_query_matches_with_alternatives_at_root",
-			"test_query_matches_with_alternatives_under_fields",
-			"test_query_matches_in_language_with_simple_aliases",
-			"test_query_matches_with_different_tokens_with_the_same_string_value",
+# 			"test_query_matches_with_negated_fields",
+# 			"test_query_matches_with_field_at_root",
+# 			"test_query_matches_with_repeated_leaf_nodes",
+# 			"test_query_matches_with_optional_nodes_inside_of_repetitions",
+# 			"test_query_matches_with_top_level_repetitions",
+# 			"test_query_matches_with_non_terminal_repetitions_within_root",
+# 			"test_query_matches_with_nested_repetitions",
+# 			"test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern",
+# 			"test_query_matches_with_trailing_repetitions_of_last_child",
+# 			"test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes",
+# 			"test_query_matches_with_trailing_optional_nodes",
+# 			"test_query_matches_with_nested_optional_nodes",
+# 			"test_query_matches_with_repeated_internal_nodes",
+# 			"test_query_matches_with_simple_alternatives",
+# 			"test_query_matches_with_alternatives_in_repetitions",
+# 			"test_query_matches_with_alternatives_at_root",
+# 			"test_query_matches_with_alternatives_under_fields",
+# 			"test_query_matches_in_language_with_simple_aliases",
+# 			"test_query_matches_with_different_tokens_with_the_same_string_value",
 			"test_query_matches_with_too_many_permutations_to_track",
-			"test_query_matches_with_alternatives_and_too_many_permutations_to_track",
-			"test_query_matches_with_anonymous_tokens",
-			"test_query_matches_with_supertypes",
-			"test_query_matches_within_byte_range",
+# 			"test_query_matches_with_alternatives_and_too_many_permutations_to_track",
+# # 			"test_query_matches_with_anonymous_tokens",
+# # 			"test_query_matches_with_supertypes",
+
+# 			"test_query_matches_within_byte_range",
+
 			"test_query_matches_within_point_range",
 			"test_query_captures_within_byte_range",
-			"test_query_matches_with_unrooted_patterns_intersecting_byte_range",
+# 			"test_query_matches_with_unrooted_patterns_intersecting_byte_range",
 			"test_query_captures_within_byte_range_assigned_after_iterating",
-			"test_query_matches_different_queries_same_cursor",
+# 			"test_query_matches_different_queries_same_cursor",
 			"test_query_matches_with_multiple_captures_on_a_node",
+
+### match_capture_names_and_rows...
 			"test_query_matches_with_captured_wildcard_at_root",
-			"test_query_matches_with_no_captures",
-			"test_query_matches_with_repeated_fields",
-			"test_query_matches_with_deeply_nested_patterns_with_fields",
-			"test_query_matches_with_indefinite_step_containing_no_captures",
+
+# 			"test_query_matches_with_no_captures",
+# 			"test_query_matches_with_repeated_fields",
+# 			"test_query_matches_with_deeply_nested_patterns_with_fields",
+# 			"test_query_matches_with_indefinite_step_containing_no_captures",
+
 			"test_query_captures_basic",
 			"test_query_captures_with_text_conditions",
 			"test_query_captures_with_predicates",
 			"test_query_captures_with_quoted_predicate_args",
+
 			"test_query_captures_with_duplicates",
 			"test_query_captures_with_many_nested_results_without_fields",
 			"test_query_captures_with_many_nested_results_with_fields",
@@ -330,9 +349,9 @@ class RustyGen
 			"test_query_lifetime_is_separate_from_nodes_lifetime",
 			"test_query_with_no_patterns",
 
-			"test_query_comments",
-			"test_query_disable_pattern",
-			"test_query_alternative_predicate_prefix",
+# 			"test_query_comments",
+# 			"test_query_disable_pattern",
+# 			"test_query_alternative_predicate_prefix",
 			"test_query_step_is_definite",
 
 			"assert_query_matches",

@@ -5,6 +5,39 @@ require 'tree_sitter_ffi_lang'
 
 require './src/gen/query_util.rb'
 
+require 'awesome_print'
+require 'pastel'
+
+$pa = Pastel.new
+# class Object
+#   def pa(v) inspect.pa(v) end
+# end
+# class String
+#   def pa(v) $pa.send(v) end
+# #   def pa(v) $pa.send(v); self end
+# end
+
+# in monkey_gem.rb:
+# def four11(o, props, more={})
+#   return 'nil obj' unless o && !o.null?
+# #   gather = props.zip(props.map{|e| (o.respond_to?(e) ? o.send(e) : o[e]).inspect})
+#   gather = props.map{|e| "#{e}: #{(o.respond_to?(e) ? o.send(e) : o[e]).inspect}"}
+#   gather += more.map{|k,v| "#{k}: #{v}"}
+#   "<#{o.class.name.split(':').last} " + 
+#     gather.join(', ') + ">"
+# #   "<#{o.class.name.split(':').last} " + 
+# #     props.map{|e| "#{e}: #{o.respond_to?(e) ? o.send(e) : o[e]}"}.join(', ') + ">"
+# end
+    
+alias orig_four11 four11
+def four11(o, props, more={})
+  return $pa.on_magenta('<nil>') unless o && !o.null?
+  gather = props.map{|e| "#{$pa.blue(e)}: #{(o.respond_to?(e) ? o.send(e) : o[e]).inspect}"}
+  gather += more.map{|k,v| "#{$pa.bright_blue(k)}: #{v}"}
+  "<#{$pa.red(o.class.name.split(':').last)} " + 
+    gather.join(', ') + ">"
+end  
+
 # JSON_EXAMPLE = <<-INDENTED_HEREDOC
 RUBY_EXAMPLE = <<-INDENTED_HEREDOC
 
@@ -22,6 +55,7 @@ RUBY_EXAMPLE = <<-INDENTED_HEREDOC
 ]
 	INDENTED_HEREDOC
 
+puts "+=+=+=+= #{`date`}"
 
 parser = TreeSitterFFI.parser
 lang = TreeSitterFFI.parser_ruby
@@ -46,7 +80,7 @@ puts
 #   true
 # ]
 
-puts "1. Basic s-expression string: "
+puts "1. Basic input as s-expression: "
 puts tree.root_node.string
 puts
 # => 
@@ -64,9 +98,11 @@ puts
 
 cursor = TreeSitterFFI::QueryCursor.make
 matches = cursor.matches(query, tree.root_node, RUBY_EXAMPLE)
+puts
 
 puts "3. Matches: "
 puts cursor #, matches.inspect
+# puts "  !!! matches.inspect: #{matches.inspect}"
 matches.each_with_index do |e, i|
   puts "  #{i} #{e.inspect}"
 end
@@ -79,7 +115,10 @@ puts
 sexp = '(hash) @yum'
 query = TreeSitterFFI::Query.make(lang, sexp)
 
+# pa = Pastel.new
 puts "4. Query with named capture: "
+# puts sexp.pa(:on_green), query.pa(:on_yellow)
+# puts pa.on_green(sexp), pa.on_yellow(query)
 puts sexp, query
 puts
 # =>
@@ -88,12 +127,15 @@ puts
 
 cursor = TreeSitterFFI::QueryCursor.make
 matches = cursor.matches(query, tree.root_node, RUBY_EXAMPLE)
+# puts "mrr: #{matches.inspect}"
+puts
 
 puts "5. Matches: "
 puts "tree: #{tree.inspect}"
 puts "root_node: #{tree.root_node.inspect}"
 cand = tree.root_node.named_child(0).named_child(2)
 puts "root.0.0.2: #{cand.inspect}, '#{cand.string}'"
+puts
 puts cursor #, matches.inspect
 matches.each_with_index do |e, i|
 #   names = e.captures.map{|cap| query.capture_name_for_id(cap[:index])}
@@ -124,23 +166,47 @@ puts
 # 	1: from /Users/cal/.rbenv/versions/2.6.5/lib/ruby/gems/2.6.0/gems/tree_sitter_ffi-0.0.2/lib/tree_sitter_ffi/boss.rb:30:in `block (2 levels) in wrap_attach'
 # /Users/cal/.rbenv/versions/2.6.5/lib/ruby/gems/2.6.0/gems/tree_sitter_ffi-0.0.2/lib/tree_sitter_ffi/boss.rb:30:in `ts_query_cursor_exec': :pointer argument is not a valid pointer (ArgumentError)
 
-# sexp = '((hash) @yum "false" (hash) @ooh "true")'
-sexp = '((hash) @yum "false")'
-query = TreeSitterFFI::Query.make(lang, sexp)
+lang = TreeSitterFFI.parser_javascript
+sexp = "(function_declaration name: (identifier) @fn-name)"
+query = TreeSitterFFI::Query.make(
+    lang,
+    sexp
+)
+# assert_query_matches(
+#     language,
+#     query,
+input = 
+    "function one() { two(); function three() {} }"
+expect = 
+    [
+        [0, [["fn-name", "one"]]],
+        [0, [["fn-name", "three"]]],
+    ]
+# )
 
-puts "6. Query with named capture: "
+parser = TreeSitterFFI.parser
+parser.set_language(lang)
+tree = parser.parse(input)
+
+# sexp = '((hash) @yum "false" (hash) @ooh "true")'
+# sexp = '((hash) @yum "false")'
+# query = TreeSitterFFI::Query.make(lang, sexp)
+
+puts "input: #{input}"
+puts
+puts "6. Query from rusty query: "
+
+# puts sexp.pa(:on_green), query.pa(:on_yellow)
 puts sexp, query
 puts
 # =>
 # (hash)
 # #<TreeSitterFFI::Query address=0x00007fa83f55d060>
 
-puts
-puts "done for now."
-exit 0
-
 cursor = TreeSitterFFI::QueryCursor.make
-matches = cursor.matches(query, tree.root_node, RUBY_EXAMPLE)
+matches = cursor.matches(query, tree.root_node, input)
+puts
+
 
 puts "7. Matches: "
 puts cursor #, matches.inspect
@@ -148,12 +214,94 @@ matches.each_with_index do |e, i|
   puts "  #{i} #{e.inspect}"
 end
 puts
+
+# coll = collect_matches(query, input, matches) # resig collect_matches for rusty
+coll = collect_matches(matches, query, input)
+puts "collect_matches: "
+puts "        #{coll}"
+# puts "        #{collect_matches(query, input, matches)}"
+puts "expect: #{expect.inspect}"
+# ap expect
+puts "success: #{coll == expect}"
+puts
+
 # =>
 # #<TreeSitterFFI::QueryCursor address=0x00007fa83f7fad90>
 #   0 <QueryMatch id: 0 pattern_index: 0 capture_count: 0 captures: []>
 #   1 <QueryMatch id: 1 pattern_index: 0 capture_count: 0 captures: []>
 
+lang = TreeSitterFFI.parser_javascript
+sexp = "(class_declaration
+                name: (identifier) @the-class-name
+                (class_body
+                    (method_definition
+                        name: (property_identifier) @the-method-name)))"
+query = TreeSitterFFI::Query.make(lang, sexp)
 
+input = "
+            class Person {
+                # the constructor
+                constructor(name) { this.name = name; }
+
+                # the getter
+                getFullName() { return this.name; }
+            }
+            "
+expect = [
+                [
+                    0,
+                    [
+                        ["the-class-name", "Person"],
+                        ["the-method-name", "constructor"],
+                    ],
+                ],
+                [
+                    0,
+                    [
+                        ["the-class-name", "Person"],
+                        ["the-method-name", "getFullName"],
+                    ],
+                ],
+            ]
+
+puts "input: #{input}"
+puts
+puts "8. Query from rusty query test_query_matches_with_multiple_on_same_root: "
+# puts sexp.pa(:on_green), query.pa(:on_yellow)
+puts sexp, query
+puts
+# =>
+
+parser = TreeSitterFFI.parser
+parser.set_language(lang)
+tree = parser.parse(input)
+
+cursor = TreeSitterFFI::QueryCursor.make
+matches = cursor.matches(query, tree.root_node, input)
+
+puts "9. Matches: "
+puts cursor, matches.inspect
+matches.each_with_index do |e, i|
+  puts "  #{i} #{e.inspect}"
+end
+puts
+
+# coll = collect_matches(query, input, matches) # resig collect_matches for rusty
+coll = collect_matches(matches, query, input)
+puts "collect_matches: "
+puts "        #{coll}"
+# puts "        #{collect_matches(query, input, matches)}"
+puts "expect: #{expect.inspect}"
+# ap expect
+puts "success: #{coll == expect}"
+puts
+
+# =>
+
+puts
+puts "+=+=+=+= #{`date`}"
+puts "done for now."
+exit 0
 
 
 
@@ -238,7 +386,7 @@ puts "multi: #{multi.inspect}"
 # iovlen = 3
 # # iov = FFI::MemoryPointer.new(IOVec, iovlen)
 # iovs = iovlen.times.collect do |i|
-#   o = TreeSitterFFI::Range.new(multi.pointer + i * TreeSitterFFI::Range.size)
+#   o = TreeSitterFFI::Range.new(multi.to_ptr + i * TreeSitterFFI::Range.size)
 #   puts "  (#{i}) multi props: #{o.props}"
 # end
 

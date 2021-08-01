@@ -740,8 +740,8 @@ def get_all_nodes(tree: &Tree)
     cursor = tree.walk()
     loop {
         result.push(cursor.node())
-#         if !visited_children && cursor.goto_first_child() {
-#             continue
+        if !visited_children && cursor.goto_first_child() {
+            continue
         } else if cursor.goto_next_sibling() {
             visited_children = false
         } else if cursor.goto_parent() {

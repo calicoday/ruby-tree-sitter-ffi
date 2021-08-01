@@ -92,6 +92,21 @@ module TreeSitterFFI
 
 #    s = FM::FTextItemT.new(tis[:val] + (i * FM::FTextItemT.size))	
 	module BossStructArray
+    include UnitMemory
+
+		def initialize(*args)
+		  # FFI::Struct expects 0 or 1 pointer 
+		  # .: 1 arg not a pointer wd be error
+		  # 2 args we can assume are pointer and len!!!
+		  # do we want to be able to pass only pointer when multiple 1, ie opt len=nil???
+			###puts "BossStructArray.init args: #{args.inspect}"
+# 			len = args.pop if args.length == 2
+# 			puts "BossStructArray.init args: #{args.inspect}, len: #{len}."
+			super(*args)
+		end
+
+    
+=begin
 		def initialize(*args)
 			len = args.pop if args.length == 2
 			super(*args)
@@ -140,17 +155,21 @@ module TreeSitterFFI
 				o.struct_multiple = arr.length if arr.length > 0
 			end
 		end
-		def [](idx)
-			# does super(idx) expect anything but sym???
-			if idx.is_a?(Symbol)
-				raise "struct multiple set, need index." if struct_multiple?
-				return super(idx)
-			end
-			# what if I'm an empty struct pointer??? chk!!! FIXME!!!
-			raise "struct multiple index out of bounds." unless idx >=0 && 
-				idx < @struct_multiple
-			self.class.new(self.pointer + (idx * self.class.size))
-		end
+# 		def [](idx)
+# 		  puts "+++ Boss [] class: #{self.class}"
+# 			# does super(idx) expect anything but sym???
+# 			if idx.is_a?(Symbol)
+# 				raise "struct multiple set, need index." if struct_multiple?
+# 				return super(idx)
+# 			end
+# 		  puts "+++ Boss [] class: #{self.class}"
+# 			# what if I'm an empty struct pointer??? chk!!! FIXME!!!
+# 			raise "struct multiple index out of bounds." unless idx >=0 && 
+# 				idx < @struct_multiple
+# 			self.class.new(self.pointer + (idx * self.class.size))
+# 		end
+=end
+
 	end
 	
 	class BossStruct < FFI::Struct

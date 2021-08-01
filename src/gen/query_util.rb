@@ -1,4 +1,5 @@
-require './src/gen/monkey_gem.rb'
+# require './src/gen/chimp_gem.rb'
+# require './src/gen/monkey_gem.rb'
 
 ### from demo runner.rb -- meant for iterators!!!
 	def compose_node(n, depth, input, offset, &b)
@@ -39,11 +40,23 @@ require './src/gen/monkey_gem.rb'
 class String
 	def to_string() self end
 	def as_bytes() self end
+	def repeat(v) self * v end
 end
 
 def four11(o, props, more={})
+  return 'nil obj' unless o && (o.respond_to?('null?') ? !o.null? : true)
 #   gather = props.zip(props.map{|e| (o.respond_to?(e) ? o.send(e) : o[e]).inspect})
+
   gather = props.map{|e| "#{e}: #{(o.respond_to?(e) ? o.send(e) : o[e]).inspect}"}
+#   gather = props.map do |e| 
+#     if e.respond_to?(:each_unit)
+#       ### TMP!!!
+#       "#{e}: #{(o.respond_to?(e) ? o.send(e) : o[e]).inspect}"
+#     else
+#       "#{e}: #{(o.respond_to?(e) ? o.send(e) : o[e]).inspect}"
+#     end
+#   end
+
   gather += more.map{|k,v| "#{k}: #{v}"}
   "<#{o.class.name.split(':').last} " + 
     gather.join(', ') + ">"
@@ -94,9 +107,12 @@ def assert_query_matches(language, query, source, expected)
 #   cursor = TreeSitterFFI::QueryCursor.new
   matches = cursor.matches(query, tree.root_node, source.as_bytes)
   # as_bytes???
-  put_note(false, true, caller.first.split(':')[1], 
-    "assert_query_matches disabled, just continue")
-	false
+#   put_note(false, true, caller.first.split(':')[1], 
+#     "assert_query_matches disabled, just continue")
+# 	false
+#   result = collect_matches(query, source, matches) # resig for rusty
+  result = collect_matches(matches, query, source)
+  put_note(result, expected, caller.first.split(':')[1]){|result, expect| result == expect}
 end
 
 # fn collect_matches<'a>(
@@ -115,14 +131,15 @@ end
 # }
 
 # => Array[Captures]*
-def collect_matches(query, source, matches)
+# def collect_matches(query, source, matches) # resig for rusty
+def collect_matches(matches, query, source)
   matches.map do |e|
-    e.captures.map{|cap| compose_capture(query, source, cap)}
+    [e[:pattern_index],
+     e.captures.map{|cap| compose_capture(query, source, cap)}]
   end
 end
 # was format_captures
 def compose_capture(query, source, capture)
-  puts "=== capture: #{capture.inspect}"
   [query.capture_name_for_id(capture[:index]),
     capture[:node].utf8_text(source)]
 end
@@ -179,6 +196,8 @@ module Rusty
 	#[derive(Debug, PartialEq, Eq)]
 	class QueryError # QueryError
 		attr_accessor :row, :column, :offset, :message, :kind
+
+		def inspect() four11(self, [:row, :column, :offset, :message, :kind]) end
 
     def self.source_line_row_col(source, offset)       
 #       puts "^^^ source: #{source.inspect}, offset: #{offset.inspect}"  

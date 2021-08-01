@@ -70,10 +70,21 @@ module BindRusty
 	class TreeSitterFFI::Tree
 		def walk() TreeSitterFFI.ts_tree_cursor_new(self.root_node) end
 	end
-
+	
 	class TreeSitterFFI::TreeCursor
 		def node() TreeSitterFFI.ts_tree_cursor_current_node(self) end
 		def field_name() TreeSitterFFI.ts_tree_cursor_current_field_name(self) end
+	end
+	
+	class TreeSitterFFI::QueryCursor
+		def set_byte_range(range)
+			raise "QueryCursor#set_byte_range expected Range (#{range.inspect})" unless 
+				range.is_a?(::Range)
+			first = range.begin
+			last = range.max.to_i
+			TreeSitterFFI.ts_query_cursor_set_byte_range(self, first, last)
+			self
+		end
 	end
 	
 # /**
@@ -97,17 +108,19 @@ module BindRusty
 
 	class TreeSitterFFI::Query
 		def is_ok() true end
-		def self.make(lang, str)
-			offset_p = FFI::MemoryPointer.new(:pointer, 1) # :uint32_p is Pointer
-			errtype_p = FFI::MemoryPointer.new(:pointer, 1) # TSQueryError is enum
-			ret = TreeSitterFFI.ts_query_new(lang, str, str.length, offset_p, errtype_p)
-			return ret unless ret.nil?
-			# raise/return error stuff
-			offset = offset_p.get(:uint32, 0)
-			# start with this
-			raise "TreeSitterFFI::Query.make failed, offset: #{offset}"
-# 			errtype = errtype_p.get(QueryError.ptr, 0)
-		end
+	  ### chimp now in gem
+# 		def self.make(lang, str)
+# 		  puts "=== Query.make run_rusty_helper.rb"
+# 			offset_p = FFI::MemoryPointer.new(:pointer, 1) # :uint32_p is Pointer
+# 			errtype_p = FFI::MemoryPointer.new(:pointer, 1) # TSQueryError is enum
+# 			ret = TreeSitterFFI.ts_query_new(lang, str, str.length, offset_p, errtype_p)
+# 			return ret unless ret.nil?
+# 			# raise/return error stuff
+# 			offset = offset_p.get(:uint32, 0)
+# 			# start with this
+# 			raise "TreeSitterFFI::Query.make failed, offset: #{offset}"
+# # 			errtype = errtype_p.get(QueryError.ptr, 0)
+# 		end
 	end
 # ###QueryError {
 # 	class TreeSitterFFI::QueryError

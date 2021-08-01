@@ -43,11 +43,22 @@ module TreeSitterFFI
 			return false unless !v.nil? && self.class == v.class # subclasses???
 			self[:row] == v[:row] && self[:column] == v[:column]
 		end
+
+### chimp???
+    def props()
+      [self[:column], self[:row]]
+    end
+    def props=(colrow)
+      self[:row] = colrow[1]
+      self[:column] = colrow[0]
+      self # for chaining
+    end
 	end
 
 # 	class Range < BossStruct
 	class Range < FFI::Struct
-		include BossStructArray
+		include UnitMemory
+# 		include BossStructArray
 		layout(
 			:start_point, Point,
 			:end_point, Point,
@@ -55,13 +66,56 @@ module TreeSitterFFI
 			:end_byte, :uint32,
 			)
 			
+    def initialize(*args)
+      super
+#       self.unit_count = 1 if args.empty?
+    end
+
 		# untested bc not called yet??? prob need BossStructArray.to_multiple!!!
+# 		def self.from_array(arr)
+# 			to_multiple do |e, range|
+# 				e[:start_point] = range[:start_point]
+# 				e[:end_point] = range[:end_point]
+# 				e[:start_byte] = range[:start_byte]
+# 				e[:end_byte] = range[:end_byte]
+# 			end
+# 		end
+    def props()
+      [self[:start_point].props, self[:end_point].props, 
+        [self[:start_byte], self[:end_byte]]]
+    end
+#     def props=(start_colrow, end_colrow, run)
+    def props=(arr_or_h)
+      # just arr for now (Array, Array, Array (Range?))
+      start_colrow, end_colrow, run = arr_or_h
+      self[:start_point].props = start_colrow
+      self[:end_point].props = end_colrow
+      self[:start_byte] = run[0]
+      self[:end_byte] = run[1]
+      self # for chaining
+    end
+    
+    ### override init!!!
+    def self.make(arr)
+      # vet arr shape!!!
+      self.new.tap do |o|
+        o.props = (arr)
+      end
+    end
+    
+		def copy_values(from)
+# 		  raise "BossStructArray#copy_values(to) must be overridden."
+      # from, to must be this class!!!
+      unless from && from.is_a?(self.class)
+        raise "#{self.class}#copy_value: to must be class #{self.class} (#{from.inspect})"
+      end
+      self.props = from.props
+		end
+
+		### from_array, to_contiguous are module method!!!
 		def self.from_array(arr)
-			to_multiple do |e, range|
-				e[:start_point] = range[:start_point]
-				e[:end_point] = range[:end_point]
-				e[:start_byte] = range[:start_byte]
-				e[:end_byte] = range[:end_byte]
+			BossStructArray.to_contiguous(arr) do |e, fresh|
+			  fresh.copy_values(to)
 			end
 		end
 	end
