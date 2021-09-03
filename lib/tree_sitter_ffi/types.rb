@@ -114,7 +114,8 @@ module TreeSitterFFI
 
 		### from_array, to_contiguous are module method!!!
 		def self.from_array(arr)
-			BossStructArray.to_contiguous(arr) do |e, fresh|
+# 			BossStructArray.to_contiguous(arr) do |e, fresh|
+			UnitMemory.to_contiguous(arr) do |e, fresh|
 			  fresh.copy_values(to)
 			end
 		end

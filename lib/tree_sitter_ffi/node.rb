@@ -115,9 +115,6 @@ module TreeSitterFFI
     end
 
 	  def copy_values(from)
-# 	    puts "=== Node#copy_values"
-# # 	    puts "  self: #{self.inspect}"
-# 	    puts "  from: #{from.inspect}"
 	    4.times.each{|i| self[:context][i] = from[:context][i]}
 	    self[:id] = from[:id]
 	    self[:tree] = from[:tree]    

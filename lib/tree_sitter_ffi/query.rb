@@ -115,25 +115,22 @@ module TreeSitterFFI
 			:index, :uint32,
 			)
 			
-### chimp
-	  include BossStructArray
+	  include UnitMemory
 	  
-# 	  def self.make_multi(count)
-# 	  end
-	  
-    def props()
-      [self[:node].props, self[:index]]
-    end
-#     def props=(start_colrow, end_colrow, run)
-    def props=(arr_or_h)
-      # just arr for now [Node.by_value, :uint32]
-      # Node.by_value is [context[:uint32, :uint32, :uint32, :uint32], id_p, tree_p]
-      node, index = arr_or_h
-      self[:node].props = node #node.dup???
-#       self[:index].props = index ###???!!!
-      self[:index] = index
-      self # for chaining
-    end
+	  # reconsider props, props=!!!
+#     def props()
+#       [self[:node].props, self[:index]]
+#     end
+# #     def props=(start_colrow, end_colrow, run)
+#     def props=(arr_or_h)
+#       # just arr for now [Node.by_value, :uint32]
+#       # Node.by_value is [context[:uint32, :uint32, :uint32, :uint32], id_p, tree_p]
+#       node, index = arr_or_h
+#       self[:node].props = node #node.dup???
+# #       self[:index].props = index ###???!!!
+#       self[:index] = index
+#       self # for chaining
+#     end
     
     # values of an individual QueryCapture (equiv multiple = 1)
     # now a deep copy of values of an individual QueryCapture (equiv multiple = 1)
@@ -144,7 +141,6 @@ module TreeSitterFFI
       end
       self[:node].copy_values(from[:node])
       self[:index] = from[:index]
-#       self.props = from.props
       self
 		end
 
@@ -152,7 +148,6 @@ module TreeSitterFFI
 		def self.from_array(arr)
 			BossStructArray.to_contiguous(arr) do |e, fresh|
 			  fresh.copy_values(e)
-# 			  fresh.props = e.props
 			end
 		end
 
@@ -176,13 +171,15 @@ module TreeSitterFFI
 # 			:captures, :pointer # QueryCapture.ptr??? FIXME!!! come back re multiple
 			)
 			
-### chimp
     include UnitMemory
-    
+		
     def copy_values(from)
       [:id, :pattern_index, :capture_count].each{|k| self[k] = from[k]}
       count = from[:capture_count]
-      self[:captures] = from[:captures].make_copy(count) if count > 0
+      if count > 0
+      	fresh = from[:captures].make_copy(count)
+      	self[:captures] = fresh
+      end
       self
     end
     
@@ -225,36 +222,11 @@ module TreeSitterFFI
 				:bool], 
 			])
 
-### chimp
 	  # override init???
 	  def self.make()
       TreeSitterFFI.ts_query_cursor_new
 	  end
-	  
-	  alias_method :orig_next_match, :next_match
-	  def next_match(match)
-# 	    match.dep
-	    ret = orig_next_match(match)
-#       puts "  $$$ next_match"
-#       puts "      match: #{match.inspect}"
-	    count = match[:capture_count]
-#       puts "QueryMatch#next_match capture_count: #{count}"
-	    if count > 0
-	      raise "QueryMatch#next_match: count is #{count} but captures is nil/null (#{match[:captures].inspect})" if !match[:captures] || match[:captures].null?
-	    end
-	    ret
-	  end
-
-# /// A sequence of `QueryMatch`es associated with a given `QueryCursor`.
-# pub struct QueryMatches<'a, 'tree: 'a, T: TextProvider<'a>> {
-#     ptr: *mut ffi::TSQueryCursor,
-#     query: &'a Query,
-#     text_provider: T,
-#     buffer1: Vec<u8>,
-#     buffer2: Vec<u8>,
-#     _tree: PhantomData<&'tree ()>,
-# }
-
+	
     ### Rusty!!!
 		# TextProvider??? try String input first...
 		def matches(query, node, input)
@@ -304,52 +276,4 @@ module TreeSitterFFI
 		
 	end
 
-
-
-### pre-chimp
-=begin
-	class QueryCapture < BossStruct
-		layout(
-			:node, Node,
-			:index, :uint32,
-			)
-	end
-	
-	class QueryMatch < BossStruct
-		layout(
-			:id, :uint32,
-			:pattern_index, :uint16,
-			:capture_count, :uint16,
-			:captures, QueryCapture.ptr
-# 			:captures, :pointer # QueryCapture.ptr??? FIXME!!! come back re multiple
-			)
-			
-		def captures()
-			struct_array(self[:captures], self[:capture_count])
-		end
-	end
-	
-	class QueryCursor < BossPointer
-		def self.release(ptr)
-			TreeSitterFFI.ts_query_cursor_delete(ptr)
-		end
-
-		TreeSitterFFI.attach_function :ts_query_cursor_new, [], QueryCursor 
-		TreeSitterFFI.attach_function :ts_query_cursor_delete, [QueryCursor], :void # mem delete
-
-		wrap_attach(:ts_query_cursor_, [
-			[:ts_query_cursor_exec, [QueryCursor, Query, Node.by_value], :void],
-			[:ts_query_cursor_did_exceed_match_limit, [QueryCursor], :bool],
-			[:ts_query_cursor_match_limit, [QueryCursor], :uint32],
-			[:ts_query_cursor_set_match_limit, [QueryCursor, :uint32], :bool],
-			[:ts_query_cursor_set_byte_range, [QueryCursor, :uint32, :uint32], :void],
-			[:ts_query_cursor_set_point_range, [QueryCursor, Point], :void],
-			[:ts_query_cursor_next_match, [QueryCursor, QueryMatch.by_ref], :bool],
-			[:ts_query_cursor_remove_match, [QueryCursor, :uint32], :void],
-			[:ts_query_cursor_next_capture, 
-				[QueryCursor, QueryMatch.by_ref, :uint32_p],
-				:bool], 
-			])
-	end
-=end
 end

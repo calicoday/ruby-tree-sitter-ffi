@@ -32,12 +32,89 @@ module TreeSitterFFI
 
 
 	module UnitMemory
-		def make_copy(count=1)
-			self.class.new(FFI::MemoryPointer.new(self.class, 
-			  count * self.class.size)).tap do |o|
-			  o.copy_multiple(self, count)
-			end
-		end
+### daisy
+    def prev_make_copy
+#       puts "make_copy match: #{self.inspect}"
+#       if self[:capture_count] > 0
+#         wrap = FFI::MemoryPointer.new(QueryCapture, self[:capture_count])
+# 			  puts "  self[:capture_count]: #{self[:capture_count]}"
+# 			  puts "  QueryCapture.size: #{QueryCapture.size}"
+#         puts "  wrap.size: #{wrap.size}" # count * QueryCapture.size
+#         puts "  wrap.type_size: #{wrap.type_size}" # QueryCapture.size
+#       end
+      self.class.new.copy_values(self).tap do |o|
+#           puts "    o: #{o[:captures].inspect}"
+      end
+    end
+    
+    def make_copy(count=1)
+      raise "make_copy: count must be > 0 (#{count})." unless count && count > 0
+      blob = FFI::MemoryPointer.new(self, count)
+      self.class.new(blob).tap do |o|
+        o.copy_multiple(self, count)
+      end
+    end
+    
+    # TMP!!! ref
+#     def blob_ptr
+#       # pointer is blob_ptr, struct needs to_ptr call
+#       self.respond_to?(:to_ptr) ? self.to_ptr : self
+#     end
+#     def make_blob(count=1)
+#       blob = FFI::MemoryPointer.new(self.class, count)
+#     end
+#     def was_copy_blob(from, count)
+#       from_ptr = from.blob_ptr
+#       blob = FFI::MemoryPointer.new(self.class, count)
+#       blob.put_bytes(0, from_ptr.get_bytes(0, blob.size)) 
+# #       self.class.new(blob)
+#     end
+
+#     def unit_count() @_unit_count || 1 end #or 0??? what about null ptr???
+    ### NOPE can't make this work
+#     def unit_count()
+#       ptr = (self.is_a?(FFI::Pointer) ? self : self.to_ptr)
+#       # check nil ptr
+#       if ptr.type_size == 0
+#         raise "UnitMemory#unit_count: no type_size for #{self.inspect} ptr" 
+#       end
+#       # if remainder??? round? raise?
+#       ptr.size / ptr.type_size
+#     end
+    
+    
+    # SHD be poss to alloc and copy whole chunk of C mem at once (then alloc and copy
+    # further for deep members) but this isn't it. Hmm.
+#     def make_copy_blob(count)
+#       raise "make_copy_blob: count must be > 0 (#{count})." unless count && count > 0
+#       # we'd LIKE to check count >= self unit_count but how???
+# 
+#       puts "make_copy_blob count: #{count}."
+# #       puts "  unit_count: #{unit_count}."
+#       puts "  self: #{self.inspect}"
+# #       from_ptr = self.blob_ptr
+#       from_ptr = self.to_ptr
+# #       puts "  self.to_ptr: #{from_ptr}"
+# #       puts "  from_ptr.size: #{from_ptr.size}" # count * QueryCapture.size
+# #       puts "  from_ptr.type_size: #{from_ptr.type_size}" # QueryCapture.size
+#       
+#       blob = FFI::MemoryPointer.new(self, count)
+#       blob.put_bytes(0, from_ptr.get_bytes(0, blob.size)) 
+#       self.class.new(blob).tap do |o|
+#         o.each_unit(count){|e, i| e.deep_blob(self[i])}
+#       end
+#     end
+#     # copy_values when blob_copying for members that need further alloc
+#     def deep_blob(from)
+#       # override as nec!!!
+#     end
+#     # override in match...
+#     def deep_blob(from)
+#     	return unless from[:capture_count] > 0
+#       fresh = from[:captures].make_copy_blob(from[:capture_count])
+#       self[:captures] = fresh
+#     end
+    
 		
 		def copy_multiple(from, count)
 		  self.each_unit(count){|e, i| e.copy_values(from[i])}
