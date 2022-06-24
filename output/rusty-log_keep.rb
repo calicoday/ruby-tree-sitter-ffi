@@ -97,6 +97,7 @@ test_query_matches_with_many_overlapping_results()
 test_query_matches_capturing_error_nodes()
 test_query_matches_with_extra_children()
 test_query_matches_with_named_wildcard()
+  - skipped
 test_query_matches_with_wildcard_at_the_root()
 test_query_matches_with_immediate_siblings()
 test_query_matches_with_last_named_child()

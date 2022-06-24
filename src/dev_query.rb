@@ -212,6 +212,9 @@ puts "7. Matches: "
 puts cursor #, matches.inspect
 matches.each_with_index do |e, i|
   puts "  #{i} #{e.inspect}"
+  cap = e[:captures]
+  puts "    first cap: #{cap.inspect}"
+  
 end
 puts
 

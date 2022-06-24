@@ -705,7 +705,6 @@ def test_query_matches_with_extra_children()
     #     })
 end
 
-=begin
 def test_query_matches_with_named_wildcard()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -735,7 +734,6 @@ def test_query_matches_with_named_wildcard()
         )
     #     })
 end
-=end
 
 def test_query_matches_with_wildcard_at_the_root()
     # TreeSitterFFI::allocations.record(|| {

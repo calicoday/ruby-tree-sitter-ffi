@@ -105,9 +105,21 @@ Probably. I've done this a couple of times but not really challenged it. It IS h
 
 ### Process for generating rusty _tests files
 
-The script `./src/rusty_gen.rb` reads the tree-sitter runtime test files `node_tests.rs` and `tree_tests.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can in `./gen/rusty/rusty_node_tests.rb` and `./gen/rusty_tree_tests.rb`. Also a `./gen/rusty/run_rusty.rb` script for running them. My convention is no files under the `./gen` destination directory should have hand editing and runner is designed for commenting/uncommenting the individual tests in development, so you need to copy `./gen/rusty/run_rusty.rb` to `./src/run_rusty.rb`. Then run from the project directory
+The script `./src/gen/rusty_gen.rb` reads the tree-sitter runtime test files `node_tests.rs` and `tree_tests.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can in `./gen/rusty/rusty_node_tests.rb` and `./gen/rusty_tree_tests.rb`. Also a `./gen/rusty/run_rusty.rb` script for running them. My convention is no files under the `./gen` destination directory should have hand editing and runner is designed for commenting/uncommenting the individual tests in development, so you need to copy `./gen/rusty/run_rusty.rb` to `./src/run_rusty.rb`. Then run from the project directory
 ```
 $ ruby src/run_rusty.rb
+```
+There's a rake task for running the `./src/gen/rusty_gen.rb` generating script:
+```
+$ rake gen_rusty
+```
+for running the generated (unedited) `./gen/rusty/run_rusty.rb` script and capturing the output in `./output/run_rusty_out.txt`:
+```
+$ rake run_rusty
+```
+and for moving the `./output/run_rusty_out.txt` to `./output/run_rusty_out_keep.txt`:
+```
+$ rake keep_run_rusty
 ```
 
 

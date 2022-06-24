@@ -105,76 +105,16 @@ module TreeSitterFFI
 			super(*args)
 		end
 
-    
-=begin
-		def initialize(*args)
-			len = args.pop if args.length == 2
-			super(*args)
-		end
-		def struct_multiple() @struct_multiple || 1 end
-		def struct_multiple=(v) 
-			# vet v!!!
-			@struct_multiple = v 
-		end
-		def struct_multiple?() @struct_multiple != nil end
-		# cd be to_a???
-		def to_array()
-			len = struct_multiple
-			len.times.map{|i| self.class.new(self.pointer + i * self.class.size)}
-		end
-		def self.array_of_struct(klass, &b)
-			raise "array_of_struct: #{klass} not TreeSitterFFI::BossStructArray." unless 
-				klass.method_defined?(:struct_multiple)
-			len_p = FFI::MemoryPointer.new(:pointer, 1) # :uint32_p is Pointer
-			ret = yield(len_p)
-			len = len_p.get(:uint32, 0)
-			klass.new(ret, len).to_array
-		end
-		# untested!!!
-		# take a list of arg types, make mem pointers and pass them the block, then
-		# return an array of the values
-		def self.arg_p(*args, &b)
-			arg_p_arr = args.map{|e| MemoryPointer.new(e, 1)}
-			got = yield arg_p_arr
-			values = []
-			got.each_with_index{|e, i| values << e.get(args[i])}
-			values
-		end
-		def self.to_multiple(arr, &b)
-			# what if arr is nil??? pass NotARange???
-			raise "to_multiple nil arr." unless arr
-			# all arr members are expected to be the same class!!!
-			klass = arr[0].class
-			# might all be pointers into the same mem chunk but copy for now!!!
-			MemoryPointer.new(klass, arr.length * klass.size).tap do |o|
-				arr.each_with_index do |e, i| 
-					raise "to_multiple mismatched class (#{e.class}, expected #{klass}" unless
-						e.class == klass # which equals??? eq? ??? FIXME!!!
-					yield(e, o.pointer + (i * o.class.size)) if block_given?
-				end
-				o.struct_multiple = arr.length if arr.length > 0
-			end
-		end
-# 		def [](idx)
-# 		  puts "+++ Boss [] class: #{self.class}"
-# 			# does super(idx) expect anything but sym???
-# 			if idx.is_a?(Symbol)
-# 				raise "struct multiple set, need index." if struct_multiple?
-# 				return super(idx)
-# 			end
-# 		  puts "+++ Boss [] class: #{self.class}"
-# 			# what if I'm an empty struct pointer??? chk!!! FIXME!!!
-# 			raise "struct multiple index out of bounds." unless idx >=0 && 
-# 				idx < @struct_multiple
-# 			self.class.new(self.pointer + (idx * self.class.size))
-# 		end
-=end
-
 	end
 	
 	class BossStruct < FFI::Struct
 		extend Wrap
 		include TreeSitterFFI
+	end
+	
+	class BossMixedStruct < MixedStruct # MixedStruct in unit_memory.rb
+	  extend Wrap
+	  include TreeSitterFFI
 	end
 	
 	class BossManagedStruct < FFI::ManagedStruct

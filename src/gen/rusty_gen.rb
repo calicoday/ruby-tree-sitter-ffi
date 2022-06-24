@@ -4,6 +4,10 @@ require './src/gen/rusty_gen_query.rb'
 
 require 'awesome_print'
 
+puts "src/gen/rusty_gen.rb"
+puts "+=+=+ " + `date`
+puts
+
 # move into reusable class, top-level gen calls as we did???
 
 # ruby -e"require './fresh/gen-step/rusty_gen_00.rb'; gen"

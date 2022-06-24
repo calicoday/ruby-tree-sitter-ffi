@@ -1,152 +1,103 @@
 require 'ffi'
 
+require 'ffi'
+
 module TreeSitterFFI
 
-  # type MUST be recorded in ffi::memptr somewhere, but I can't find it yet!!!
-  # wrap to record type and overload value, value=
-  # keep count and handle arrays???
-  class Memory < FFI::MemoryPointer
-    attr_reader :type
-    def initialize(type, count=nil)
-      super
-      @type = type
-    end
-    # ret type???
-    def value() read(type) end
-    def value=(v)
-      # vet type
-      write(type, v)
-    end
-    def self.sase(arr)
-      arr.map{|e| self.class.new(e)}
-    end
-    # doubtful this is useful now...
-    # len, str = rsvp([:int32, :string]){|len_p, str_p| len_p.value=3; str_p.value="aha"}
-    # => [3, "aha"]
-    def self.rsvp(arr, &b)
-      params = sase(arr)
-      yield *params
-      arr.zip(params.map(:value))
-    end
-  end
-
-
+  # MultiStruct, ie array of struct
 	module UnitMemory
-### daisy
-    def prev_make_copy
-#       puts "make_copy match: #{self.inspect}"
-#       if self[:capture_count] > 0
-#         wrap = FFI::MemoryPointer.new(QueryCapture, self[:capture_count])
-# 			  puts "  self[:capture_count]: #{self[:capture_count]}"
-# 			  puts "  QueryCapture.size: #{QueryCapture.size}"
-#         puts "  wrap.size: #{wrap.size}" # count * QueryCapture.size
-#         puts "  wrap.type_size: #{wrap.type_size}" # QueryCapture.size
-#       end
-      self.class.new.copy_values(self).tap do |o|
-#           puts "    o: #{o[:captures].inspect}"
-      end
-    end
-    
-    def make_copy(count=1)
-      raise "make_copy: count must be > 0 (#{count})." unless count && count > 0
-      blob = FFI::MemoryPointer.new(self, count)
-      self.class.new(blob).tap do |o|
-        o.copy_multiple(self, count)
-      end
-    end
-    
-    # TMP!!! ref
-#     def blob_ptr
-#       # pointer is blob_ptr, struct needs to_ptr call
-#       self.respond_to?(:to_ptr) ? self.to_ptr : self
-#     end
-#     def make_blob(count=1)
-#       blob = FFI::MemoryPointer.new(self.class, count)
-#     end
-#     def was_copy_blob(from, count)
-#       from_ptr = from.blob_ptr
-#       blob = FFI::MemoryPointer.new(self.class, count)
-#       blob.put_bytes(0, from_ptr.get_bytes(0, blob.size)) 
-# #       self.class.new(blob)
-#     end
 
-#     def unit_count() @_unit_count || 1 end #or 0??? what about null ptr???
-    ### NOPE can't make this work
-#     def unit_count()
-#       ptr = (self.is_a?(FFI::Pointer) ? self : self.to_ptr)
-#       # check nil ptr
-#       if ptr.type_size == 0
-#         raise "UnitMemory#unit_count: no type_size for #{self.inspect} ptr" 
-#       end
-#       # if remainder??? round? raise?
-#       ptr.size / ptr.type_size
-#     end
-    
-    
-    # SHD be poss to alloc and copy whole chunk of C mem at once (then alloc and copy
-    # further for deep members) but this isn't it. Hmm.
-#     def make_copy_blob(count)
-#       raise "make_copy_blob: count must be > 0 (#{count})." unless count && count > 0
-#       # we'd LIKE to check count >= self unit_count but how???
-# 
-#       puts "make_copy_blob count: #{count}."
-# #       puts "  unit_count: #{unit_count}."
-#       puts "  self: #{self.inspect}"
-# #       from_ptr = self.blob_ptr
-#       from_ptr = self.to_ptr
-# #       puts "  self.to_ptr: #{from_ptr}"
-# #       puts "  from_ptr.size: #{from_ptr.size}" # count * QueryCapture.size
-# #       puts "  from_ptr.type_size: #{from_ptr.type_size}" # QueryCapture.size
-#       
-#       blob = FFI::MemoryPointer.new(self, count)
-#       blob.put_bytes(0, from_ptr.get_bytes(0, blob.size)) 
-#       self.class.new(blob).tap do |o|
-#         o.each_unit(count){|e, i| e.deep_blob(self[i])}
-#       end
-#     end
-#     # copy_values when blob_copying for members that need further alloc
-#     def deep_blob(from)
-#       # override as nec!!!
-#     end
-#     # override in match...
-#     def deep_blob(from)
-#     	return unless from[:capture_count] > 0
-#       fresh = from[:captures].make_copy_blob(from[:capture_count])
-#       self[:captures] = fresh
-#     end
-    
-		
-		def copy_multiple(from, count)
-		  self.each_unit(count){|e, i| e.copy_values(from[i])}
-		  self
-		end
-		
+    def make_copy(count=1)
+      blob = FFI::MemoryPointer.new(self.class, count)
+      fresh = self.class.new(blob)
+      fresh.copy_multiple(self, count)
+      fresh
+    end
+    def copy_multiple(from, count)
+      from_p = FFI::Pointer.new(from.class, from.to_ptr)
+      fresh_p = FFI::Pointer.new(self.class, self.to_ptr)
+		  keeps = count.times.map do |i| 
+		    from_unit = from.class.new(from_p[i])
+		    fresh_unit = self.class.new(fresh_p[i])
+		    fresh_unit.copy_values(from_unit)
+		  end
+		  keeps
+    end
 	  def copy_values(from) 
-		  raise "UnitMemory#copy_values must be overridden."
+		  raise "UnitMemory#copy_values must be overridden in #{self.class}."
 	  end
-		def each_unit(count, &b)
-		  count.times{|i| yield(self[i], i)}
+	  def util_copy_values(data_members, from)
+      unless from && from.is_a?(self.class)
+        raise "#{self.class}#copy_value: to must be class #{self.class} (#{from.inspect})"
+      end
+      data_members.each{|k| self[k] = from[k]}
 	  end
-	  
+
+    # assumes each arr elem is a single struct!!! FIXME!!!
+    def make_contig(arr)
+      klass = arr[0].class
+      count = arr.length
+      blob = FFI::MemoryPointer.new(klass, count)
+      fresh = self.class.new(blob)
+      fresh_p = FFI::Pointer.new(self.class, self.to_ptr)
+      keeps = []
+      arr.each_with_index do |e, i|
+        fresh_unit = self.class.new(fresh_p[i])
+        keeps << fresh_unit.copy_values(e)
+      end
+      fresh.mixed_set_keep(keeps) if fresh.respond_to?(:mixed_set_keep)
+#       keeps
+      fresh
+    end
+    
+    def make_units(count)
+      # self is the multi from!!!
+      from_p = FFI::Pointer.new(self.class, self.to_ptr)
+#       from_p = FFI::Pointer.new(from.class, from.to_ptr)
+#       fresh_p = FFI::Pointer.new(self.class, self.to_ptr)
+      arr = []
+		  count.times.map do |i| 
+		    from_unit = self.class.new(from_p[i])
+        blob = FFI::MemoryPointer.new(self.class, 1)
+        fresh = self.class.new(blob)
+		    fresh_unit = fresh
+# 		    fresh_unit = self.class.new(fresh_p[i])
+		    keeps = fresh_unit.copy_values(from_unit)
+		    # set keeps in fresh_unit if nec!!!
+		    ### FIXME!!!
+		    fresh_unit.mixed_set_keep(keeps) if fresh_unit.respond_to?(:mixed_set_keep)
+		    arr << fresh_unit
+		  end
+# 		  keeps
+      arr
+    end
+    
+
+    ### treesit UnitMemory stuff...
+
+    ### very sus!!! FIXME!!!
 # 		alias_method :ffi_member, :[]
 # 		alias_method :ffi_member=, :[]=
-		def [](k)
-		  return super(k) unless k.is_a?(Integer)
-		  raise "BossStructArray#[]: k (#{k}) negative index" unless k > -1
-		  self.class.new(self.to_ptr + k * self.class.size)
-		end
-		def []=(k, v)
-		  return super(k, v) unless k.is_a?(Integer)
-		  raise "#{self.class}#[]=: k (#{k}) negative index" unless k > -1
-      unless v && v.is_a?(self.class)
-        raise "#{self.class}#[]=: value must be class #{self.class} (#{v.inspect})"
-      end
-      self.class.new(self.to_ptr + k * self.class.size).tap do |o|
-        o.copy_values(v)
-      end
-      # ret new or self???
-      self
-		end
+# 		def [](k)
+#     #def get_by_index(k)
+# 		  return super(k) unless k.is_a?(Integer)
+# 		  raise "BossStructArray#[]: k (#{k}) negative index" unless k > -1
+# 		  self.class.new(self.to_ptr + k * self.class.size)
+# 		end
+# 		def []=(k, v)
+#     #def set_by_index(k, v)
+# 		  return super(k, v) unless k.is_a?(Integer)
+# 		  raise "#{self.class}#[]=: k (#{k}) negative index" unless k > -1
+#       unless v && v.is_a?(self.class)
+#         raise "#{self.class}#[]=: value must be class #{self.class} (#{v.inspect})"
+#       end
+#       self.class.new(self.to_ptr + k * self.class.size).tap do |o|
+#         o.copy_values(v)
+#       end
+#       # ret new or self???
+#       self
+# 		end
+
 		### array of unit pointers
 		def to_a()
 		  ### TMP!!! 
@@ -158,18 +109,19 @@ module TreeSitterFFI
 		### array of unit copies, take count bc no multi TMP!!!
 		def burst(count)
 		  return [] if count < 1
-			count.times.map{|i| self.class.new.copy_values(self[i])}
+		  make_units(count)
+# 			count.times.map{|i| self.class.new.copy_values(self[i])}
 		end
-		
-		### module methods???
-		# => Array of copies
-# 		def from_contiguous(contig)
-# 		end
+    ### burst needs updating!!! FIXME!!!
 
     # takes array of 1 or more struct(_array), each of which is multiple 1 or more
     # doesn't check any overlapping???!!! what does this even mean???
 		# => multi self
 		def to_contiguous(arr)
+      ### TMP!!! FIXME!!!
+		  return make_contig(arr)
+		  
+		  
 			raise "UnitMemory#to_contiguous: nil arr." unless arr && arr.length > 0
 			klass = arr[0].class
 			raise "UnitMemory#to_contiguous: #{klass} does not include UnitMemory" unless 
@@ -190,8 +142,67 @@ module TreeSitterFFI
 		end
 		alias_method :to_contig, :to_contiguous
 		
-		# blind blob copy???
-		def womp(from, count)
-		end
-	end
+  end
+
+  # MixedStruct wraps a C struct that contains one or more pointers (as opposed to a 
+  # 'data struct' that has NO pointers and just values). When we want to set a pointer
+  # member in Ruby, we need to keep a reference to the MemoryPointer (or other wrapper) 
+  # holding the new allocated memory blob for as long as we need the blob or the Ruby
+  # GC may collect it too early.
+  class MixedStruct < FFI::Struct
+    
+    include UnitMemory
+  
+    def copy_multiple(from, count)
+      @keep = super
+    end
+
+    def util_copy_values(data_members, pointer_members_and_counts, from)
+      # data members, eg [:simple_count]
+      data_members.each{|k| self[k] = from[k]}
+      # pointer members and their counts, eg {simples: from[:simple_count]}
+      unit_keeps = []
+      pointer_members_and_counts.each do |k,v|
+      if v > 0
+        fresh = from[k].make_copy(v)
+        unit_keeps << fresh
+        mixed_set_member(k, fresh)
+      end
+      end
+      unit_keeps
+    end
+    
+    def keep_keys() 
+		  raise "MixedStruct#keep_keys must be overridden in #{self.class}."
+    end
+    
+#     def clear_keep(k=nil)
+#       k ? @keep[k] = nil : @keep = {}
+#     end
+#     def add_keep(k, v)
+#       @keep[k] ||= []
+#       @keep[k] << v
+#     end
+    def mixed_set_keep(v)
+      @keep = v
+    end
+#     def mixed_set_keep(k, v)
+#       @keep ||= {}
+#       @keep[k] = v
+#       self.keep_simples = v
+#     end
+
+    alias_method :orig_aset, :[]=
+    def []=(k, v)
+      raise "can't set mixed struct member #{k} directly." if k && keep_keys.include?(k)
+      super(k, v)
+    end
+    
+    def mixed_set_member(k, v)
+      raise "bad mixed_set_member." unless k && keep_keys.include?(k)
+      orig_aset(k, v)
+#       FFI::Struct.instance_method(:[]=).bind(self).call(k, v)
+    end
+  
+  end
 end

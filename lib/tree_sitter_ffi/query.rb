@@ -108,7 +108,6 @@ module TreeSitterFFI
 
 #### for QueryCursor...
 
-### chimp
 	class QueryCapture < BossStruct
 		layout(
 			:node, Node,
@@ -146,7 +145,8 @@ module TreeSitterFFI
 
 		### from_array, to_contiguous are module method!!!
 		def self.from_array(arr)
-			BossStructArray.to_contiguous(arr) do |e, fresh|
+# 			BossStructArray.to_contiguous(arr) do |e, fresh|
+			UnitMemory.to_contiguous(arr) do |e, fresh|
 			  fresh.copy_values(e)
 			end
 		end
@@ -162,7 +162,8 @@ module TreeSitterFFI
 	  end
 	end
 
-	class QueryMatch < BossStruct
+# 	class QueryMatch < BossStruct
+	class QueryMatch < BossMixedStruct
 		layout(
 			:id, :uint32,
 			:pattern_index, :uint16,
@@ -172,27 +173,20 @@ module TreeSitterFFI
 			)
 			
     include UnitMemory
+    
+    def keep_keys() [:captures] end
 		
     def copy_values(from)
-      [:id, :pattern_index, :capture_count].each{|k| self[k] = from[k]}
-      count = from[:capture_count]
-      if count > 0
-      	fresh = from[:captures].make_copy(count)
-      	self[:captures] = fresh
-      end
-      self
+      unit_keeps = util_copy_values([:id, :pattern_index, :capture_count],
+        {captures: from[:capture_count]}, from)
     end
     
     ###???def captures() self[:captures] || [] end
     def captures() 
-#       caps = QueryCapture.new(self[:captures])
-#       caps.null? ? nil : caps.to_a 
-      self[:captures].null? ? [] : self[:captures].burst(self[:capture_count]) 
-#       self[:captures].null? ? nil : self[:captures].burst(self[:capture_count]) 
-#       self[:captures].null? ? nil : self[:captures].to_a 
+      self[:capture_count] < 1 ||self[:captures].null? ? 
+        [] : 
+        self[:captures].burst(self[:capture_count]) 
     end
-#     def captures() self[:captures].null? ? nil : self[:captures].to_a end
-#     def captures() self[:captures].to_a end
   
 		def inspect() 
 		  four11(self, [:id, :pattern_index, :capture_count], 
@@ -226,10 +220,22 @@ module TreeSitterFFI
 	  def self.make()
       TreeSitterFFI.ts_query_cursor_new
 	  end
-	
+
     ### Rusty!!!
 		# TextProvider??? try String input first...
 		def matches(query, node, input)
+		  self.exec(query, node)
+		  arr = []
+      match = QueryMatch.new
+		  while(next_match(match))
+		    arr << match.make_copy #only single
+		  end
+		  arr
+    end
+	
+    ### Rusty!!!
+		# TextProvider??? try String input first...
+		def was_matches(query, node, input)
 # 		  puts "*** matches all "
 		  self.exec(query, node)
 		  arr = []
