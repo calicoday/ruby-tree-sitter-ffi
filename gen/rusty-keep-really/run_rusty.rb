@@ -12,7 +12,6 @@ require './src/gen/query_util.rb'
 require './gen/rusty/rusty_node_test.rb'
 
 puts './gen/rusty/rusty_node_test.rb'
-init_tally()
 test_node_child()
 # test_node_children()
 # test_node_children_by_field_name()
@@ -31,13 +30,11 @@ test_node_sexp()
 test_node_numeric_symbols_respect_simple_aliases()
 # get_all_nodes(tree: &Tree)
 parse_json_example()
-report_tally()
 
 
 require './gen/rusty/rusty_tree_test.rb'
 
 puts './gen/rusty/rusty_tree_test.rb'
-init_tally()
 test_tree_edit()
 test_tree_cursor()
 test_tree_cursor_fields()
@@ -52,13 +49,11 @@ test_tree_node_equality()
 #     source_code: &mut Vec<u8>,
 #     edit: Edit,
 # )
-report_tally()
 
 
 require './gen/rusty/rusty_query_test.rb'
 
 puts './gen/rusty/rusty_query_test.rb'
-init_tally()
 test_query_errors_on_invalid_syntax()
 test_query_errors_on_invalid_symbols()
 # test_query_errors_on_invalid_predicates()
@@ -102,7 +97,7 @@ test_query_matches_with_anonymous_tokens()
 test_query_matches_with_supertypes()
 test_query_matches_within_byte_range()
 # test_query_matches_within_point_range()
-test_query_captures_within_byte_range()
+# test_query_captures_within_byte_range()
 test_query_matches_with_unrooted_patterns_intersecting_byte_range()
 # test_query_captures_within_byte_range_assigned_after_iterating()
 test_query_matches_different_queries_same_cursor()
@@ -112,20 +107,20 @@ test_query_matches_with_no_captures()
 test_query_matches_with_repeated_fields()
 test_query_matches_with_deeply_nested_patterns_with_fields()
 test_query_matches_with_indefinite_step_containing_no_captures()
-test_query_captures_basic()
-test_query_captures_with_text_conditions()
+# test_query_captures_basic()
+# test_query_captures_with_text_conditions()
 # test_query_captures_with_predicates()
 # test_query_captures_with_quoted_predicate_args()
-test_query_captures_with_duplicates()
+# test_query_captures_with_duplicates()
 # test_query_captures_with_many_nested_results_without_fields()
 # test_query_captures_with_many_nested_results_with_fields()
-test_query_captures_with_too_many_nested_results()
-test_query_captures_with_definite_pattern_containing_many_nested_matches()
+# test_query_captures_with_too_many_nested_results()
+# test_query_captures_with_definite_pattern_containing_many_nested_matches()
 # test_query_captures_ordered_by_both_start_and_end_positions()
 # test_query_captures_with_matches_removed()
 # test_query_captures_and_matches_iterators_are_fused()
 # test_query_text_callback_returns_chunks()
-test_query_start_byte_for_pattern()
+# test_query_start_byte_for_pattern()
 # test_query_capture_names()
 # test_query_lifetime_is_separate_from_nodes_lifetime()
 # test_query_with_no_patterns()
@@ -150,6 +145,5 @@ test_query_alternative_predicate_prefix()
 #     query: &'a Query,
 #     source: &'a str,
 # )
-report_tally()
 
 puts 'done.'

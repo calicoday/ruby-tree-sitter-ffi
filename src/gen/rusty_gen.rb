@@ -280,6 +280,7 @@ def split_atomic(s)
 				.gsub('.kind', '.type')
 				.gsub('.start_position', '.start_point')
 				.gsub('.end_position', '.end_point')
+				.gsub('String::new()', '""')
 				.gsub(/(\w+)::/, 'TreeSitterFFI::\1.')
 				.gsub('.find(', '.index(')
 				.gsub('None', 'nil')
@@ -335,10 +336,14 @@ def split_atomic(s)
 # 				end
 # 			end
 
+      # drop & from any variables now ### new in aug!!!
+      expr = expr.gsub(/&(\w+)/, '\1')
+
 			# disable any asserts that contain '&', 'Vec' 
 # 			if expr =~ /&|Vec/ || expr =~ /.repeat(count)/
 			if expr =~ /[^&]&[^&]|Vec/ 
-				$log << "  - suppress &|Vec\n"
+				$log << "  - suppress &|Vec: #{expr.scan(/[^&]&[^&]|Vec/).inspect}\n"
+				###$log << "  - suppress &|Vec\n"
 # 				expr = expr.split("\n").map{|e| e.gsub(/^/, '# ')}.join("\n")
 				expr = expr.split("\n", -1).map{|e| e.gsub(/^/, '# ') unless e == ''}.join("\n")
 			end

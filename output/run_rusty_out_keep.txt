@@ -183,6 +183,11 @@ c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :ui
 729: ok
 732: ok
 733: ok
+===
+total asserts: 182
+  ok: 182
+  failed: 0
+
 ./gen/rusty/rusty_tree_test.rb
 13: ok
 35: ok
@@ -308,6 +313,11 @@ c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :ui
 372: ok
 373: ok
 374: ok
+===
+total asserts: 124
+  ok: 124
+  failed: 0
+
 ./gen/rusty/rusty_query_test.rb
 11: ok
 12: ok
@@ -401,4 +411,10 @@ c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :ui
 3245: ok
 3279: ok
 3311: ok
+===
+total asserts: 78
+  ok: 71
+  failed: 7
+  ["386", "985", "1052", "1213", "1706", "2211", "2257"]
+
 done.

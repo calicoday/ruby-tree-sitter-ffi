@@ -3,6 +3,8 @@
 require 'tree_sitter_ffi'
 require 'tree_sitter_ffi_lang'
 
+# require 'bind_rusty_helpers.rb'
+
 # helpful for failures
 def put_more(o)
 	case o
@@ -13,10 +15,25 @@ def put_more(o)
 	end
 end
 
+def init_tally
+  $assert_count = 0
+  $assert_fails = []
+end
+def report_tally
+  puts "==="
+  puts "total asserts: #{$assert_count}"
+  puts "  ok: #{$assert_count - $assert_fails.length}"
+  puts "  failed: #{$assert_fails.length}"
+  puts "  #{$assert_fails.inspect}" if $assert_fails.length > 0
+  puts
+end
+
 # def put_note(result, expect, from, &b)
 def put_note(result, expect, from, msg=nil, &b)
   return puts "#{from}: #{msg}" if msg # handy during dev
 	success = yield(result, expect)
+	$assert_count += 1
+	$assert_fails << from unless success
 	msg = (success ? 'ok' : 'failed')
 	return puts "#{from}: #{msg}" if success #yield(result, expect)
 	puts "#{from}: #{msg}"
@@ -43,10 +60,14 @@ def assert_array_eq!(result, expect)
 	end
 end
 
+
+
 # monkeypatching to make ruby calls match the rust bindings... mostly rubier anyway
 # maybe make this a whole separate mod
 
 module BindRusty
+#   include BindRustyHelpers
+# TMP!!!
 	def get_language(lang)
 		case lang
 		when "json" then TreeSitterFFI.parser_json
@@ -85,6 +106,69 @@ module BindRusty
 			TreeSitterFFI.ts_query_cursor_set_byte_range(self, first, last)
 			self
 		end
+
+    #### monkeypatching TreeSitterFFI classes while I restabilize the tests before
+    # remaking the gem...
+
+    # from wb/engine_rb.rb ParseRunner -- for ref!!!
+
+      # will be QueryCursor#captures(match) => index or nil
+    #   def cursor_captures()
+      def cursor_captures(cursor)
+        arr = []
+        match = TreeSitterFFI::QueryMatch.new
+        ###TMP!!! amend TreeSitterFFI!!!
+    #     while(idx=cursor.next_capture(match))
+        while(idx=next_capture(match, cursor))
+          arr << match.captures[idx] #make_copy issue!!!
+          # wait up, doesn't [] already create copy??? try it...
+        end
+        arr    
+      end
+      # ruby wrap for next_match, next_capture shd return obj/index or nil instead of bool!!!
+    #   def next_match(match) #conv override
+    #     ret = ts_query_cursor_next_match(self, match)
+      def will_next_match(match, cursor) #conv override
+        ret = ts_query_cursor_next_match(cursor, match)
+        # ret is true or false, return match or nil
+        ret ? match : nil
+      end
+    #   def next_capture() #conv override
+    #     len_p = FFI::MemoryPointer.new(:uint32, 1)
+    #     ret = ts_parser_included_ranges(self, len_p)
+      def next_capture(match, cursor) #conv override
+        len_p = FFI::MemoryPointer.new(:uint32, 1)
+        ret = cursor.ts_query_cursor_next_capture(cursor, match, len_p) # weird monkey!!!
+    #     ret = ts_query_cursor_next_capture(cursor, match, len_p)
+        # ret is true or false, return index or nil
+        len = len_p.get(:uint32, 0)
+        ret ? len : nil
+      end
+    ####
+		
+		# QueryCursor already has #matches but it shdnt, shd be here in BindRusty
+		# OR we shd backport some of the essential helpers to C!!!
+    def captures(query, node, input)
+		  self.exec(query, node)
+		  arr = []
+      match = QueryMatch.new
+		  while(idx=next_capture(match, self)) # not cursor.next_capture bc return int!!! FIXME!!!
+		    arr << match.captures[idx] #make_copy issue!!!
+          # wait up, doesn't [] already create copy??? try it...
+		  end
+		  arr
+    end
+    # in gem:
+# 		def matches(query, node, input)
+# 		  self.exec(query, node)
+# 		  arr = []
+#       match = QueryMatch.new
+# 		  while(next_match(match))
+# 		    arr << match.make_copy #only single
+# 		  end
+# 		  arr
+#     end
+		
 	end
 	
 # /**
@@ -154,6 +238,16 @@ end
 include BindRusty
 
 require 'awesome_print'
+
+
+# general Rustiness
+class String
+  def trim() strip end
+  def trim_start() lstrip end
+  def trim_end() rstrip end
+  def len() length end
+end
+  
 
 QueryErrorKind = TreeSitterFFI::EnumQueryError
 class StuntQueryError

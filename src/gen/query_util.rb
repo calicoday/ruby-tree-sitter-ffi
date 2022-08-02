@@ -138,6 +138,7 @@ def collect_matches(matches, query, source)
      e.captures.map{|cap| compose_capture(query, source, cap)}]
   end
 end
+# TMP!!! 
 # was format_captures
 def compose_capture(query, source, capture)
   [query.capture_name_for_id(capture[:index]),
@@ -151,22 +152,19 @@ end
 #     parser.parse(JSON_EXAMPLE, nil)
 # end
 
+#         assert_eq!(
+#             collect_captures(captures, query, source),
+#             [
+#                 ["function", "DEFUN"],
+#                 ["string.arg", "\"safe-length\""],
+#                 ["string", "\"safe-length\""],
+#             ]
+#         )
+# captures is Array???
+def collect_captures(captures, query, source)
+  captures.map{|capture| compose_capture(query, source, capture)}
+end
 
-# fn collect_matches<'a>(
-#     matches: impl Iterator<Item = QueryMatch<'a, 'a>>,
-#     query: &'a Query,
-#     source: &'a str,
-# ) -> Vec<(usize, Vec<(&'a str, &'a str)>)> {
-#     matches
-#         .map(|m| {
-#             (
-#                 m.pattern_index,
-#                 format_captures(m.captures.iter().cloned(), query, source),
-#             )
-#         })
-#         .collect()
-# }
-# 
 # fn collect_captures<'a>(
 #     captures: impl Iterator<Item = (QueryMatch<'a, 'a>, usize)>,
 #     query: &'a Query,

@@ -15,8 +15,10 @@ require './src/gen/query_util.rb'
 require '<%= h[:bossreq] %>'
 
 puts '<%= h[:bossreq] %>'
+init_tally()
 <%= h[:tests] %>
 
+report_tally()
 <% end %>
 
 puts 'done.'
