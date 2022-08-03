@@ -380,7 +380,7 @@ def test_get_changed_ranges()
 
     parser = TreeSitterFFI.parser()
     parser.set_language(get_language("javascript"))
-#     control_tree = parser.parse(&source_code, nil)
+    control_tree = parser.parse(source_code, nil)
     tree = control_tree
 
     assert_eq!(
@@ -399,13 +399,13 @@ def test_get_changed_ranges()
             deleted_length: 3,
             inserted_text: b"othing".to_vec(),
         }
-#         inverse_edit = invert_edit(&source_code, &edit)
+        inverse_edit = invert_edit(source_code, edit)
         ranges = get_changed_ranges(parser, tree, source_code, edit)
-#         assert_eq!(ranges, vec![range_of(&source_code, "nothing")])
+        assert_eq!(ranges, vec![range_of(source_code, "nothing")])
 
         # Replace `nothing` with `null` - that token has changed syntax
         ranges = get_changed_ranges(parser, tree, source_code, inverse_edit)
-#         assert_eq!(ranges, vec![range_of(&source_code, "null")])
+        assert_eq!(ranges, vec![range_of(source_code, "null")])
     # }
 
     # Changing only leading whitespace
@@ -419,7 +419,7 @@ def test_get_changed_ranges()
             deleted_length: 0,
             inserted_text: b"\n".to_vec(),
         }
-#         inverse_edit = invert_edit(&source_code, &edit)
+        inverse_edit = invert_edit(source_code, edit)
         ranges = get_changed_ranges(parser, tree, source_code, edit)
         assert_eq!(ranges, vec![])
 
@@ -439,18 +439,18 @@ def test_get_changed_ranges()
             deleted_length: 0,
             inserted_text: b", b: false".to_vec(),
         }
-#         inverse_edit1 = invert_edit(&source_code, &edit1)
+        inverse_edit1 = invert_edit(source_code, edit1)
         ranges = get_changed_ranges(parser, tree, source_code, edit1)
-#         assert_eq!(ranges, vec![range_of(&source_code, ", b: false")])
+        assert_eq!(ranges, vec![range_of(source_code, ", b: false")])
 
         edit2 = Edit {
             position: source_code.index(", b"),
             deleted_length: 0,
             inserted_text: b", c: 1".to_vec(),
         }
-#         inverse_edit2 = invert_edit(&source_code, &edit2)
+        inverse_edit2 = invert_edit(source_code, edit2)
         ranges = get_changed_ranges(parser, tree, source_code, edit2)
-#         assert_eq!(ranges, vec![range_of(&source_code, ", c: 1")])
+        assert_eq!(ranges, vec![range_of(source_code, ", c: 1")])
 
         # Remove the middle pair
         ranges = get_changed_ranges(parser, tree, source_code, inverse_edit2)
@@ -472,13 +472,13 @@ def test_get_changed_ranges()
             deleted_length: 0,
             inserted_text: b"b === ".to_vec(),
         }
-#         inverse_edit1 = invert_edit(&source_code, &edit1)
+        inverse_edit1 = invert_edit(source_code, edit1)
         ranges = get_changed_ranges(parser, tree, source_code, edit1)
-#         assert_eq!(ranges, vec![range_of(&source_code, "b === null")])
+        assert_eq!(ranges, vec![range_of(source_code, "b === null")])
 
         # Undo
         ranges = get_changed_ranges(parser, tree, source_code, inverse_edit1)
-#         assert_eq!(ranges, vec![range_of(&source_code, "null")])
+        assert_eq!(ranges, vec![range_of(source_code, "null")])
     # }
 end
 =end
@@ -510,9 +510,9 @@ def get_changed_ranges(
     source_code: &mut Vec<u8>,
     edit: Edit,
 )
-    # perform_edit(tree, source_code, &edit)
-#     new_tree = parser.parse(&source_code, (tree))
-#     result = tree.changed_ranges(&new_tree).collect()
+    perform_edit(tree, source_code, edit)
+    new_tree = parser.parse(source_code, (tree))
+    result = tree.changed_ranges(new_tree).collect()
     *tree = new_tree
     result
 end

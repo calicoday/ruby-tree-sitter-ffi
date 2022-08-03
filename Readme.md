@@ -1,10 +1,5 @@
 # ruby-tree-sitter-ffi
 
-This is one of those accidental projects. I didn't mean to build it,  I just
-wanted to have try at several of the various technical aspects it would
-involve. I kept getting stuck but never quite decisively enough for me to
-give up. So here we are.
-
 This gem provides bindings for the tree-sitter runtime library, `libtree-sitter`.
 You must also have at least one language parser to do anything, so I've made a
 separate repo, [ruby-tree-sitter-ffi-lang](https://github.com/calicoday/ruby-tree-sitter-ffi-lang), 

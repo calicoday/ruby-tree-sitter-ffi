@@ -127,14 +127,14 @@ def test_node_children()
 #             .children(cursor)
 #             .map(|n| n.type())
 #             .TreeSitterFFI::collect.<Vec<_>>(),
-#         &["[", "number", ",", "false", ",", "object", "]",]
+#         ["[", "number", ",", "false", ",", "object", "]",]
 #     )
 #     assert_eq!(
 #         array_node
 #             .named_children(cursor)
 #             .map(|n| n.type())
 #             .TreeSitterFFI::collect.<Vec<_>>(),
-#         &["number", "false", "object"]
+#         ["number", "false", "object"]
 #     )
     object_node = array_node
         .named_children(cursor)
@@ -144,7 +144,7 @@ def test_node_children()
 #             .children(cursor)
 #             .map(|n| n.type())
 #             .TreeSitterFFI::collect.<Vec<_>>(),
-#         &["{", "pair", "}",]
+#         ["{", "pair", "}",]
 #     )
 end
 =end
@@ -173,7 +173,7 @@ def test_node_children_by_field_name()
         alternatives.map(|n| source[n.child_by_field_name("condition").byte_range()])
 #     assert_eq!(
 #         alternative_texts.TreeSitterFFI::collect.<Vec<_>>(),
-#         &["two", "three", "four",]
+#         ["two", "three", "four",]
 #     )
 end
 =end

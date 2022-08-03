@@ -3312,24 +3312,24 @@ def test_query_step_is_definite()
 #         results_by_substring: &'static [(&'static str, bool)],
 #     }
 
-#     rows = &[
+#     rows = [
 #         Row {
 #             description: "no definite steps",
 #             language: get_language("python"),
 #             pattern: %q%(expression_statement (string))% ,
-#             results_by_substring: &[("expression_statement", false), ("string", false)],
+#             results_by_substring: [("expression_statement", false), ("string", false)],
 #         },
 #         Row {
 #             description: "all definite steps",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" "}")% ,
-#             results_by_substring: &[("object", false), ("{", true), ("}", true)],
+#             results_by_substring: [("object", false), ("{", true), ("}", true)],
 #         },
 #         Row {
 #             description: "an indefinite step that is optional",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (identifier)? @foo "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", true),
 #                 ("(identifier)?", false),
@@ -3340,7 +3340,7 @@ def test_query_step_is_definite()
 #             description: "multiple indefinite steps that are optional",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (identifier)? @id1 ("," (identifier) @id2)? "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", true),
 #                 ("(identifier)? @id1", false),
@@ -3352,7 +3352,7 @@ def test_query_step_is_definite()
 #             description: "definite step after indefinite step",
 #             language: get_language("javascript"),
 #             pattern: %q%(pair (property_identifier) ":")% ,
-#             results_by_substring: &[("pair", false), ("property_identifier", false), (":", true)],
+#             results_by_substring: [("pair", false), ("property_identifier", false), (":", true)],
 #         },
 #         Row {
 #             description: "indefinite step in between two definite steps",
@@ -3363,7 +3363,7 @@ def test_query_step_is_definite()
 #                 consequence: (call_expression)
 #                 ":"
 #                 alternative: (_))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("condition:", false),
 #                 ("\"?\"", false),
 #                 ("consequence:", false),
@@ -3375,13 +3375,13 @@ def test_query_step_is_definite()
 #             description: "one definite step after a repetition",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (_) "}")% ,
-#             results_by_substring: &[("object", false), ("{", false), ("(_)", false), ("}", true)],
+#             results_by_substring: [("object", false), ("{", false), ("(_)", false), ("}", true)],
 #         },
 #         Row {
 #             description: "definite steps after multiple repetitions",
 #             language: get_language("json"),
 #             pattern: %q%(object "{" (pair) "," (pair) "," (_) "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", false),
 #                 ("(pair) \",\" (pair)", false),
@@ -3395,7 +3395,7 @@ def test_query_step_is_definite()
 #             description: "a definite with a field",
 #             language: get_language("javascript"),
 #             pattern: %q%(binary_expression left: (identifier) right: (_))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("binary_expression", false),
 #                 ("(identifier)", false),
 #                 ("(_)", true),
@@ -3405,7 +3405,7 @@ def test_query_step_is_definite()
 #             description: "multiple definite steps with fields",
 #             language: get_language("javascript"),
 #             pattern: %q%(function_declaration name: (identifier) body: (statement_block))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("function_declaration", false),
 #                 ("identifier", true),
 #                 ("statement_block", true),
@@ -3418,7 +3418,7 @@ def test_query_step_is_definite()
 #                 (function_declaration
 #                     name: (identifier)
 #                     body: (statement_block "{" (expression_statement) "}"))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("function_declaration", false),
 #                 ("identifier", false),
 #                 ("statement_block", false),
@@ -3435,7 +3435,7 @@ def test_query_step_is_definite()
 #                 value: (constant)
 #                 "end")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("singleton_class", false),
 #                 ("constant", false),
 #                 ("end", true),
@@ -3450,7 +3450,7 @@ def test_query_step_is_definite()
 #                   property: (property_identifier) @template-tag)
 #                 arguments: (template_string)) @template-call
 #             % ,
-#             results_by_substring: &[("property_identifier", false), ("template_string", false)],
+#             results_by_substring: [("property_identifier", false), ("template_string", false)],
 #         },
 #         Row {
 #             description: "a definite step after a nested node",
@@ -3462,7 +3462,7 @@ def test_query_step_is_definite()
 #                     property: (property_identifier) @prop)
 #                 "[")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("property_identifier", true),
 #                 ("[", true),
@@ -3479,7 +3479,7 @@ def test_query_step_is_definite()
 #                 "["
 #                 (#match? @prop "foo"))
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("property_identifier", false),
 #                 ("[", true),
@@ -3497,7 +3497,7 @@ def test_query_step_is_definite()
 #                 (binary_expression right:(call_expression))
 #             ]
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("right:", false),
 #                 ("function:", true),
@@ -3510,7 +3510,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (method_parameters "(" (identifier) @id")")
 #             % ,
-#             results_by_substring: &[("\"(\"", false), ("(identifier)", false), ("\")\"", true)],
+#             results_by_substring: [("\"(\"", false), ("(identifier)", false), ("\")\"", true)],
 #         },
 #         Row {
 #             description: "long, but not too long to analyze",
@@ -3518,7 +3518,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (object "{" (pair) (pair) (pair) (pair) "}")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("\"{\"", false),
 #                 ("(pair)", false),
 #                 ("(pair) \"}\"", false),
@@ -3531,7 +3531,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (object "{" (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) "}")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("\"{\"", false),
 #                 ("(pair)", false),
 #                 ("(pair) \"}\"", false),
@@ -3544,7 +3544,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (method_declaration name: (identifier))
 #             % ,
-#             results_by_substring: &[("name:", true)],
+#             results_by_substring: [("name:", true)],
 #         },
 #         Row {
 #             description: "top-level non-terminal extra nodes",
@@ -3554,7 +3554,7 @@ def test_query_step_is_definite()
 #                 (interpolation)
 #                 (heredoc_end) @end)
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("(heredoc_body", false),
 #                 ("(interpolation)", false),
 #                 ("(heredoc_end)", true),

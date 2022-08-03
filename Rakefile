@@ -21,6 +21,13 @@ task :build_and_install do
 	puts "done."
 end
 
+desc "gen refac rusty tests"
+task :gen_refac do
+  #cmdline: ruby -e"require './src/gen/rusty_gen.rb'; gen"
+  `ruby -e"require './src/gen-refac/rusty_gen.rb'; gen"`
+  puts "gen_refac done."
+end
+
 desc "gen rusty tests"
 task :gen_rusty do
   #cmdline: ruby -e"require './src/gen/rusty_gen.rb'; gen"

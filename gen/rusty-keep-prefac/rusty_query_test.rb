@@ -588,12 +588,12 @@ def test_query_matches_with_many_results()
         language = get_language("javascript")
         query = TreeSitterFFI::Query.make(language, "(array (identifier) @element)")
 
-#         assert_query_matches(
-#             language,
-#             query,
-#             "[hello];\n".repeat(50),
-#             &vec![[0, [["element", "hello"]]]; 50],
-#         )
+        assert_query_matches(
+            language,
+            query,
+            "[hello];\n".repeat(50),
+            vec![[0, [["element", "hello"]]]; 50],
+        )
     #     })
 end
 =end
@@ -1156,7 +1156,7 @@ def test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pa
 #             language,
 #             query,
 #             source,
-#             &vec![[7, [["comment", "# the comment"]]]; 64]
+#             vec![[7, [["comment", "# the comment"]]]; 64]
 #                 .into_iter()
 #                 .chain(vec![(
 #                     0,
@@ -1798,7 +1798,6 @@ def test_query_matches_within_point_range()
 end
 =end
 
-=begin
 def test_query_captures_within_byte_range()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("c")
@@ -1820,10 +1819,10 @@ def test_query_captures_within_byte_range()
         tree = parser.parse(source, nil)
 
         cursor = TreeSitterFFI::QueryCursor.make()
-#         captures =
-#             cursor
-#                 .set_byte_range(3...27)
-#                 .captures(&query, tree.root_node(), source.as_bytes())
+        captures =
+            cursor
+                .set_byte_range(3...27)
+                .captures(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(
             collect_captures(captures, query, source),
@@ -1835,7 +1834,6 @@ def test_query_captures_within_byte_range()
         )
     #     })
 end
-=end
 
 def test_query_matches_with_unrooted_patterns_intersecting_byte_range()
     # TreeSitterFFI::allocations.record(|| {
@@ -1929,16 +1927,16 @@ def test_query_captures_within_byte_range_assigned_after_iterating()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
 
 #         # Retrieve some captures
 #         results = TreeSitterFFI::Vec.new()
         for (mat, capture_ix) in captures.by_ref().take(5) {
             capture = mat.captures[capture_ix as usize]
-#             results.push((
-#                 query.capture_names()[capture.index as usize].as_str(),
-#                 &source[capture.node.byte_range()],
-#             ))
+            results.push((
+                query.capture_names()[capture.index as usize].as_str(),
+                source[capture.node.byte_range()],
+            ))
         }
         assert_eq!(
             results,
@@ -1958,10 +1956,10 @@ def test_query_captures_within_byte_range_assigned_after_iterating()
         captures.set_byte_range(source.index("Ok")..source.len())
         for (mat, capture_ix) in captures {
             capture = mat.captures[capture_ix as usize]
-#             results.push((
-#                 query.capture_names()[capture.index as usize].as_str(),
-#                 &source[capture.node.byte_range()],
-#             ))
+            results.push((
+                query.capture_names()[capture.index as usize].as_str(),
+                source[capture.node.byte_range()],
+            ))
         }
         assert_eq!(
             results,
@@ -2359,7 +2357,6 @@ def test_query_matches_with_indefinite_step_containing_no_captures()
     #     })
 end
 
-=begin
 def test_query_captures_basic()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2412,7 +2409,7 @@ def test_query_captures_basic()
             ],
         )
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_captures(captures, query, source),
             [
@@ -2432,9 +2429,7 @@ def test_query_captures_basic()
         )
     #     })
 end
-=end
 
-=begin
 def test_query_captures_with_text_conditions()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2469,7 +2464,7 @@ def test_query_captures_with_text_conditions()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_captures(captures, query, source),
             [
@@ -2487,7 +2482,6 @@ def test_query_captures_with_text_conditions()
         )
     #     })
 end
-=end
 
 =begin
 def test_query_captures_with_predicates()
@@ -2584,7 +2578,6 @@ def test_query_captures_with_quoted_predicate_args()
 end
 =end
 
-=begin
 def test_query_captures_with_duplicates()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2608,14 +2601,13 @@ def test_query_captures_with_duplicates()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_captures(captures, query, source),
             [["function", "x"], ["variable", "x"],],
         )
     #     })
 end
-=end
 
 =begin
 def test_query_captures_with_many_nested_results_without_fields()
@@ -2652,27 +2644,27 @@ def test_query_captures_with_many_nested_results_without_fields()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
-#         captures = collect_captures(captures, &query, &source)
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
+        captures = collect_captures(captures, query, source)
 
-#         assert_eq!(
-#             &captures[0...13],
-#             [
-#                 ["colon", ":"],
-#                 ["method-def", "method0"],
-#                 ["colon", ":"],
-#                 ["comma", ","],
-#                 ["method-def", "method1"],
-#                 ["colon", ":"],
-#                 ["comma", ","],
-#                 ["method-def", "method2"],
-#                 ["colon", ":"],
-#                 ["comma", ","],
-#                 ["method-def", "method3"],
-#                 ["colon", ":"],
-#                 ["comma", ","],
-#             ]
-#         )
+        assert_eq!(
+            captures[0...13],
+            [
+                ["colon", ":"],
+                ["method-def", "method0"],
+                ["colon", ":"],
+                ["comma", ","],
+                ["method-def", "method1"],
+                ["colon", ":"],
+                ["comma", ","],
+                ["method-def", "method2"],
+                ["colon", ":"],
+                ["comma", ","],
+                ["method-def", "method3"],
+                ["colon", ":"],
+                ["comma", ","],
+            ]
+        )
 
         # Ensure that we don't drop matches because of needing to buffer too many.
         assert_eq!(captures.len(), 1 + 3 * method_count)
@@ -2712,34 +2704,34 @@ def test_query_captures_with_many_nested_results_with_fields()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
-#         captures = collect_captures(captures, &query, &source)
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
+        captures = collect_captures(captures, query, source)
 
-#         assert_eq!(
-#             &captures[0...20],
-#             [
-#                 ["left", "y0"],
-#                 ["right", "y0"],
-#                 ["left", "y1"],
-#                 ["right", "y1"],
-#                 ["left", "y2"],
-#                 ["right", "y2"],
-#                 ["left", "y3"],
-#                 ["right", "y3"],
-#                 ["left", "y4"],
-#                 ["right", "y4"],
-#                 ["left", "y5"],
-#                 ["right", "y5"],
-#                 ["left", "y6"],
-#                 ["right", "y6"],
-#                 ["left", "y7"],
-#                 ["right", "y7"],
-#                 ["left", "y8"],
-#                 ["right", "y8"],
-#                 ["left", "y9"],
-#                 ["right", "y9"],
-#             ]
-#         )
+        assert_eq!(
+            captures[0...20],
+            [
+                ["left", "y0"],
+                ["right", "y0"],
+                ["left", "y1"],
+                ["right", "y1"],
+                ["left", "y2"],
+                ["right", "y2"],
+                ["left", "y3"],
+                ["right", "y3"],
+                ["left", "y4"],
+                ["right", "y4"],
+                ["left", "y5"],
+                ["right", "y5"],
+                ["left", "y6"],
+                ["right", "y6"],
+                ["left", "y7"],
+                ["right", "y7"],
+                ["left", "y8"],
+                ["right", "y8"],
+                ["left", "y9"],
+                ["right", "y9"],
+            ]
+        )
 
         # Ensure that we don't drop matches because of needing to buffer too many.
         assert_eq!(captures.len(), 2 * count)
@@ -2747,7 +2739,6 @@ def test_query_captures_with_many_nested_results_with_fields()
 end
 =end
 
-=begin
 def test_query_captures_with_too_many_nested_results()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2810,36 +2801,34 @@ def test_query_captures_with_too_many_nested_results()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
         cursor.set_match_limit(32)
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
-#         captures = collect_captures(captures, &query, &source)
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
+        captures = collect_captures(captures, query, source)
 
-#         assert_eq!(
-#             &captures[0...4],
-#             [
-#                 ["template-call", "b.c0().d0 `😄`"],
-#                 ["method-name", "c0"],
-#                 ["method-name", "d0"],
-#                 ["template-tag", "d0"],
-#             ]
-#         )
-#         assert_eq!(
-#             &captures[36...40],
-#             [
-#                 ["template-call", "b.c9().d9 `😄`"],
-#                 ["method-name", "c9"],
-#                 ["method-name", "d9"],
-#                 ["template-tag", "d9"],
-#             ]
-#         )
-#         assert_eq!(
-#             &captures[40..],
-#             [["method-name", "e"], ["method-name", "f"],]
-#         )
+        assert_eq!(
+            captures[0...4],
+            [
+                ["template-call", "b.c0().d0 `😄`"],
+                ["method-name", "c0"],
+                ["method-name", "d0"],
+                ["template-tag", "d0"],
+            ]
+        )
+        assert_eq!(
+            captures[36...40],
+            [
+                ["template-call", "b.c9().d9 `😄`"],
+                ["method-name", "c9"],
+                ["method-name", "d9"],
+                ["template-tag", "d9"],
+            ]
+        )
+        assert_eq!(
+            captures[40..],
+            [["method-name", "e"], ["method-name", "f"],]
+        )
     #     })
 end
-=end
 
-=begin
 def test_query_captures_with_definite_pattern_containing_many_nested_matches()
     # TreeSitterFFI::allocations.record(|| {
         language = get_language("javascript")
@@ -2873,7 +2862,7 @@ def test_query_captures_with_definite_pattern_containing_many_nested_matches()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
 #         assert_eq!(
 #             collect_captures(captures, query, source),
 #             [["l-bracket", "["]]
@@ -2885,7 +2874,6 @@ def test_query_captures_with_definite_pattern_containing_many_nested_matches()
 #         )
     #     })
 end
-=end
 
 =begin
 def test_query_captures_ordered_by_both_start_and_end_positions()
@@ -2909,7 +2897,7 @@ def test_query_captures_ordered_by_both_start_and_end_positions()
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
 
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
         assert_eq!(
             collect_captures(captures, query, source),
             [
@@ -2951,8 +2939,8 @@ def test_query_captures_with_matches_removed()
         cursor = TreeSitterFFI::QueryCursor.make()
 
 #         captured_strings = TreeSitterFFI::Vec.new()
-#         for (m, i) in cursor.captures(&query, tree.root_node(), source.as_bytes()) {
-#             capture = m.captures[i]
+        for (m, i) in cursor.captures(query, tree.root_node(), source.as_bytes()) {
+            capture = m.captures[i]
             text = capture.node.utf8_text(source.as_bytes())
             if text == "a" {
                 m.remove()
@@ -2988,7 +2976,7 @@ def test_query_captures_and_matches_iterators_are_fused()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         captures = cursor.captures(&query, tree.root_node(), source.as_bytes())
+        captures = cursor.captures(query, tree.root_node(), source.as_bytes())
 
         assert_eq!(captures.next().0.captures[0].index, 0)
         assert_eq!(captures.next().0.captures[0].index, 0)
@@ -3038,9 +3026,9 @@ def test_query_text_callback_returns_chunks()
                     end_in_chunk = (range.end - offset).min(chunk.len())
                     start_in_chunk = range.start.max(offset) - offset
                     offset = end_offset
-#                     (&chunk[start_in_chunk..end_in_chunk])
-#                 } else {
-#                     offset = end_offset
+                    (chunk[start_in_chunk..end_in_chunk])
+                } else {
+                    offset = end_offset
                     nil
                 }
             })
@@ -3062,9 +3050,9 @@ def test_query_text_callback_returns_chunks()
         parser.set_language(language)
         tree = parser.parse(source, nil)
         cursor = TreeSitterFFI::QueryCursor.make()
-#         captures = cursor.captures(&query, tree.root_node(), |node: Node| {
-#             chunks_in_range(node.byte_range())
-#         })
+        captures = cursor.captures(query, tree.root_node(), |node: Node| {
+            chunks_in_range(node.byte_range())
+        })
 
         assert_eq!(
             collect_captures(captures, query, source),
@@ -3082,7 +3070,6 @@ def test_query_text_callback_returns_chunks()
 end
 =end
 
-=begin
 def test_query_start_byte_for_pattern()
     language = get_language("javascript")
 
@@ -3108,12 +3095,12 @@ def test_query_start_byte_for_pattern()
     "
     .trim_start()
 
-    source = TreeSitterFFI::String.new()
+    source = ""
     source += patterns_1
     source += patterns_2
     source += patterns_3
 
-#     query = TreeSitterFFI::Query.make(language, &source)
+    query = TreeSitterFFI::Query.make(language, source)
 
     assert_eq!(query.start_byte_for_pattern(0), 0)
     assert_eq!(query.start_byte_for_pattern(5), patterns_1.len())
@@ -3122,7 +3109,6 @@ def test_query_start_byte_for_pattern()
         patterns_1.len() + patterns_2.len()
     )
 end
-=end
 
 =begin
 def test_query_capture_names()
@@ -3167,14 +3153,14 @@ def test_query_lifetime_is_separate_from_nodes_lifetime()
         parser.set_language(language)
         tree = parser.parse(source, nil)
 
-#         fn take_first_node_from_captures<'tree>(
-#             source: &str,
-#             query: &str,
-#             node: Node<'tree>,
-#         ) -> Node<'tree> {
-#             # Following 2 lines are redundant but needed to demonstrate
-#             # more understandable compiler error message
-#             language = get_language("javascript")
+        fn take_first_node_from_captures<'tree>(
+            source: str,
+            query: str,
+            node: Node<'tree>,
+        ) -> Node<'tree> {
+            # Following 2 lines are redundant but needed to demonstrate
+            # more understandable compiler error message
+            language = get_language("javascript")
             query = TreeSitterFFI::Query.make(language, query)
             cursor = TreeSitterFFI::QueryCursor.make()
             node = cursor
@@ -3188,20 +3174,20 @@ def test_query_lifetime_is_separate_from_nodes_lifetime()
         node = take_first_node_from_captures(source, query, tree.root_node())
         assert_eq!(node.type(), "call_expression")
 
-#         fn take_first_node_from_matches<'tree>(
-#             source: &str,
-#             query: &str,
-#             node: Node<'tree>,
-#         ) -> Node<'tree> {
-#             language = get_language("javascript")
+        fn take_first_node_from_matches<'tree>(
+            source: str,
+            query: str,
+            node: Node<'tree>,
+        ) -> Node<'tree> {
+            language = get_language("javascript")
             query = TreeSitterFFI::Query.make(language, query)
             cursor = TreeSitterFFI::QueryCursor.make()
-#             node = cursor
-#                 .captures(&query, node, source.as_bytes())
-#                 .next()
-#                 .0
-#                 .captures[0]
-#                 .node
+            node = cursor
+                .captures(query, node, source.as_bytes())
+                .next()
+                .0
+                .captures[0]
+                .node
             node
         }
 
@@ -3326,24 +3312,24 @@ def test_query_step_is_definite()
 #         results_by_substring: &'static [(&'static str, bool)],
 #     }
 
-#     rows = &[
+#     rows = [
 #         Row {
 #             description: "no definite steps",
 #             language: get_language("python"),
 #             pattern: %q%(expression_statement (string))% ,
-#             results_by_substring: &[("expression_statement", false), ("string", false)],
+#             results_by_substring: [("expression_statement", false), ("string", false)],
 #         },
 #         Row {
 #             description: "all definite steps",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" "}")% ,
-#             results_by_substring: &[("object", false), ("{", true), ("}", true)],
+#             results_by_substring: [("object", false), ("{", true), ("}", true)],
 #         },
 #         Row {
 #             description: "an indefinite step that is optional",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (identifier)? @foo "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", true),
 #                 ("(identifier)?", false),
@@ -3354,7 +3340,7 @@ def test_query_step_is_definite()
 #             description: "multiple indefinite steps that are optional",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (identifier)? @id1 ("," (identifier) @id2)? "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", true),
 #                 ("(identifier)? @id1", false),
@@ -3366,7 +3352,7 @@ def test_query_step_is_definite()
 #             description: "definite step after indefinite step",
 #             language: get_language("javascript"),
 #             pattern: %q%(pair (property_identifier) ":")% ,
-#             results_by_substring: &[("pair", false), ("property_identifier", false), (":", true)],
+#             results_by_substring: [("pair", false), ("property_identifier", false), (":", true)],
 #         },
 #         Row {
 #             description: "indefinite step in between two definite steps",
@@ -3377,7 +3363,7 @@ def test_query_step_is_definite()
 #                 consequence: (call_expression)
 #                 ":"
 #                 alternative: (_))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("condition:", false),
 #                 ("\"?\"", false),
 #                 ("consequence:", false),
@@ -3389,13 +3375,13 @@ def test_query_step_is_definite()
 #             description: "one definite step after a repetition",
 #             language: get_language("javascript"),
 #             pattern: %q%(object "{" (_) "}")% ,
-#             results_by_substring: &[("object", false), ("{", false), ("(_)", false), ("}", true)],
+#             results_by_substring: [("object", false), ("{", false), ("(_)", false), ("}", true)],
 #         },
 #         Row {
 #             description: "definite steps after multiple repetitions",
 #             language: get_language("json"),
 #             pattern: %q%(object "{" (pair) "," (pair) "," (_) "}")% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("object", false),
 #                 ("{", false),
 #                 ("(pair) \",\" (pair)", false),
@@ -3409,7 +3395,7 @@ def test_query_step_is_definite()
 #             description: "a definite with a field",
 #             language: get_language("javascript"),
 #             pattern: %q%(binary_expression left: (identifier) right: (_))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("binary_expression", false),
 #                 ("(identifier)", false),
 #                 ("(_)", true),
@@ -3419,7 +3405,7 @@ def test_query_step_is_definite()
 #             description: "multiple definite steps with fields",
 #             language: get_language("javascript"),
 #             pattern: %q%(function_declaration name: (identifier) body: (statement_block))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("function_declaration", false),
 #                 ("identifier", true),
 #                 ("statement_block", true),
@@ -3432,7 +3418,7 @@ def test_query_step_is_definite()
 #                 (function_declaration
 #                     name: (identifier)
 #                     body: (statement_block "{" (expression_statement) "}"))% ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("function_declaration", false),
 #                 ("identifier", false),
 #                 ("statement_block", false),
@@ -3449,7 +3435,7 @@ def test_query_step_is_definite()
 #                 value: (constant)
 #                 "end")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("singleton_class", false),
 #                 ("constant", false),
 #                 ("end", true),
@@ -3464,7 +3450,7 @@ def test_query_step_is_definite()
 #                   property: (property_identifier) @template-tag)
 #                 arguments: (template_string)) @template-call
 #             % ,
-#             results_by_substring: &[("property_identifier", false), ("template_string", false)],
+#             results_by_substring: [("property_identifier", false), ("template_string", false)],
 #         },
 #         Row {
 #             description: "a definite step after a nested node",
@@ -3476,7 +3462,7 @@ def test_query_step_is_definite()
 #                     property: (property_identifier) @prop)
 #                 "[")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("property_identifier", true),
 #                 ("[", true),
@@ -3493,7 +3479,7 @@ def test_query_step_is_definite()
 #                 "["
 #                 (#match? @prop "foo"))
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("property_identifier", false),
 #                 ("[", true),
@@ -3511,7 +3497,7 @@ def test_query_step_is_definite()
 #                 (binary_expression right:(call_expression))
 #             ]
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("identifier", false),
 #                 ("right:", false),
 #                 ("function:", true),
@@ -3524,7 +3510,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (method_parameters "(" (identifier) @id")")
 #             % ,
-#             results_by_substring: &[("\"(\"", false), ("(identifier)", false), ("\")\"", true)],
+#             results_by_substring: [("\"(\"", false), ("(identifier)", false), ("\")\"", true)],
 #         },
 #         Row {
 #             description: "long, but not too long to analyze",
@@ -3532,7 +3518,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (object "{" (pair) (pair) (pair) (pair) "}")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("\"{\"", false),
 #                 ("(pair)", false),
 #                 ("(pair) \"}\"", false),
@@ -3545,7 +3531,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (object "{" (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) (pair) "}")
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("\"{\"", false),
 #                 ("(pair)", false),
 #                 ("(pair) \"}\"", false),
@@ -3558,7 +3544,7 @@ def test_query_step_is_definite()
 #             pattern: %q%
 #             (method_declaration name: (identifier))
 #             % ,
-#             results_by_substring: &[("name:", true)],
+#             results_by_substring: [("name:", true)],
 #         },
 #         Row {
 #             description: "top-level non-terminal extra nodes",
@@ -3568,7 +3554,7 @@ def test_query_step_is_definite()
 #                 (interpolation)
 #                 (heredoc_end) @end)
 #             % ,
-#             results_by_substring: &[
+#             results_by_substring: [
 #                 ("(heredoc_body", false),
 #                 ("(interpolation)", false),
 #                 ("(heredoc_end)", true),
