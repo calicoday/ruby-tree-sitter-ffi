@@ -14,10 +14,17 @@ describe "parser_patch_spec_blank.rb" do
     
   # ret is array of Range, arg_1 is pointer to array len.
   it ":ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range" do
-    :ts_parser_included_ranges.should == :FIXME
-    ret = TreeSitterFFI.ts_parser_included_ranges()
+#     :ts_parser_included_ranges.should == :FIXME
+#     ret = TreeSitterFFI.ts_parser_included_ranges()
+#     ret.should_not == nil
+#     ret.is_a?(TreeSitterFFI::Pointer).should == true
+    arg_1 = FFI::MemoryPointer.new(:uint32, 1)
+    ret = TreeSitterFFI.ts_parser_included_ranges(@pars, arg_1)
     ret.should_not == nil
     ret.is_a?(FFI::Pointer).should == true
+    len = arg_1.get(:uint32, 0)
+    len.should_not == nil
+    len.is_a?(Integer).should == true
   end
 
   it ":ts_parser_parse, [Parser, Tree, Input.by_value], Tree" do
@@ -28,9 +35,12 @@ describe "parser_patch_spec_blank.rb" do
   end
 
   it ":ts_parser_set_cancellation_flag, [Parser, :size_p], :void" do
-    :ts_parser_set_cancellation_flag.should == :FIXME
-    # :size_p is Pointer
-    ret = TreeSitterFFI.ts_parser_set_cancellation_flag()
+#     :ts_parser_set_cancellation_flag.should == :FIXME
+#     # :size_p is Pointer
+#     ret = TreeSitterFFI.ts_parser_set_cancellation_flag()
+#     # ret void
+    arg_1 = FFI::MemoryPointer.new(:pointer, 1) # :size_p is Pointer
+    ret = TreeSitterFFI.ts_parser_set_cancellation_flag(@pars, arg_1)
     # ret void
   end
 

@@ -37,10 +37,12 @@ class QuerySigs
 		  ["# api.h doesn't say what :ts_query_step_is_definite does!!!"]
 		  ]
 		when :ts_query_capture_name_for_id then [nil,
-		  ["# don't know what are acceptable arg values!!!"]
+		  ["# don't know what are acceptable arg values!!!"],
+		  {not_impl: true}
 		  ]
 		when :ts_query_string_value_for_id then [nil,
-		  ["# don't know what are acceptable arg values!!!"]
+		  ["# don't know what are acceptable arg values!!!"],
+      {not_impl: true}
 		  ]
 		when :ts_query_disable_capture then ['@query, "blurg", 1',
 		  ["# api.h doesn't say what the args are for!!!"]
@@ -58,11 +60,13 @@ class QuerySigs
 		when :ts_query_cursor_set_byte_range then '@query_cursor, 1, 5'
 		when :ts_query_cursor_set_point_range then '@query_cursor, TreeSitterFFI::Point.new'
 		when :ts_query_cursor_next_match then [nil,
-		  ["# don't know what are acceptable arg values!!!"]
+		  ["# don't know what are acceptable arg values!!!"],
+		  {not_impl: true}
 		  ]
 		when :ts_query_cursor_remove_match then '@query_cursor, 5'
 		when :ts_query_cursor_next_capture then [nil,
-		  ["# don't know what are acceptable arg values!!!"]
+		  ["# don't know what are acceptable arg values!!!"],
+		  {not_impl: true}
 		  ]
     else
       nil

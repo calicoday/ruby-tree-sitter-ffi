@@ -26,10 +26,18 @@ describe "query_patch_spec_blank.rb" do
   end
     
   it ":ts_query_predicates_for_pattern, [Query, :uint32, :uint32_p], QueryPredicateStep.by_ref" do
-    :ts_query_predicates_for_pattern.should == :FIXME
-    ret = TreeSitterFFI.ts_query_predicates_for_pattern()
+#     :ts_query_predicates_for_pattern.should == :FIXME
+#     ret = TreeSitterFFI.ts_query_predicates_for_pattern()
+#     ret.should_not == nil
+#     ret.is_a?(TreeSitterFFI::QueryPredicateStep).should == true
+    arg_1 = 5
+    arg_2 = FFI::MemoryPointer.new(:uint32, 1)
+    ret = TreeSitterFFI.ts_query_predicates_for_pattern(@query, arg_1, arg_2)
     ret.should_not == nil
     ret.is_a?(TreeSitterFFI::QueryPredicateStep).should == true
+    len = arg_2.get(:uint32, 0)
+    len.should_not == nil
+    len.is_a?(Integer).should == true
   end
 
   # don't know what are acceptable arg values!!!

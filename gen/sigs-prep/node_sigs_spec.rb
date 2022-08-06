@@ -4,7 +4,7 @@
 # returns the right type, given acceptable args
 
 describe "node_sigs_spec.rb" do
-	before do
+  before do
     @pars = TreeSitterFFI.parser
     json = TreeSitterFFI.parser_json
     @pars.set_language(json).should == true
@@ -13,7 +13,7 @@ describe "node_sigs_spec.rb" do
     @root_node = @tree.root_node
     @array_node = @root_node.named_child(0)
     @number_node = @array_node.named_child(0)
-	end
+  end
     
   it ":ts_node_type, [Node.by_value], :string" do
     ret = TreeSitterFFI.ts_node_type(@number_node)
@@ -51,7 +51,12 @@ describe "node_sigs_spec.rb" do
     ret.is_a?(TreeSitterFFI::Point).should == true
   end
 
-  it ":ts_node_string, [Node.by_value], :adoptstring" do end # TBD
+  it ":ts_node_string, [Node.by_value], :adoptstring" do
+    # :strptr is [String, FFI::Pointer]
+    ret = TreeSitterFFI.ts_node_string(@number_node)
+    ret.should_not == nil
+    ret.is_a?(Array).should == true
+  end
 
   it ":ts_node_is_null, [Node.by_value], :bool" do
     ret = TreeSitterFFI.ts_node_is_null(@number_node)
@@ -96,7 +101,12 @@ describe "node_sigs_spec.rb" do
     ret.is_a?(TreeSitterFFI::Node).should == true
   end
 
-  it ":ts_node_field_name_for_child, [Node.by_value, :uint32], :string" do end # TBD
+  # not sure yet whether we can use just any node args, so try @array_node here for now
+  it ":ts_node_field_name_for_child, [Node.by_value, :uint32], :string" do
+    ret = TreeSitterFFI.ts_node_field_name_for_child(@array_node, 3)
+    # ret.should_not == nil # nil return permitted
+    ret.is_a?(String).should == true if ret
+  end
 
   it ":ts_node_child_count, [Node.by_value], :uint32" do
     ret = TreeSitterFFI.ts_node_child_count(@array_node)
@@ -116,9 +126,18 @@ describe "node_sigs_spec.rb" do
     ret.is_a?(Integer).should == true
   end
 
-  it ":ts_node_child_by_field_name, [Node.by_value, :string, :uint32], Node.by_value" do end # TBD
+  # come back to these two Field map ones:
+  it ":ts_node_child_by_field_name, [Node.by_value, :string, :uint32], Node.by_value" do
+    ret = TreeSitterFFI.ts_node_child_by_field_name(@number_node, "blurg", 2)
+    # ret.should_not == nil # nil return permitted
+    ret.is_a?(TreeSitterFFI::Node).should == true if ret
+  end
 
-  it ":ts_node_child_by_field_id, [Node.by_value, :field_id], Node.by_value" do end # TBD
+  it ":ts_node_child_by_field_id, [Node.by_value, :field_id], Node.by_value" do
+    ret = TreeSitterFFI.ts_node_child_by_field_id(@number_node, 2)
+    # ret.should_not == nil # nil return permitted
+    ret.is_a?(TreeSitterFFI::Node).should == true if ret
+  end
 
   it ":ts_node_next_sibling, [Node.by_value], Node.by_value" do
     ret = TreeSitterFFI.ts_node_next_sibling(@number_node)
@@ -141,7 +160,7 @@ describe "node_sigs_spec.rb" do
   it ":ts_node_prev_named_sibling, [Node.by_value], Node.by_value" do
     ret = TreeSitterFFI.ts_node_prev_named_sibling(@number_node)
     # ret.should_not == nil # nil return permitted
-    ret.is_a?(TreeSitterFFI::Node).should == true
+    ret.is_a?(TreeSitterFFI::Node).should == true if ret
   end
 
   # again array_node, nec???
@@ -168,7 +187,7 @@ describe "node_sigs_spec.rb" do
 
   it ":ts_node_descendant_for_point_range, [Node.by_value, Point.by_value, Point.by_value], Node.by_value" do
     ret = TreeSitterFFI.ts_node_descendant_for_point_range(@array_node, 
-		  TreeSitterFFI::Point.new, TreeSitterFFI::Point.new)
+      TreeSitterFFI::Point.new, TreeSitterFFI::Point.new)
     ret.should_not == nil
     ret.is_a?(TreeSitterFFI::Node).should == true
   end
@@ -182,7 +201,7 @@ describe "node_sigs_spec.rb" do
 
   it ":ts_node_named_descendant_for_point_range, [Node.by_value, Point.by_value, Point.by_value], Node.by_value" do
     ret = TreeSitterFFI.ts_node_named_descendant_for_point_range(@number_node, 
-		  TreeSitterFFI::Point.new, TreeSitterFFI::Point.new)
+      TreeSitterFFI::Point.new, TreeSitterFFI::Point.new)
     ret.should_not == nil
     ret.is_a?(TreeSitterFFI::Node).should == true
   end

@@ -20,7 +20,7 @@ describe "tree_patch_spec_blank.rb" do
     # compare @tree to itself
     ret = TreeSitterFFI.ts_tree_get_changed_ranges()
     ret.should_not == nil
-    ret.is_a?(FFI::Pointer).should == true
+    ret.is_a?(TreeSitterFFI::Pointer).should == true
   end
 
   # come back to FILE pointer

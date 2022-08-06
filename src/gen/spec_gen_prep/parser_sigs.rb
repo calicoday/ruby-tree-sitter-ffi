@@ -38,10 +38,15 @@ class ParserSigs
 		  ]
 		when :ts_parser_cancellation_flag then ['@pars',
 		  '# :size_p is Pointer',
-		  '# nil return permitted!!!'
+		  {nil_ok: true}
 		  ]
-# 		when :ts_parser_set_logger then 
-# 		when :ts_parser_logger then 
+		when :ts_parser_set_logger then [nil,
+		  {not_impl: true}
+		  ]
+		when :ts_parser_logger then [nil,
+		  ['# getting nil ret in the form of #<FFI::Pointer address=0x0000000000000000> ???!!!'],
+		  {not_impl: true}
+		  ]
 		when :ts_parser_print_dot_graphs then '@pars, 2'
     else
       nil

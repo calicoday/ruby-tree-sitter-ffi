@@ -16,11 +16,19 @@ describe "tree_patch_spec_blank.rb" do
   end
     
   it ":ts_tree_get_changed_ranges, [Tree, Tree, :uint32_p], :array_of_range" do
-    :ts_tree_get_changed_ranges.should == :FIXME
+#     :ts_tree_get_changed_ranges.should == :FIXME
+#     # compare @tree to itself
+#     ret = TreeSitterFFI.ts_tree_get_changed_ranges()
+#     ret.should_not == nil
+#     ret.is_a?(TreeSitterFFI::Pointer).should == true
+    arg_2 = FFI::MemoryPointer.new(:uint32, 1)
     # compare @tree to itself
-    ret = TreeSitterFFI.ts_tree_get_changed_ranges()
-    ret.should_not == nil
+    ret = TreeSitterFFI.ts_tree_get_changed_ranges(@tree, @tree, arg_2)
+#     ret.should_not == nil # nil is permitted (if no diff, len == 0)
     ret.is_a?(FFI::Pointer).should == true
+    len = arg_2.get(:uint32, 0)
+    len.should_not == nil
+    len.is_a?(Integer).should == true
   end
 
   # come back to FILE pointer

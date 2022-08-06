@@ -17,7 +17,7 @@ describe "parser_patch_spec_blank.rb" do
     :ts_parser_included_ranges.should == :FIXME
     ret = TreeSitterFFI.ts_parser_included_ranges()
     ret.should_not == nil
-    ret.is_a?(FFI::Pointer).should == true
+    ret.is_a?(TreeSitterFFI::Pointer).should == true
   end
 
   it ":ts_parser_parse, [Parser, Tree, Input.by_value], Tree" do

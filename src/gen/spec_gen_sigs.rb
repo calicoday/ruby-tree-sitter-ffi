@@ -10,6 +10,8 @@ require './src/gen/spec_gen_prep/tree_sigs.rb'
 require './src/gen/spec_gen_prep/query_sigs.rb'
 require './src/gen/spec_gen_prep/parser_sigs.rb'
 
+require 'ffi'
+
 # Yo, cal: do not keep fussing over this one!!!
 
 # spec_gen.rb is a throw-away, bootstrap script to generate blunt tests for each 
@@ -40,11 +42,15 @@ require './src/gen/spec_gen_prep/parser_sigs.rb'
 # - edit boss_patch_spec.rb with custom its
 
 # fixes todo:
+# - version!!!
 # - dirs should end in '/', not filenames start with it
 # - sigs notes are intended to be comments -- gen the hash (when we add indenting???)
-# - indent should be calc'd in case we use this nested
-# - generated indents need to be detabbed!!!
-# - need opts: :nil_permitted, :not_impl
+# - need to strip notes and line break. Curr \n in arglist is fine but
+#   in notes will result in broken comments!!! see :ts_node_child.
+#   Also arglist needs to be detabbed!!!
+# - only create boss_patch_spec_blank.rb if there ARE patches
+# - :nil_ok shd add 'if ret' to type check. DONE. CONF!!!
+# - note: should_not == :FIXME in patch bc :not_impl in prep or just nil arglist!!!
 
 def chg_type(type)
 	case type
@@ -63,13 +69,30 @@ def chg_type(type)
 	end
 end
 
+# def qual_type(type)
+#   puts "  type: #{type.inspect}"
+# 	begin
+# 		::Kernel.const_get(type)
+# 	rescue
+# 		# if type isn't recognized, assume it belongs to tree_sitter_ffi and qualify
+# 		type = "TreeSitterFFI::#{type.to_s}"
+# 	end
+# end
 def qual_type(type)
+  puts "  type: #{type.inspect}"
 	begin
-		::Kernel.const_get(type)
+		c = ::Kernel.const_get(type)
 	rescue
-		# if type isn't recognized, assume it belongs to tree_sitter_ffi and qualify
-		type = "TreeSitterFFI::#{type.to_s}"
+    begin
+      c = ::FFI.const_get(type)
+      type = "FFI::#{type.to_s}"
+    rescue
+      # if type isn't recognized, assume it belongs to tree_sitter_ffi and qualify
+      type = "TreeSitterFFI::#{type.to_s}"
+    end
 	end
+	puts "  qual: #{type.inspect}"
+	type
 end
 
 class String
@@ -89,41 +112,37 @@ def mk_descr_head(label, before="")
 # returns the right type, given acceptable args
 
 describe "#{label}" do
-	before do
+  before do
     #{before.map(&:strip).reject{|e| e.empty?}.join_indented(2) unless before.empty?}
-	end
+  end
     
-	INDENTED_HEREDOC
+INDENTED_HEREDOC
 end
-#    #{before.map(&:strip).reject{|e| e.empty?}.join("\n\t\t") unless before.empty?}
 
 def mk_it_all(c_name_sym, label, arg_types, ret, prep, depth=1, &b)
   # make the it, then add it to the spec or patch, as approp, and return both
 
   # arglist from prep is now a string of comma sepd. split to count, write out as is!!!
-#   obj, arglist = prep.fn(c_name_sym.to_sym)
   entry = prep.sig(c_name_sym.to_sym)
   entry = [entry] unless entry.is_a?(Array)
-#   arglist, *notes = entry
   arglist, *notes = entry
   
   # if the last member of entry is a Hash, it is opts
-#   opts = {}
-#   opts = notes.pop if notes && notes.last && notes.last.is_a?(Hash)
   opts = (notes && notes.last && notes.last.is_a?(Hash) ? notes.pop : {})
   
   notes = [] unless notes
   notes = [notes] unless notes.is_a?(Array)
-#   outerlist, innerlist = notes
   
-  puts "  == #{c_name_sym}: #{arglist.inspect}, notes: #{notes.inspect}"
+  puts "=== #{c_name_sym}: #{arglist.inspect}, notes: #{notes.inspect}"
   
+  # patch gets a symbol reason (not true or false) or nil if no patch
+  patch = nil
   # if arglist is nil, the it needs a patch, so just stub it and move on
-  unless arglist
-    patch = "it \"#{label}\" do end # TBD".line(depth).line
-  end
+  patch = :nil_arglist unless arglist
+  patch = :not_impl if opts[:not_impl] # still patch but we expected it
     
   arglist = "" unless arglist
+  arglist = arglist.gsub("\t", '  ') # detab -- do better!!! FIXME!!!
   
   s = ""
   
@@ -136,12 +155,18 @@ def mk_it_all(c_name_sym, label, arg_types, ret, prep, depth=1, &b)
 	s += "it \"#{label}\" do".line(depth)
   depth += 1
 
+  if patch
+    # bc :not_impl or :nil_arglist
+    t = ":#{c_name_sym}.should == :FIXME"
+    t += " # :not_impl" if patch == :not_impl
+    s += t.line(depth)
+  end
+    
 	unless notes.empty?
 	  inner = notes.map(&:strip).reject{|e| e.empty?}.join_indented(depth)
     s += "#{inner}".line(depth)
   end
   
-#   unless arglist.split(',').length == arg_types.length
   unless arglist.empty? || arglist.split(',').length == arg_types.length
     ### label lists args ts_ style, ie with obj included first, but prep asks
     # only for the other args!!! awkward!!!
@@ -152,28 +177,32 @@ def mk_it_all(c_name_sym, label, arg_types, ret, prep, depth=1, &b)
 		
 	call = yield(arglist)
 		
-	if opts[:not_impl]
-	  ret = :not_impl
-	else
-    s += "ret = #{call}".line(depth)
-  end
+# 	if opts[:not_impl]
+# # 	  ret = :not_impl
+#     patch = :not_impl
+# 	else
+#     s += "ret = #{call}".line(depth)
+#   end
 
 	s += case ret
   when ':void'
-		"# ret void".line(depth)
+    t = "ret = #{call}".line(depth)
+		t += "# ret void".line(depth)
 	when ':bool'
-		"[true, false].include?(ret).should == true".line(depth)
-	when :not_impl 
-# 		:ts_parser_set_logger.should_not == :FIXME # not impl
-    t = ":#{c_name_sym}.should_not == :FIXME # not impl".line(depth)
+    t = "ret = #{call}".line(depth)
+		t += "[true, false].include?(ret).should == true".line(depth)
 	else
-	  if opts[:nil_ok]
-      t = "# ret.should_not == nil # nil return permitted".line(depth)
-	  else
-      t = "ret.should_not == nil".line(depth)
-		end
+    t = ""
+    # and then the boilerplate stuff to start with, in sigs or patch
+    t += "ret = #{call}".line(depth)
 	  qual_ret = (ret.is_a?(Symbol) ? ret : qual_type(ret))
-    t += "ret.is_a?(#{qual_ret}).should == true".line(depth)
+	  if opts[:nil_ok]
+      t += "# ret.should_not == nil # nil return permitted".line(depth)
+      t += "ret.is_a?(#{qual_ret}).should == true if ret".line(depth)
+	  else
+      t += "ret.should_not == nil".line(depth)
+      t += "ret.is_a?(#{qual_ret}).should == true".line(depth)
+		end
 	end
 
 	depth -= 1
@@ -182,7 +211,7 @@ def mk_it_all(c_name_sym, label, arg_types, ret, prep, depth=1, &b)
 	# if patch is not nil, the spec gets a stub and the it goes to the patch
 	# return [spec, patch]
 	patch ?
-	  ["it \"#{label}\" do end # TBD".line(depth).line, s] :
+	  ["# #{label} # to patch".line(depth).line, s] :
 	  [s, nil] 
 
 end
@@ -229,6 +258,8 @@ runner.legacy_prepare_dirs(srcdir, gendir, outdir, devdir, true) #womping
   # head
   before = prep.before
   before = [before] unless before.is_a?(Array)
+  before = before.map{|e| e.gsub("\t", '  ')} # detab -- do better!!! FIXME!!!
+
   runner.write_some(:out_ts, mk_descr_head("#{bosstag}_sigs_spec.rb", before))
   runner.write_some(:out_patch, mk_descr_head("#{bosstag}_patch_spec_blank.rb", before))
 

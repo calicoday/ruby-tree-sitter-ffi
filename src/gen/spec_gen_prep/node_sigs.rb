@@ -23,7 +23,9 @@ class NodeSigs
 		when :ts_node_end_byte then '@number_node'
 		when :ts_node_end_point then '@number_node'
 		
-# 		when :ts_node_string then 
+		when :ts_node_string then ['@number_node',
+		  '# :strptr is [String, FFI::Pointer]'
+		  ]
 		
 		when :ts_node_is_null then '@number_node'
 		when :ts_node_is_named then '@number_node'
@@ -37,14 +39,22 @@ class NodeSigs
 		  ['# not sure yet whether we can use just any node args, '+
 		    'so try @array_node here for now']
 		  ]
-# 		when :ts_node_field_name_for_child then 
+		when :ts_node_field_name_for_child then ['@array_node, 3',
+		  ['# not sure yet whether we can use just any node args, so try @array_node here for now'],
+		  {nil_ok: true}
+		  ]
 		when :ts_node_child_count then '@array_node'
 		when :ts_node_named_child then '@array_node, 0'
 		when :ts_node_named_child_count then '@array_node'
 		
-# 		when :ts_node_child_by_field_name then 
-# 		when :ts_node_child_by_field_id then 
-		
+		when :ts_node_child_by_field_name then ['@number_node, "blurg", 2',
+		  ['# come back to these two Field map ones:'],
+		  {nil_ok: true}
+		  ]
+		when :ts_node_child_by_field_id then ['@number_node, 2',
+		  {nil_ok: true}
+		  ]
+
 		when :ts_node_next_sibling then '@number_node'
 		when :ts_node_prev_sibling then '@number_node'
 		when :ts_node_next_named_sibling then '@number_node'

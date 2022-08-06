@@ -35,7 +35,9 @@ class TreeSigs
 		  '# reset to the same root_node'
 		  ]
 		when :ts_tree_cursor_current_node then '@tree_cursor'
-		when :ts_tree_cursor_current_field_name then '@tree_cursor'
+		when :ts_tree_cursor_current_field_name then ['@tree_cursor',
+		  {nil_ok: true}
+		  ]
 		when :ts_tree_cursor_current_field_id then '@tree_cursor'
 		when :ts_tree_cursor_goto_parent then '@tree_cursor'
 		when :ts_tree_cursor_goto_next_sibling then '@tree_cursor'
