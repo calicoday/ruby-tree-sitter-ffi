@@ -48,7 +48,9 @@ class NodeSigs
 		when :ts_node_next_sibling then '@number_node'
 		when :ts_node_prev_sibling then '@number_node'
 		when :ts_node_next_named_sibling then '@number_node'
-		when :ts_node_prev_named_sibling then '@number_node'
+		when :ts_node_prev_named_sibling then ['@number_node',
+		  {nil_ok: true}
+		  ]
 		
 		when :ts_node_first_child_for_byte then ['@array_node, 5',
 		  ['# again array_node, nec???'],

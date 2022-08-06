@@ -12,34 +12,34 @@ describe "parser_patch_spec_blank.rb" do
 		@tree = @pars.parse_string(nil, @input, @input.length)
 	end
     
-	# ret is array of Range, arg_1 is pointer to array len.
-	it ":ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range" do
-		ret = TreeSitterFFI.ts_parser_included_ranges()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::Pointer).should == true
-	end
+  # ret is array of Range, arg_1 is pointer to array len.
+  it ":ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range" do
+    ret = TreeSitterFFI.ts_parser_included_ranges()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::Pointer).should == true
+  end
 
-	it ":ts_parser_parse, [Parser, Tree, Input.by_value], Tree" do
-		ret = TreeSitterFFI.ts_parser_parse()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::Tree).should == true
-	end
+  it ":ts_parser_parse, [Parser, Tree, Input.by_value], Tree" do
+    ret = TreeSitterFFI.ts_parser_parse()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::Tree).should == true
+  end
 
-	it ":ts_parser_set_cancellation_flag, [Parser, :size_p], :void" do
-		# :size_p is Pointer
-		ret = TreeSitterFFI.ts_parser_set_cancellation_flag()
-		# ret void
-	end
+  it ":ts_parser_set_cancellation_flag, [Parser, :size_p], :void" do
+    # :size_p is Pointer
+    ret = TreeSitterFFI.ts_parser_set_cancellation_flag()
+    # ret void
+  end
 
-	it ":ts_parser_set_logger, [Parser, Logger.by_value], :void" do
-		ret = TreeSitterFFI.ts_parser_set_logger()
-		# ret void
-	end
+  it ":ts_parser_set_logger, [Parser, Logger.by_value], :void" do
+    ret = TreeSitterFFI.ts_parser_set_logger()
+    # ret void
+  end
 
-	it ":ts_parser_logger, [Parser], Logger.by_value" do
-		ret = TreeSitterFFI.ts_parser_logger()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::Logger).should == true
-	end
+  it ":ts_parser_logger, [Parser], Logger.by_value" do
+    ret = TreeSitterFFI.ts_parser_logger()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::Logger).should == true
+  end
 
 end

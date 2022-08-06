@@ -15,17 +15,17 @@ describe "tree_patch_spec_blank.rb" do
 		@tree_cursor = TreeSitterFFI.ts_tree_cursor_new(@root_node) #crashes!!! FIXME!!!
 	end
     
-  it ":ts_tree_get_changed_ranges, [Tree, Tree, :uint32_p], :array_of_range" do
-    # compare @tree to itself
-    ret = TreeSitterFFI.ts_tree_get_changed_ranges()
-    ret.should_not == nil
-    ret.is_a?(TreeSitterFFI::Pointer).should == true
-  end
+	it ":ts_tree_get_changed_ranges, [Tree, Tree, :uint32_p], :array_of_range" do
+		# compare @tree to itself
+		ret = TreeSitterFFI.ts_tree_get_changed_ranges()
+		ret.should_not == nil
+		ret.is_a?(TreeSitterFFI::Pointer).should == true
+	end
 
-  # come back to FILE pointer
-  it ":ts_tree_print_dot_graph, [Tree, :file_pointer], :void" do
-    ret = TreeSitterFFI.ts_tree_print_dot_graph()
-    # ret void
-  end
+	# come back to FILE pointer
+	it ":ts_tree_print_dot_graph, [Tree, :file_pointer], :void" do
+		ret = TreeSitterFFI.ts_tree_print_dot_graph()
+		# ret void
+	end
 
 end

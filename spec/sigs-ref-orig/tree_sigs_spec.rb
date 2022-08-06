@@ -116,5 +116,4 @@ describe "ts_tree_spec.rb" do
 		ret.should_not == nil
 		ret.is_a?(TreeSitterFFI::TreeCursor).should == true
 	end
-	
 end

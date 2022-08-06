@@ -25,36 +25,36 @@ describe "query_patch_spec_blank.rb" do
 		@root_node = @tree.root_node
 	end
     
-	it ":ts_query_predicates_for_pattern, [Query, :uint32, :uint32_p], QueryPredicateStep.by_ref" do
-		ret = TreeSitterFFI.ts_query_predicates_for_pattern()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::QueryPredicateStep).should == true
-	end
+  it ":ts_query_predicates_for_pattern, [Query, :uint32, :uint32_p], QueryPredicateStep.by_ref" do
+    ret = TreeSitterFFI.ts_query_predicates_for_pattern()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::QueryPredicateStep).should == true
+  end
 
-	# don't know what are acceptable arg values!!!
-	it ":ts_query_capture_name_for_id, [Query, :uint32, :uint32_p], :string" do
-		ret = TreeSitterFFI.ts_query_capture_name_for_id()
-		ret.should_not == nil
-		ret.is_a?(String).should == true
-	end
+  # don't know what are acceptable arg values!!!
+  it ":ts_query_capture_name_for_id, [Query, :uint32, :uint32_p], :string" do
+    ret = TreeSitterFFI.ts_query_capture_name_for_id()
+    ret.should_not == nil
+    ret.is_a?(String).should == true
+  end
 
-	# don't know what are acceptable arg values!!!
-	it ":ts_query_string_value_for_id, [Query, :uint32, :uint32_p], :string" do
-		ret = TreeSitterFFI.ts_query_string_value_for_id()
-		ret.should_not == nil
-		ret.is_a?(String).should == true
-	end
+  # don't know what are acceptable arg values!!!
+  it ":ts_query_string_value_for_id, [Query, :uint32, :uint32_p], :string" do
+    ret = TreeSitterFFI.ts_query_string_value_for_id()
+    ret.should_not == nil
+    ret.is_a?(String).should == true
+  end
 
-	# don't know what are acceptable arg values!!!
-	it ":ts_query_cursor_next_match, [QueryCursor, QueryMatch.by_ref], :bool" do
-		ret = TreeSitterFFI.ts_query_cursor_next_match()
-		[true, false].include?(ret).should == true
-	end
+  # don't know what are acceptable arg values!!!
+  it ":ts_query_cursor_next_match, [QueryCursor, QueryMatch.by_ref], :bool" do
+    ret = TreeSitterFFI.ts_query_cursor_next_match()
+    [true, false].include?(ret).should == true
+  end
 
-	# don't know what are acceptable arg values!!!
-	it ":ts_query_cursor_next_capture, [QueryCursor, QueryMatch.by_ref, :uint32_p], :bool" do
-		ret = TreeSitterFFI.ts_query_cursor_next_capture()
-		[true, false].include?(ret).should == true
-	end
+  # don't know what are acceptable arg values!!!
+  it ":ts_query_cursor_next_capture, [QueryCursor, QueryMatch.by_ref, :uint32_p], :bool" do
+    ret = TreeSitterFFI.ts_query_cursor_next_capture()
+    [true, false].include?(ret).should == true
+  end
 
 end

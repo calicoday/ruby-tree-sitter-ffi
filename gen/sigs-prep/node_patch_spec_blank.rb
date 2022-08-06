@@ -6,37 +6,37 @@
 describe "node_patch_spec_blank.rb" do
 	before do
     @pars = TreeSitterFFI.parser
-		json = TreeSitterFFI.parser_json
-		@pars.set_language(json).should == true
-		@input = "[1, null]"
-		@tree = @pars.parse_string(nil, @input, @input.length)
-		@root_node = @tree.root_node
-		@array_node = @root_node.named_child(0)
-		@number_node = @array_node.named_child(0)
+    json = TreeSitterFFI.parser_json
+    @pars.set_language(json).should == true
+    @input = "[1, null]"
+    @tree = @pars.parse_string(nil, @input, @input.length)
+    @root_node = @tree.root_node
+    @array_node = @root_node.named_child(0)
+    @number_node = @array_node.named_child(0)
 	end
     
-	it ":ts_node_string, [Node.by_value], :adoptstring" do
-		ret = TreeSitterFFI.ts_node_string()
-		ret.should_not == nil
-		ret.is_a?(Array).should == true
-	end
+  it ":ts_node_string, [Node.by_value], :adoptstring" do
+    ret = TreeSitterFFI.ts_node_string()
+    ret.should_not == nil
+    ret.is_a?(Array).should == true
+  end
 
-	it ":ts_node_field_name_for_child, [Node.by_value, :uint32], :string" do
-		ret = TreeSitterFFI.ts_node_field_name_for_child()
-		ret.should_not == nil
-		ret.is_a?(String).should == true
-	end
+  it ":ts_node_field_name_for_child, [Node.by_value, :uint32], :string" do
+    ret = TreeSitterFFI.ts_node_field_name_for_child()
+    ret.should_not == nil
+    ret.is_a?(String).should == true
+  end
 
-	it ":ts_node_child_by_field_name, [Node.by_value, :string, :uint32], Node.by_value" do
-		ret = TreeSitterFFI.ts_node_child_by_field_name()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::Node).should == true
-	end
+  it ":ts_node_child_by_field_name, [Node.by_value, :string, :uint32], Node.by_value" do
+    ret = TreeSitterFFI.ts_node_child_by_field_name()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::Node).should == true
+  end
 
-	it ":ts_node_child_by_field_id, [Node.by_value, :field_id], Node.by_value" do
-		ret = TreeSitterFFI.ts_node_child_by_field_id()
-		ret.should_not == nil
-		ret.is_a?(TreeSitterFFI::Node).should == true
-	end
+  it ":ts_node_child_by_field_id, [Node.by_value, :field_id], Node.by_value" do
+    ret = TreeSitterFFI.ts_node_child_by_field_id()
+    ret.should_not == nil
+    ret.is_a?(TreeSitterFFI::Node).should == true
+  end
 
 end
