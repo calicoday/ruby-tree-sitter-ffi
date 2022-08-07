@@ -12,8 +12,6 @@ require './src/gen/spec_gen_prep/parser_sigs.rb'
 
 require 'ffi'
 
-# Yo, cal: do not keep fussing over this one!!!
-
 # spec_gen.rb is a throw-away, bootstrap script to generate blunt tests for each 
 # function sig of the main boss classes (and their mod.ts_ equivalents).
 # There is definitely a role for such a script but this is exactly the
@@ -69,15 +67,28 @@ def chg_type(type)
 	end
 end
 
-# def qual_type(type)
-#   puts "  type: #{type.inspect}"
-# 	begin
-# 		::Kernel.const_get(type)
-# 	rescue
-# 		# if type isn't recognized, assume it belongs to tree_sitter_ffi and qualify
-# 		type = "TreeSitterFFI::#{type.to_s}"
-# 	end
+### check this poss with 'retry':
+# def send_messages_maybe(object, messages, *parameters)
+#   object.send(messages.first, *parameters)
+# rescue NoMethodError
+#   messages = messages[1..-1]
+#   if messages.empty?
+#     warn "Object does not respond to basic methods!"
+#   else
+#     retry
+#   end
 # end
+# 
+# module Quux
+#   def quux(*args)
+#     puts "quux method called with #{args.inspect}"
+#   end
+# end
+# 
+# messages = %i{foo bar quux}
+# send_messages_maybe(Object.new, messages)
+# send_messages_maybe(Object.new.extend(Quux), messages, 10, :hello, 'world')
+
 def qual_type(type)
   puts "  type: #{type.inspect}"
 	begin
@@ -177,13 +188,6 @@ def mk_it_all(c_name_sym, label, arg_types, ret, prep, depth=1, &b)
 		
 	call = yield(arglist)
 		
-# 	if opts[:not_impl]
-# # 	  ret = :not_impl
-#     patch = :not_impl
-# 	else
-#     s += "ret = #{call}".line(depth)
-#   end
-
 	s += case ret
   when ':void'
     t = "ret = #{call}".line(depth)
@@ -221,8 +225,6 @@ def cut_prefix(prefix, c_name)
 	# if prefix matches, return amended method name
 	prefix = prefix[1..-1] # chop : but leave it string!!!
 	prefix == c_name[0, prefix.length] ? c_name[prefix.length..-1] : nil
-	# already cut :
-# 	prefix.to_s == c_name.to_s[0, prefix.length] ? c_name[prefix.length..-1] : nil
 end
 
 def compose_c(label, prefix, c_name_sym, arg_types, ret_type, prep)
@@ -249,9 +251,6 @@ runner.legacy_prepare_dirs(srcdir, gendir, outdir, devdir, true) #womping
   runner.write_open(:out, :out_ts, "/#{bosstag}_sigs_spec.rb", 'w')
   runner.write_open(:out, :out_patch, "/#{bosstag}_patch_spec_blank.rb", 'w')
 
-#   prep = case bosstag
-#   when 'node' then NodeSigs.new
-#   end
   klass = bosstag.capitalize + 'Sigs'
   prep = Object::const_get(klass).new
   
