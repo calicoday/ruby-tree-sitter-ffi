@@ -12,6 +12,14 @@ describe "parser_patch_spec_blank.rb" do
     @tree = @pars.parse_string(nil, @input, @input.length)
   end
     
+  # ret is array of Range, arg_1 is pointer to array len.
+  it ":ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range" do
+    :ts_parser_included_ranges.should == :FIXME
+    ret = TreeSitterFFI.ts_parser_included_ranges()
+    ret.should_not == nil
+    ret.is_a?(FFI::Pointer).should == true
+  end
+
   it ":ts_parser_parse, [Parser, Tree, Input.by_value], Tree" do
     :ts_parser_parse.should == :FIXME
     ret = TreeSitterFFI.ts_parser_parse()

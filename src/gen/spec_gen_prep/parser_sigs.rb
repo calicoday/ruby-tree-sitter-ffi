@@ -19,15 +19,19 @@ class ParserSigs
 			TreeSitterFFI::Range.new, 1',
 			['# arg_1 is array of Range, arg_2 is array len.']
 			]
-		# make these spec_gen test cases:
+# 		# make these spec_gen test cases:
 # 		when :ts_parser_set_included_ranges then [['@pars', 
+# 		when :ts_parser_set_included_ranges then 
 # 			'TreeSitterFFI::Range.new', '1', :uint32_p],
 # 			['# arg_1 is array of Range, arg_2 is array len.']
 # 			]
 # 		when :ts_parser_included_ranges then [['@pars', [:uint32_p], :quux],
 # 		  ['# ret is array of Range, arg_1 is pointer to array len.']
 # 		  ]
-		when :ts_parser_included_ranges then [['@pars', :uint32_p],
+# 		when :ts_parser_included_ranges then [['@pars', :uint32_p],
+# 		  ['# ret is array of Range, arg_1 is pointer to array len.']
+# 		  ]
+		when :ts_parser_included_ranges then [nil,
 		  ['# ret is array of Range, arg_1 is pointer to array len.']
 		  ]
 # 		when :ts_parser_parse then 

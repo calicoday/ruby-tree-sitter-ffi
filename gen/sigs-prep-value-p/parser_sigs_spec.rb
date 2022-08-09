@@ -29,15 +29,7 @@ describe "parser_sigs_spec.rb" do
     [true, false].include?(ret).should == true
   end
 
-  # ret is array of Range, arg_1 is pointer to array len.
-  it ":ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range" do
-    ret, *got = SpecUtil::bufs([:uint32_p]) do |arg_1|
-      TreeSitterFFI.ts_parser_included_ranges(@pars, arg_1)
-    end
-    got[0].is_a?(Integer).should == true
-    ret.should_not == nil
-    ret.is_a?(FFI::Pointer).should == true
-  end
+  # :ts_parser_included_ranges, [Parser, :uint32_p], :array_of_range # to patch
 
   # :ts_parser_parse, [Parser, Tree, Input.by_value], Tree # to patch
 
