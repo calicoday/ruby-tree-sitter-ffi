@@ -13,7 +13,7 @@ module TreeSitterFFI
 	
 		wrap_attach(:ts_language_, [
 			[:ts_language_symbol_count, [Language], :uint32],
-			[:ts_language_symbol_name, [Language, :symbol], :uint32],
+			[:ts_language_symbol_name, [Language, :symbol], :string],
 			[:ts_language_symbol_for_name, [Language, :string, :uint32, :bool], :symbol],
 			[:ts_language_field_count, [Language], :uint32],
 			[:ts_language_field_name_for_id, [Language, :field_id], :string],
