@@ -11,146 +11,225 @@ end
 
 class RustyQuery < RustyBoss
 
+  # let all pass for finding still problems
+	def no_skip_fn(m)
+		# m NOT commented out will be skipped!!!
+		name = m.scan(/[^\(]*/).first
+		case name
+		when "test_query_errors_on_invalid_syntax" then nil
+		when "test_query_errors_on_invalid_symbols" then nil
+		when "test_query_errors_on_invalid_predicates" then nil
+		when "test_query_errors_on_impossible_patterns" then nil
+		when "test_query_verifies_possible_patterns_with_aliased_parent_nodes" then nil
+		when "test_query_matches_with_simple_pattern" then nil
+		when "test_query_matches_with_multiple_on_same_root" then nil
+		when "test_query_matches_with_multiple_patterns_different_roots" then nil
+		when "test_query_matches_with_multiple_patterns_same_root" then nil
+		when "test_query_matches_with_nesting_and_no_fields" then nil
+		when "test_query_matches_with_many_results" then nil
+		when "test_query_matches_with_many_overlapping_results" then nil
+		when "test_query_matches_capturing_error_nodes" then nil
+		when "test_query_matches_with_extra_children" then nil
+		when "test_query_matches_with_named_wildcard" then nil
+		when "test_query_matches_with_wildcard_at_the_root" then nil
+		when "test_query_matches_with_immediate_siblings" then nil
+		when "test_query_matches_with_last_named_child" then nil
+		when "test_query_matches_with_negated_fields" then nil
+		when "test_query_matches_with_field_at_root" then nil
+		when "test_query_matches_with_repeated_leaf_nodes" then nil
+		when "test_query_matches_with_optional_nodes_inside_of_repetitions" then nil
+		when "test_query_matches_with_top_level_repetitions" then nil
+		when "test_query_matches_with_non_terminal_repetitions_within_root" then nil
+		when "test_query_matches_with_nested_repetitions" then nil
+		when "test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern" then nil
+		when "test_query_matches_with_trailing_repetitions_of_last_child" then nil
+		when "test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes" then nil
+		when "test_query_matches_with_trailing_optional_nodes" then nil
+		when "test_query_matches_with_nested_optional_nodes" then nil
+		when "test_query_matches_with_repeated_internal_nodes" then nil
+		when "test_query_matches_with_simple_alternatives" then nil
+		when "test_query_matches_with_alternatives_in_repetitions" then nil
+		when "test_query_matches_with_alternatives_at_root" then nil
+		when "test_query_matches_with_alternatives_under_fields" then nil
+		when "test_query_matches_in_language_with_simple_aliases" then nil
+		when "test_query_matches_with_different_tokens_with_the_same_string_value" then nil
+		when "test_query_matches_with_too_many_permutations_to_track" then nil
+		when "test_query_matches_with_alternatives_and_too_many_permutations_to_track" then nil
+		when "test_query_matches_with_anonymous_tokens" then nil
+		when "test_query_matches_with_supertypes" then nil
+		when "test_query_matches_within_byte_range" then nil
+		when "test_query_matches_within_point_range" then nil
+		when "test_query_captures_within_byte_range" then nil
+		when "test_query_matches_with_unrooted_patterns_intersecting_byte_range" then nil
+		when "test_query_captures_within_byte_range_assigned_after_iterating" then nil
+		when "test_query_matches_different_queries_same_cursor" then nil
+		when "test_query_matches_with_multiple_captures_on_a_node" then nil
+		when "test_query_matches_with_captured_wildcard_at_root" then nil
+		when "test_query_matches_with_no_captures" then nil
+		when "test_query_matches_with_repeated_fields" then nil
+		when "test_query_matches_with_deeply_nested_patterns_with_fields" then nil
+		when "test_query_matches_with_indefinite_step_containing_no_captures" then nil
+		when "test_query_captures_basic" then nil
+		when "test_query_captures_with_text_conditions" then nil
+		when "test_query_captures_with_predicates" then nil
+		when "test_query_captures_with_quoted_predicate_args" then nil
+		when "test_query_captures_with_duplicates" then nil
+		when "test_query_captures_with_many_nested_results_without_fields" then nil
+		when "test_query_captures_with_many_nested_results_with_fields" then nil
+		when "test_query_captures_with_too_many_nested_results" then nil
+		when "test_query_captures_with_definite_pattern_containing_many_nested_matches" then nil
+		when "test_query_captures_ordered_by_both_start_and_end_positions" then nil
+		when "test_query_captures_with_matches_removed" then nil
+		when "test_query_captures_and_matches_iterators_are_fused" then nil
+		when "test_query_text_callback_returns_chunks" then nil
+		when "test_query_start_byte_for_pattern" then nil
+		when "test_query_capture_names" then nil
+		when "test_query_lifetime_is_separate_from_nodes_lifetime" then nil
+		when "test_query_with_no_patterns" then nil
+		when "test_query_comments" then nil
+		when "test_query_disable_pattern" then nil
+		when "test_query_alternative_predicate_prefix" then nil
+		when "test_query_step_is_definite" then nil
+		when "assert_query_matches" then nil
+		when "collect_matches" then nil
+		when "collect_captures" then nil
+		when "format_captures" then nil
+
+    when /&|Vec/ then "&|Vec"
+      # disable any calls that contain '&', 'Vec'
+    else
+      nil
+    end
+  end
+  
 	# for commenting out def and call of troublesome functions during dev
 	# => nil or a why String
 	def skip_fn(m)
 		# m NOT commented out will be skipped!!!
 		name = m.scan(/[^\(]*/).first
-		[
-=begin
-			# query, prob need to recreate these
-	# 		"test_query_errors_on_invalid_syntax",
-	# 		"test_query_errors_on_invalid_symbols",
-=end	
+		case name
+# 		when "test_query_errors_on_invalid_syntax" then nil
+# 		when "test_query_errors_on_invalid_symbols" then nil
+
 	    # choke: run_rusty_helper.rb:28:in `==': Invalid Memory object (ArgumentError)
-			"test_query_errors_on_invalid_predicates",  ### noVec
-=begin	
-	# 		"test_query_errors_on_impossible_patterns",
-	# 		"test_query_verifies_possible_patterns_with_aliased_parent_nodes",
-	# 		"test_query_matches_with_simple_pattern",
-	# 		"test_query_matches_with_multiple_on_same_root",
-	# 		"test_query_matches_with_multiple_patterns_different_roots",
-	# 		"test_query_matches_with_multiple_patterns_same_root",
-	# 		"test_query_matches_with_nesting_and_no_fields",
-	# 		"test_query_matches_with_many_results",
-=end
-			"test_query_matches_with_many_overlapping_results",
-=begin
-	# 		"test_query_matches_capturing_error_nodes",
-	# 		"test_query_matches_with_extra_children",
-			###"test_query_matches_with_named_wildcard",  ### noVec
-# 			"test_query_matches_with_wildcard_at_the_root", ### anchor op '.'
-# 			"test_query_matches_with_immediate_siblings", ### anchor op '.'
-# 			"test_query_matches_with_last_named_child", ### anchor op '.'
+		when "test_query_errors_on_invalid_predicates" then "choke, noVec"
 
-# 			"test_query_matches_with_negated_fields", ### anchor op '.'
-# 			"test_query_matches_with_field_at_root",
-# 			"test_query_matches_with_repeated_leaf_nodes", ### anchor op '.'
-# 			"test_query_matches_with_optional_nodes_inside_of_repetitions",
-# 			"test_query_matches_with_top_level_repetitions",
-# 			"test_query_matches_with_non_terminal_repetitions_within_root",
-# 			"test_query_matches_with_nested_repetitions",
-# 			"test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern",
-# 			"test_query_matches_with_trailing_repetitions_of_last_child",
-# 			"test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes", ### anchor op '.'
-# 			"test_query_matches_with_trailing_optional_nodes",
-# 			"test_query_matches_with_nested_optional_nodes",
-# 			"test_query_matches_with_repeated_internal_nodes",
-# 			"test_query_matches_with_simple_alternatives",
-# 			"test_query_matches_with_alternatives_in_repetitions", ### anchor op '.'
-# 			"test_query_matches_with_alternatives_at_root",
-# 			"test_query_matches_with_alternatives_under_fields",
-# 			"test_query_matches_in_language_with_simple_aliases",
-# 			"test_query_matches_with_different_tokens_with_the_same_string_value",
-=end
+# 		when "test_query_errors_on_impossible_patterns" then nil
+# 		when "test_query_verifies_possible_patterns_with_aliased_parent_nodes" then nil
+# 		when "test_query_matches_with_simple_pattern" then nil
+# 		when "test_query_matches_with_multiple_on_same_root" then nil
+# 		when "test_query_matches_with_multiple_patterns_different_roots" then nil
+# 		when "test_query_matches_with_multiple_patterns_same_root" then nil
+# 		when "test_query_matches_with_nesting_and_no_fields" then nil
+
+		when "test_query_matches_with_many_results" then "bc why???!!!"
+		when "test_query_matches_with_many_overlapping_results" then "bc why???!!!"
+		
+# 		when "test_query_matches_capturing_error_nodes" then nil
+# 		when "test_query_matches_with_extra_children" then nil
+# 		when "test_query_matches_with_named_wildcard" then nil
+# 		when "test_query_matches_with_wildcard_at_the_root" then nil
+# 		when "test_query_matches_with_immediate_siblings" then nil
+# 		when "test_query_matches_with_last_named_child" then nil
+# 		when "test_query_matches_with_negated_fields" then nil
+# 		when "test_query_matches_with_field_at_root" then nil
+# 		when "test_query_matches_with_repeated_leaf_nodes" then nil
+# 		when "test_query_matches_with_optional_nodes_inside_of_repetitions" then nil
+# 		when "test_query_matches_with_top_level_repetitions" then nil
+# 		when "test_query_matches_with_non_terminal_repetitions_within_root" then nil
+# 		when "test_query_matches_with_nested_repetitions" then nil
+
+		when "test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern" then "bc why???!!!"
+
+# 		when "test_query_matches_with_trailing_repetitions_of_last_child" then nil
+# 		when "test_query_matches_with_leading_zero_or_more_repeated_leaf_nodes" then nil
+# 		when "test_query_matches_with_trailing_optional_nodes" then nil
+# 		when "test_query_matches_with_nested_optional_nodes" then nil
+# 		when "test_query_matches_with_repeated_internal_nodes" then nil
+# 		when "test_query_matches_with_simple_alternatives" then nil
+# 		when "test_query_matches_with_alternatives_in_repetitions" then nil
+# 		when "test_query_matches_with_alternatives_at_root" then nil
+# 		when "test_query_matches_with_alternatives_under_fields" then nil
+# 		when "test_query_matches_in_language_with_simple_aliases" then nil
+# 		when "test_query_matches_with_different_tokens_with_the_same_string_value" then nil
+
       # choke: undefined method `push_str' for #<String:0x0000000141aefed8> (NoMethodError)
-			"test_query_matches_with_too_many_permutations_to_track",  ### noVec
+		when "test_query_matches_with_too_many_permutations_to_track" then "choke, noVec"
 
-=begin
-# below "test_query_matches_with_alternatives_and_too_many_permutations_to_track",
-# # 			"test_query_matches_with_anonymous_tokens",
-# # 			"test_query_matches_with_supertypes",
+		when "test_query_matches_with_alternatives_and_too_many_permutations_to_track" then "bc why???!!!"
+		
+# 		when "test_query_matches_with_anonymous_tokens" then nil
+# 		when "test_query_matches_with_supertypes" then nil
+# 		when "test_query_matches_within_byte_range" then nil
 
-# 			"test_query_matches_within_byte_range",
-=end
       # choke: rusty_query_test.rb:1759:in `test_query_matches_within_point_range': bad value for range (ArgumentError)
-			"test_query_matches_within_point_range",  ### noVec
-=begin
+		when "test_query_matches_within_point_range" then "choke, noVec"
+
 		# no method captures
-			"test_query_captures_within_byte_range", ### new captures here!!!
-# 			"test_query_matches_with_unrooted_patterns_intersecting_byte_range",
-=end
+# 		when "test_query_captures_within_byte_range" then nil ### new captures here!!!
+# 		when "test_query_matches_with_unrooted_patterns_intersecting_byte_range" then nil
+
   # bad end ### is it???!!!
-			"test_query_captures_within_byte_range_assigned_after_iterating",
-=begin
-# 			"test_query_matches_different_queries_same_cursor",
-=end
+		when "test_query_captures_within_byte_range_assigned_after_iterating" then "bad end"
+
+# 		when "test_query_matches_different_queries_same_cursor" then nil
+
       # choke: /boss.rb:30:in `ts_query_disable_capture': wrong number of arguments (2 for 3) (ArgumentError)
-			"test_query_matches_with_multiple_captures_on_a_node", ### noVec
-
+		when "test_query_matches_with_multiple_captures_on_a_node" then "choke, noVec"
+		
 ### match_capture_names_and_rows...
-			"test_query_matches_with_captured_wildcard_at_root", ### last MARKER
-=begin
+		when "test_query_matches_with_captured_wildcard_at_root" then "match_capture_names_and_rows, last MARKER"
+		
+# 		when "test_query_matches_with_no_captures" then nil
+# 		when "test_query_matches_with_repeated_fields" then nil
+# 		when "test_query_matches_with_deeply_nested_patterns_with_fields" then nil
+# 		when "test_query_matches_with_indefinite_step_containing_no_captures" then nil
+# 		when "test_query_captures_basic" then nil
+# 		when "test_query_captures_with_text_conditions" then nil
 
-# 			"test_query_matches_with_no_captures",
-# 			"test_query_matches_with_repeated_fields",
-# 			"test_query_matches_with_deeply_nested_patterns_with_fields",  ### anchor op '.'
-# 			"test_query_matches_with_indefinite_step_containing_no_captures",
-
-			"test_query_captures_basic",
-			"test_query_captures_with_text_conditions",
-=end
 			# choke:
-			"test_query_captures_with_predicates",  ### noVec
+		when "test_query_captures_with_predicates" then "choke, noVec"
 			# choke: rusty_query_test.rb:2563:in `test_query_captures_with_quoted_predicate_args': undefined method `property_settings' for #<TreeSitterFFI::Query address=0x000000014f2fbc20> (NoMethodError)
-			"test_query_captures_with_quoted_predicate_args", ### noVec
-=begin
+		when "test_query_captures_with_quoted_predicate_args" then "choke, noVec"
+		
+# 		when "test_query_captures_with_duplicates" then nil
 
-			"test_query_captures_with_duplicates",
-=end
-  # bad end
-			"test_query_captures_with_many_nested_results_without_fields",
-  # bad end
-			"test_query_captures_with_many_nested_results_with_fields", ### gone MARKER
-=begin
-			"test_query_captures_with_too_many_nested_results",
-			"test_query_captures_with_definite_pattern_containing_many_nested_matches",
-=end
-			"test_query_captures_ordered_by_both_start_and_end_positions", ### will gone MARKER
-			"test_query_captures_with_matches_removed",
-			"test_query_captures_and_matches_iterators_are_fused",
-			"test_query_text_callback_returns_chunks",
-=begin
-			"test_query_start_byte_for_pattern",
-=end
+		when "test_query_captures_with_many_nested_results_without_fields" then "bad end"
+		when "test_query_captures_with_many_nested_results_with_fields" then "bad end, gone MARKER"
+
+# 		when "test_query_captures_with_too_many_nested_results" then nil
+# 		when "test_query_captures_with_definite_pattern_containing_many_nested_matches" then nil
+		when "test_query_captures_ordered_by_both_start_and_end_positions" then "will gone MARKER"
+		when "test_query_captures_with_matches_removed" then "bc why???!!!"
+		when "test_query_captures_and_matches_iterators_are_fused" then "bc why???!!!"
+		when "test_query_text_callback_returns_chunks" then "bc why???!!!"
+
+# 		when "test_query_start_byte_for_pattern" then nil
+		
 			# choke: rusty_query_test.rb:3146:in `test_query_capture_names': undefined method `capture_names' for #<TreeSitterFFI::Query address=0x0000000135ad6080> (NoMethodError)
 # Did you mean?  capture_name_for_id
-			"test_query_capture_names",  ### noVec
-			"test_query_lifetime_is_separate_from_nodes_lifetime",
+		when "test_query_capture_names" then "choke, noVec"
+		when "test_query_lifetime_is_separate_from_nodes_lifetime" then "noVec"
 			# choke: rusty_query_test.rb:3218:in `test_query_with_no_patterns': undefined method `capture_names' for #<TreeSitterFFI::Query address=0x00000001573d57b0> (NoMethodError)
-			"test_query_with_no_patterns",  ### noVec
-=begin
+		when "test_query_with_no_patterns" then "choke, noVec"
+		
+# 		when "test_query_comments" then nil
+# 		when "test_query_disable_pattern" then nil
+# 		when "test_query_alternative_predicate_prefix" then nil
 
-# 			"test_query_comments",
-# 			"test_query_disable_pattern",
-# 			"test_query_alternative_predicate_prefix",
-=end
-			"test_query_step_is_definite",
+		when "test_query_step_is_definite" then "bc why???!!!"
+		
+		# these need regex bc <>
+		when /assert_query_matches/ then "[internal]"
+		when /collect_matches/ then "[internal]"
+		when /collect_captures/ then "[internal]"
+		when /format_captures/ then "[internal]"
 
-      # always skip these...
-			"assert_query_matches",
-			"collect_matches<'a>",
-			"collect_captures<'a>",
-			"format_captures<'a>",
-
-			].include?(name) || name =~ /&|Vec/ ||
-			["test_query_matches_with_many_results",
-			"test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern",
-			# choke:
-			"test_query_matches_with_alternatives_and_too_many_permutations_to_track"  ### noVec
-			].include?(name)
-
-			# disable any calls that contain '&', 'Vec'
+    when /&|Vec/ then "&|Vec"
+      # disable any calls that contain '&', 'Vec'
+    else
+      nil
+    end
 	end
 
 	def preprocess(s, m)
@@ -282,7 +361,7 @@ class RustyQuery < RustyBoss
 
 		# allow poss , after vec ]
     # allow poss , after ) but don't capture \s* needed for next start match: \s(\d+
-		     re = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(#{re_vec})(\s*,?\s*)\)(\s*,?)/
+		    re = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(#{re_vec})(\s*,?\s*)\)(\s*,?)/
 		re_flat = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)*)\])(\s*,?\s*)\)(\s*,?)/
 #        ^  <-- chgd + to *
 # 		re_flat = /(\A|[^\w,!])\((\s*\d+\s*,\s*)(vec!\[(\s*(\(\s*"(\\"|[^"])*"\s*,\s*"(\\"|[^"])*"\s*,?\s*\)\s*,?\s*)+)\])(\s*,?\s*)\)(\s*,?)/

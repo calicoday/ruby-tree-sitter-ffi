@@ -96,8 +96,8 @@ module GenUtils
 # 		s.scan(/([^\/#%";]*)(#{re_all}|[\/#%";])/)
 # 		arr = s.scan(/([^\/#%";]*)(#{re_all}|[\/#%";])/)
 		arr = s.scan(/([^\/#%";]*)(#{re_all}|[\/#%";])?/)
-		puts "   ++++ respell_lang scan arr:"
-		ap arr
+# 		puts "   ++++ respell_lang scan arr:"
+# 		ap arr
 			
 		arr.map{|a| [a[0], a[1]]}
 			.flatten

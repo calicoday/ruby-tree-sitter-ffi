@@ -74,7 +74,7 @@ class RustyTree < RustyBoss
 	
 		# for only specific functions
 		subs.each do |var|
-			puts "var: #{var}"
+# 			puts "var: #{var}"
 			# make control_var for vars that get cloned, add var = control_var
 			# for any pre-block statements and comment out block parens
 			s = s.gsub(/    let\s+#{var}\s+= ([^;]*;)/, 

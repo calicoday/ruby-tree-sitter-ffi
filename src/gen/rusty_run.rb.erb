@@ -9,6 +9,12 @@ require './src/run_rusty_helper.rb'
 <%# tmp here for query dev: %>
 require './src/gen/query_util.rb'
 <%# comment something something %>
+<% if @patchreqs %>
+
+<% @patchreqs.each do |e| %>
+require '<%= e %>'
+<% end %>
+<% end %>
 <% @testcalls.each do |h| %>
 
 

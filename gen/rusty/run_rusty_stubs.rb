@@ -8,8 +8,8 @@
 require './src/run_rusty_helper.rb'
 require './src/gen/query_util.rb'
 
-require './gen/rusty/rusty_node_patch.rb'
-require './gen/rusty/rusty_query_patch.rb'
+require './gen/rusty/rusty_node_patch_blank.rb'
+require './gen/rusty/rusty_query_patch_blank.rb'
 
 
 require './gen/rusty/rusty_node_test.rb'

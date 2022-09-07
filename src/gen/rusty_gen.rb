@@ -20,7 +20,7 @@ def gen()
 	outdir = gendir + '/rusty'
 	ts_tests_dir = './dev-ref/tree-sitter-0.19.5/cli/src/tests'
 	g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
-	$log = File.open(outdir + '/rusty-log.rb', 'w')
+	$log = File.open(outdir + '/rusty-gen-log.rb', 'w')
 	bosslist = ["node", "tree", "query"]
 	g.gen_tests(bosslist)
 
@@ -34,7 +34,7 @@ class RustyGen
 	include GenUtils
 	
   # ivars to pass to ERB
-	attr_reader :srcfile, :boss, :testcalls, :testdefs
+	attr_reader :srcfile, :boss, :testcalls, :testdefs, :stubs, :patchreqs
 	
   def get_binding
     binding
@@ -77,7 +77,7 @@ class RustyGen
 				rem = boss.preprocess(rem, m)
 				testdefs << [m, guts(rem, m), skip]
 				
-				puts "#{m}: #{skip ? 'skip' : ''}"
+				puts "#{m}: #{skip ? "skip (#{skip})" : ''}"
 				$log << "  - skipped #{skip}\n" if skip
 
 				m
@@ -90,10 +90,35 @@ class RustyGen
 			File.write(outfile, ERB.new(tmplt, trim_mode: "%<>").result(get_binding))
 	
 			# comment out the skips
-			tests_string = tests.map{|m| 
-				boss.skip_fn(m) ? m.split("\n").map{|e| e.gsub(/^/, '# ')}.join("\n") : m
-			}.join("\n")
-			
+			###tests_string = tests.join("\n")
+# 			tests_string = tests.map{|m| 
+# 				boss.skip_fn(m) ? m.split("\n").map{|e| e.gsub(/^/, '# ')}.join("\n") : m
+# 			}.join("\n")
+      good_tests = testdefs.reject{|m, guts, skip| skip &&
+        skip.include?('internal')}.compact.map{|m, guts, skip| m}
+#       good_tests = testdefs.reject{|m, guts, skip| skip && 
+# 			  skip.is_a?(String) && !skip.include?('internal')}.compact.map{|m, guts, skip| m}
+#       good_tests = testdefs.select{|m, guts, skip| !skip || 
+#         skip.is_a?(String) && skip.include?('internal')}.map{|m, guts, skip| m}
+      tests_string = good_tests.join("\n")
+
+      # nope, gen rusty_patch_include.rb with require skip stubs files
+# 			@stubs = testdefs.select{|m, guts, skip| skip}.compact
+# 			@stubs = testdefs.select{|m, guts, skip| skip && !skip.include?('internal')}.compact
+			@stubs = testdefs.select{|m, guts, skip| skip && 
+			  skip.is_a?(String) && !skip.include?('internal')}.compact
+			@stubs = nil if stubs.empty?
+			if stubs
+			  puts "if stubs" #: #{stubs.inspect}"
+			  @patchreqs ||= []
+			  # form requires for patch blanks and cut '_blank' before gen run_rusty
+			  @patchreqs << outdir + "/rusty_#{boss.tag}_patch_blank.rb"
+        patchfile = outdir + "/rusty_#{boss.tag}_patch_blank.rb"
+        tmplt = File.read(devdir + '/rusty_patch.rb.erb')
+        # rusty_tests tmplt needs @boss (#tag), @testdefs [m, guts, skip]
+        File.write(patchfile, ERB.new(tmplt, trim_mode: "%<>").result(get_binding))
+      end
+	
 			@testcalls << {
 				bossreq: outfile,
 				tests: tests_string}
@@ -103,9 +128,20 @@ class RustyGen
 		end
 
 		tmplt = File.read(devdir + '/rusty_run.rb.erb')
+		# rusty_run tmplt needs @testcalls {:bossreq, :tests}, @patchreqs
+
+		# for early testing...
+		File.write(outdir+"/run_rusty_stubs.rb", 
+			ERB.new(tmplt, trim_mode: "%<>").result(get_binding))
+			
+		# for real, when patch blanks have been filled
+		@patchreqs = patchreqs.map{|e| e.gsub('_blank', '')}
+		
 		# rusty_run tmplt needs @testcalls {:bossreq, :tests}
 		File.write(outdir+"/run_rusty.rb", 
 			ERB.new(tmplt, trim_mode: "%<>").result(get_binding))
+			
+			
 	end
 
 	def guts(s, vars="")
