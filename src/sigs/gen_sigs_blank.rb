@@ -51,10 +51,15 @@ end
 
 
 
-devdir = './src/gen'
+# devdir = './src/gen'
+# gendir = './gen'
+# # outdir = gendir + '/sigs-prep'
+# outdir = devdir + '/spec_gen_prep'
+# srcdir = './lib/tree_sitter_ffi'
+
+devdir = './src/sigs'
 gendir = './gen'
-# outdir = gendir + '/sigs-prep'
-outdir = devdir + '/spec_gen_prep'
+outdir = gendir + '/sigs-prep'
 srcdir = './lib/tree_sitter_ffi'
 
 runner = GenRunner.new

@@ -53,7 +53,7 @@ There are a handful of basic spec files in `spec/` you can run from the project 
 $ rspec
 ```
 
-In `./gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `./src/rusty/gen_rusty.rb`. You can run them from the project dir with
+In `gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `src/rusty/gen_rusty.rb`. You can run them from the project dir with
 ```
 $ ruby gen/rusty/run_rusty.rb
 ```
@@ -77,6 +77,22 @@ Not recommended for production use yet but it should be playable on most common 
 
 
 ## Project notes
+
+This project began as a rough experiment just to investigate tree-sitter for possible future use. The use-cases I had in mind were big projects I wasn't near starting anyway and checking out tree-sitter involved a bunch of tech I hadn't used (or used in recent decades), so I made only the faintest gesture at organization. Tragically, I then had too much success to be able to bring myself to drop the whole thing. Well, I'm fixing it now.
+
+The general project structure is:
+- `lib/`, the Ruby bindings code. Using the FFI gem means the project doesn't have C source portions in `cext/` or other directory.
+- `src/`, project management scripts and support code
+- `gen/`, where the script-generated test code goes, including
+  - `rusty/`, the Ruby translations of the tree-sitter cli runtime Rust tests
+  - `sigs/`, low-level specs checking the tree-sitter C functions get the right args and return types
+- `dev-ref/`, necessary material pulled by script from the tree-sitter repo (# below)
+- `log/`, script output logs
+- `spec/`, ruby bindings tests beyond the `gen/` stuff
+- `demo/`, simple ruby examples corresponding to the sample code in [Using Parsers](https://tree-sitter.github.io/tree-sitter/using-parsers) of the tree-sitter docs
+- `xpct/`, copies of the best current tests results for easy diffing
+- misc like Rakefile, Gemspec, Readme, etc
+
 
 ### Wrap language parser in some other built dynamic library
 
@@ -104,24 +120,7 @@ lang_parser = TreeSitterFFI.parser_other_lang()
 # => #<FFI::Pointer address=0x000000010e55a1f0>
 ```
 
-Probably. I've done this a couple of times but not really challenged it. It IS how `tree_sitter_ffi_lang` does it.
-
-
-### Project approach and conventions
-
-This project began as a rough experiment just to investigate tree-sitter for possible future use. The use-cases I had in mind were big projects I wasn't near starting anyway and checking out tree-sitter involved a bunch of tech I hadn't used (or used in recent decades), so I made only the faintest gesture at organization. Tragically, I then had too much success to be able to bring myself to drop the whole thing. Well, I'm fixing it now.
-
-The general project structure is:
-- `lib/`, the Ruby bindings code. Using the FFI gem means the project doesn't have C source portions in `cext/` or other directory.
-- `src/`, project management scripts and support code
-- `gen/`, where the script-generated test code goes, including
-  - `rusty/`, the Ruby tranlations of the tree-sitter cli runtime Rust tests
-  - `sigs/`, low-level specs checking the tree-sitter C functions get the right args and return types
-- `dev-ref/`, necessary material pulled by script from the tree-sitter repo (# below)
-- `log/`, script output logs
-- `spec/`, ruby bindings tests beyond the gen/ stuff
-- `demo/`, simple ruby examples corresponding to the sample code in (Using Parsers)[] of the tree-sitter docs
-- misc like Rakefile, Gemspec, Readme, etc
+Probably. I've done this a couple of times but not really challenged it. It IS how [ruby-tree-sitter-ffi-lang](https://github.com/calicoday/ruby-tree-sitter-ffi-lang) does it.
 
 
 ### Gem implementation
@@ -144,9 +143,9 @@ The Ruby api is implemented in layers:
 
 
 
-### Repo refs pull system -- Pulling relevant tree-sitter repo material
+### Repo refs pull system
 
-The script `src/pull/pull_repo_refs.rb` downloads to `gen/pull/` select useful files from the main tree-sitter repo, for several of the most recent versions. It gathers (maintaining the tree-sitter relative paths):
+The script `src/pull/pull_repo_refs.rb` uses `svn` to download to `gen/pull/` select useful files from the main tree-sitter repo, for several of the most recent versions. It gathers (maintaining the tree-sitter relative paths):
 - `lib/include/tree_sitter/`
   - `api.h`, `parser.h`
 - `cli/src/tests/`
@@ -155,6 +154,13 @@ The script `src/pull/pull_repo_refs.rb` downloads to `gen/pull/` select useful f
 Run with:
 - `$ ruby src/pull/pull_repo_refs.rb &> log/pull_repo_refs_log.txt`
 
+Or, where UNIX `tee` is available:
+- `$ ruby src/pull/pull_repo_refs.rb 2>&1 | tee log/pull_repo_refs_log.txt`
+
+The script also uses UNIX `tree` to display pulled directories in the log file. If `tree` is not installed the log will show where `tree` couldn't be found.
+
+The pull system has a test script which downloads to `gen/pull/`, run with:
+- `$ ruby src/pull/test_pull_refs.rb 2>&1 | tee log/test_pull_refs_log.txt`
 
 
 ### Sigs specs system
@@ -162,11 +168,7 @@ Run with:
 Sigs specs are basic Ruby spec files that check the boundary between Ruby and C. They test only whether a Ruby method passes the expected number and type of arguments and receives the correct type of return value, matching the original C function. It does not matter what the C library does, just how the C functions and data structures are shaped. A small, mechanical bit we can take out of the larger testing equation.
 
 You can run them from the project dir with
-- `$ rspec gen/sigs/run_rusty.rb`
-
-TMP!!!
-- `$ rspec gen-keep/sigs-prep-final/*_spec.rb`
-
+- `$ rspec gen/sigs`
 
 
 Much of this can be generated automatically but some functions deal in data types that are created somehow other than a simple `new()` or depend on something else already having been set up, so we need to be able to supply test set up information for any more tricky function. This is put in 'sigs prep' files.
@@ -181,14 +183,14 @@ The process is: generate sigs prep, edit prep, generate sigs specs, edit to patc
 
 1. Generate the sigs_prep blanks
 
-- `$ ruby src/sigs/gen_sigs_blank.rb`
+- `$ ruby src/sigs/gen_sigs_blank.rb` [shd be gen_sigs_prep to gen/sigs-prep/!!!]
   - => `gen/sigs/sigs_prep/boss_sigs_blank.rb`
 - `$ cp gen/sigs/sigs_prep/boss_sigs_blank.rb gen/sigs/sigs_prep/boss_sigs.rb`
   - and EDIT with strings to be inserted in the individual tests
 
 2. Generate the sigs specs
 
-- `$ ruby src/sigs/spec_gen_value_p.rb` [prev `spec_gen_sigs.rb`, shd be `gen_sigs_spec.rb`!!!]
+- `$ ruby src/sigs/gen_sigs.rb`
   - => `gen/sigs/boss_sigs_spec.rb` and `gen/sigs/boss_patch_spec_blank.rb`
 - `$ cp gen/sigs/boss_patch_spec_blank.rb gen/sigs/boss_patch_spec.rb`
   - and EDIT with replacement tests for those that were too problematic to generate properly
@@ -232,16 +234,14 @@ The generated patch_blank files have test code similar to the spec files because
 
 ### Rusty tests system
 
-[shd be src/rusty/gen_rusty.rb] [mention stubs]
-
-In `./gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `./src/rusty/gen_rusty.rb`. You can run them from the project dir with
+In `gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `src/rusty/gen_rusty.rb`. You can run them from the project dir with
 ```
 $ ruby gen/rusty/run_rusty.rb
 ```
 
-The script `./src/gen/rusty_gen.rb` reads the tree-sitter cli runtime test files `node_tests.rs`, `tree_tests.rs` and `query_test.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can. If the script hits Rustisms it doesn't know what to do with, it comments out that test function and adds a stub function to the patch_blank file for filling in later.
+The script `src/gen/rusty_gen.rb` reads the tree-sitter cli runtime test files `node_tests.rs`, `tree_tests.rs` and `query_test.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can. If the script hits Rustisms it doesn't know what to do with, it comments out that test function and adds a stub function to the patch_blank file for filling in later.
 
-For each Rust test file, there is a rusty_prep file providing any necessary processing specific to that file. Also, a `skip_fn(m)` method, which is called with each test function and returns nil or a String giving the reason the test shouuld be commented out and a stub added to the patch blank. Any non-nil return causes the patch but the String can be anything, though if it `include?('internal')`, the test method is commented out but no stub is created (to discard utility rust functions in the test files that aren't themselves tests). The rusty_prep file is NOT generated, just made by hand with stuff salvaged from the previous rusty gen system.
+For each Rust test file, there is a rusty_prep file providing any necessary processing specific to that file. Also, a `skip_fn(m)` method, which is called with each test function and returns nil or a String giving the reason the test should be commented out and a stub added to the patch blank. Any non-nil return causes the patch but the String can be anything, though if it `include?('internal')`, the test method is commented out but no stub is created (to discard utility rust functions in the test files that aren't themselves tests). The rusty_prep file is NOT generated, just made by hand with stuff salvaged from the previous rusty gen system.
 
 The process is: generate rusty tests, edit to patch, run tests. Note:
 - all generated files are put in the `gen/` subdirectory
@@ -253,13 +253,12 @@ The process is: generate rusty tests, edit to patch, run tests. Note:
 
 - `$ ruby src/rusty/gen_rusty.rb`
   - => `gen/rusty/rusty_boss_tests.rb` and `gen/rusty/rusty_boss_patch_blank.rb`,
-    also `gen/rusty/run_rusty.rb` for running the tests and patches and  
-    `gen/rusty/run_rusty_stubs.rb` for the tests and patch_blanks.
+    also `gen/rusty/run_rusty.rb` for running the tests and patches and `gen/rusty/run_rusty_stubs.rb` for the tests and patch_blanks.
 - `$ cp gen/rusty/rusty_boss_patch_blank.rb `gen/rusty/rusty_boss_patch.rb`
   - and EDIT with replacement tests for those that were too problematic to generate properly
   
 During early development, you can run just the easy tests, ignoring to-be-patched functions, with:
-`$ ruby gen/rusty/run_rusty_stubs.rb`
+- `$ ruby gen/rusty/run_rusty_stubs.rb`
 
 
 #### When the TreeSitterFFI class api or rust tests change:

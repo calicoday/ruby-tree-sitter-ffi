@@ -1,14 +1,12 @@
 > Object.system("date")
-Thu 15 Sep 2022 11:40:20 EDT
-> FileUtils.cd("./dev-ref/pull")
+Sat 17 Sep 2022 16:08:25 EDT
+> FileUtils.cd("./dev-ref/pull/")
 
 === Pull repo vers 0.20.7...
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.7", "lib/include/tree_sitter/", "tree-sitter-0.20.7/")
 A    tree-sitter-0.20.7/lib/include/tree_sitter/api.h
 A    tree-sitter-0.20.7/lib/include/tree_sitter/parser.h
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.scrap("tree-sitter-0.20.7/lib/include/tree_sitter/", [".svn"])
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.7", "cli/src/tests/", "tree-sitter-0.20.7/")
+> RepoRefs.tidy("lib/include/tree_sitter/", "tree-sitter-0.20.7", {:scrap=>[".svn"]})
 A    tree-sitter-0.20.7/cli/src/tests/corpus_test.rs
 A    tree-sitter-0.20.7/cli/src/tests/helpers
 A    tree-sitter-0.20.7/cli/src/tests/helpers/allocations.rs
@@ -30,15 +28,13 @@ A    tree-sitter-0.20.7/cli/src/tests/test_highlight_test.rs
 A    tree-sitter-0.20.7/cli/src/tests/test_tags_test.rs
 A    tree-sitter-0.20.7/cli/src/tests/tree_test.rs
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.keep("tree-sitter-0.20.7/cli/src/tests/", ["node_test.rs", "tree_test.rs", "query_test.rs"])
+> RepoRefs.tidy("cli/src/tests/", "tree-sitter-0.20.7", {:keep=>["node_test.rs", "tree_test.rs", "query_test.rs"]})
 
 === Pull repo vers 0.20.6...
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.6", "lib/include/tree_sitter/", "tree-sitter-0.20.6/")
 A    tree-sitter-0.20.6/lib/include/tree_sitter/api.h
 A    tree-sitter-0.20.6/lib/include/tree_sitter/parser.h
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.scrap("tree-sitter-0.20.6/lib/include/tree_sitter/", [".svn"])
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.6", "cli/src/tests/", "tree-sitter-0.20.6/")
+> RepoRefs.tidy("lib/include/tree_sitter/", "tree-sitter-0.20.6", {:scrap=>[".svn"]})
 A    tree-sitter-0.20.6/cli/src/tests/corpus_test.rs
 A    tree-sitter-0.20.6/cli/src/tests/helpers
 A    tree-sitter-0.20.6/cli/src/tests/helpers/allocations.rs
@@ -60,15 +56,13 @@ A    tree-sitter-0.20.6/cli/src/tests/test_highlight_test.rs
 A    tree-sitter-0.20.6/cli/src/tests/test_tags_test.rs
 A    tree-sitter-0.20.6/cli/src/tests/tree_test.rs
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.keep("tree-sitter-0.20.6/cli/src/tests/", ["node_test.rs", "tree_test.rs", "query_test.rs"])
+> RepoRefs.tidy("cli/src/tests/", "tree-sitter-0.20.6", {:keep=>["node_test.rs", "tree_test.rs", "query_test.rs"]})
 
 === Pull repo vers 0.20.0...
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.0", "lib/include/tree_sitter/", "tree-sitter-0.20.0/")
 A    tree-sitter-0.20.0/lib/include/tree_sitter/api.h
 A    tree-sitter-0.20.0/lib/include/tree_sitter/parser.h
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.scrap("tree-sitter-0.20.0/lib/include/tree_sitter/", [".svn"])
-> RepoRefs.pull("https://github.com/tree-sitter/", "tree-sitter/", "0.20.0", "cli/src/tests/", "tree-sitter-0.20.0/")
+> RepoRefs.tidy("lib/include/tree_sitter/", "tree-sitter-0.20.0", {:scrap=>[".svn"]})
 A    tree-sitter-0.20.0/cli/src/tests/corpus_test.rs
 A    tree-sitter-0.20.0/cli/src/tests/helpers
 A    tree-sitter-0.20.0/cli/src/tests/helpers/dirs.rs
@@ -87,6 +81,6 @@ A    tree-sitter-0.20.0/cli/src/tests/tags_test.rs
 A    tree-sitter-0.20.0/cli/src/tests/test_highlight_test.rs
 A    tree-sitter-0.20.0/cli/src/tests/tree_test.rs
 Checked out revision 5933.
-> #<PullRepoRefs:0x000000013515fa78>.keep("tree-sitter-0.20.0/cli/src/tests/", ["node_test.rs", "tree_test.rs", "query_test.rs"])
+> RepoRefs.tidy("cli/src/tests/", "tree-sitter-0.20.0", {:keep=>["node_test.rs", "tree_test.rs", "query_test.rs"]})
 
 done.

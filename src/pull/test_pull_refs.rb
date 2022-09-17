@@ -10,14 +10,7 @@
 # require 'pathname'
 require './src/pull/repo_refs.rb'
 
-vers = ARGV[1] || '' # no arg gets nightly???
-
-tags_list_ref = ['0.20.7', '0.20.6', '0.20.0'] 
-tag = '0.20.6' # get from ARGV
-
-
-
-outdir = './dev-ref-pull/'
+outdir = './dev-ref/test/pull/'
 
 class TestRepoRefs
   def self.test_sample(k)
@@ -43,16 +36,19 @@ class TestRepoRefs
   end
 
 
-  def self.show_call_variants(rundir, log=nil)
-    RepoRefs.ensure_outpath(rundir)
+  def self.show_call_variants(rundir, testdir, log=nil)
+#     RepoRefs.ensure_outpath(rundir)
+    RepoRefs.ensure_outpath(testdir)
 
     # exact copy of show_svn_variants, replacing system svn calls with RepoRefs
     # expect: same dirs, files and results lines correspond.
     
     log = :stdout unless log
     show = ShowRunner.new(log)
+    show.call_sys("date")
 
-    show.call(FileUtils, :cd, rundir)
+    show.call(FileUtils, :cd, testdir)
+#     show.call(FileUtils, :cd, rundir)
     
 #     vers = '0.18.3' # testvers
     # vers = nil # nightly
@@ -119,11 +115,16 @@ class TestRepoRefs
     show.call_sys("tree")
     show.call(FileUtils, :cd, '..')
 
+    # cd back to the original rundir in case we run other tests
+#     show.call(FileUtils, :cd, '..')
+    show.call(FileUtils, :cd, rundir)
+
 #     show.write # not impl
   end
 
-  def self.show_svn_variants(rundir, log=nil)
-    RepoRefs.ensure_outpath(rundir)
+  def self.show_svn_variants(rundir, testdir, log=nil)
+#     RepoRefs.ensure_outpath(rundir)
+    RepoRefs.ensure_outpath(testdir)
 
     # switch to FileUtils now to get verbose
     # verbose write to stderr so full redirect for capture, 
@@ -135,8 +136,10 @@ class TestRepoRefs
     
     log = :stdout unless log
     show = ShowRunner.new(log)
+    show.call_sys("date")
 
-    show.call(FileUtils, :cd, rundir)    
+#     show.call(FileUtils, :cd, rundir)    
+    show.call(FileUtils, :cd, testdir)    
 
 #     vers = '0.18.3' # testvers
     # vers = nil # nightly
@@ -204,15 +207,27 @@ class TestRepoRefs
     show.call_sys("tree")
     show.call(FileUtils, :cd, '..')
 
+    # cd back to the original rundir in case we run other tests
+#     show.call(FileUtils, :cd, '..')
+    show.call(FileUtils, :cd, rundir)
+
 #     show.write # not impl
   end
   
 end
 
-raise "remove overnight guard!!!"
+# raise "remove night guard!!!"
 
-TestRepoRefs.show_svn_variants('show_svn2')
-TestRepoRefs.show_call_variants('show_call2')
+rundir = `pwd`.strip # cd doesn't like trailing \n
+
+puts "TestRepoRefs.show_svn_variants('show_svn')..."
+TestRepoRefs.show_svn_variants(rundir, outdir + 'show_svn')
+
+puts
+puts
+
+puts "TestRepoRefs.show_call_variants('show_call')..."
+TestRepoRefs.show_call_variants(rundir, outdir + 'show_call')
 
 puts
 puts "done."

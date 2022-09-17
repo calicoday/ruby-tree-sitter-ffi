@@ -11,13 +11,12 @@ module RepoRefs
     show.call(FileUtils, :cd, rundir)
     
     rec.each do |repo_root, refs|
-      dest = refs[:dest]
-      vers = refs[:vers]
-      vers = [vers] unless vers.is_a?(Array)
       subdirs = refs[:subdirs]
-      vers.each do |e|
+      vers_list = refs[:vers]
+      vers_list.each do |vers, dest|
         show.section "Pull repo vers #{vers}..."
-        RepoRefs.pull_vers(repo_root, subdirs, e, dest) do |subdir, dest, tidy|
+        RepoRefs.pull_vers(repo_root, subdirs, vers, dest) do |subdir, dest, tidy|
+#         puts "*** call pull_vers #{[repo_root, subdirs, vers, dest].map(&inspect)}"
           show.call(RepoRefs, :tidy, subdir, dest, tidy)
         end
       end
@@ -37,7 +36,7 @@ module RepoRefs
   end
 
   # will tidy each subdir unless block_given (eg you want to log the tidy call)
-  def pull_vers(repo_root, subdirs, vers, dest, &b=nil)
+  def pull_vers(repo_root, subdirs, vers, dest, &b)
     subdirs.each do |subdir, tidy|
       pull_subdir(repo_root, vers, subdir, dest)
       block_given? ?
@@ -47,11 +46,13 @@ module RepoRefs
   end
   
   def pull_subdir(repo_root, vers, subdir, dest)
+#     puts "*** pull_subdir #{[repo_root, vers, subdir, dest].map(&inspect)}"
     pull(repo_root, vers, subdir, dest)
   end
   
   def tidy(subdir, dest, tidy=nil)
     return unless tidy
+    dest = Pathname.new(dest)
     if tidy[:keep] 
       keep(dest + subdir, tidy[:keep])
     elsif tidy[:scrap]
@@ -64,6 +65,7 @@ module RepoRefs
     scrap(dir, rejects)
   end
   def scrap(dir, rejects) 
+    dir = Pathname.new(dir)
     rejects.each{|e| FileUtils.rm_rf(dir + e)} ### rm -rf !!!
   end
 
@@ -90,6 +92,7 @@ module RepoRefs
   def pull_as(repo_root, vers, subdir, dest, keep_tree=false)
     subdir = '' unless subdir
     dest = '' unless dest
+    dest = Pathname.new(dest)
     dest = dest + subdir if keep_tree
     system("svn checkout #{url(repo_root, subdir, tag(vers))} #{dest}") 
   end
