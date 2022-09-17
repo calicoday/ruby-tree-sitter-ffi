@@ -1,0 +1,14 @@
+# this is the generated patch blank or edited patch file to add tests we 
+# couldn't entirely gsub for the tree-sitter test:
+# tree-sitter/cli/src/tests/<%= @boss.tag %>_test.rs
+
+
+<%# comment in erb something something %>
+<% @stubs.each do |m, guts, skip| %>
+<% if skip %>def <%= m %>
+
+    puts "!!  #{__callee__}() stub"
+end<% end %>
+
+<% end %>
+

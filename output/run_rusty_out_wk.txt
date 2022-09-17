@@ -1,0 +1,468 @@
+c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :uint32_p], returns: :string
+=== vers: 0.0.4
+./gen/rusty/rusty_node_test.rb
+10:in `test_node_child': ok
+11:in `test_node_child': ok
+12:in `test_node_child': ok
+13:in `test_node_child': ok
+14:in `test_node_child': ok
+15:in `test_node_child': ok
+16:in `test_node_child': ok
+26:in `test_node_child': ok
+27:in `test_node_child': ok
+28:in `test_node_child': ok
+29:in `test_node_child': ok
+30:in `test_node_child': ok
+31:in `test_node_child': ok
+32:in `test_node_child': ok
+34:in `test_node_child': ok
+35:in `test_node_child': ok
+36:in `test_node_child': ok
+37:in `test_node_child': ok
+38:in `test_node_child': ok
+39:in `test_node_child': ok
+40:in `test_node_child': ok
+42:in `test_node_child': ok
+43:in `test_node_child': ok
+47:in `test_node_child': ok
+48:in `test_node_child': ok
+50:in `test_node_child': ok
+51:in `test_node_child': ok
+55:in `test_node_child': ok
+56:in `test_node_child': ok
+58:in `test_node_child': ok
+59:in `test_node_child': ok
+60:in `test_node_child': ok
+62:in `test_node_child': ok
+67:in `test_node_child': ok
+68:in `test_node_child': ok
+69:in `test_node_child': ok
+71:in `test_node_child': ok
+72:in `test_node_child': ok
+73:in `test_node_child': ok
+75:in `test_node_child': ok
+76:in `test_node_child': ok
+77:in `test_node_child': ok
+78:in `test_node_child': ok
+80:in `test_node_child': ok
+85:in `test_node_child': ok
+86:in `test_node_child': ok
+87:in `test_node_child': ok
+89:in `test_node_child': ok
+90:in `test_node_child': ok
+91:in `test_node_child': ok
+93:in `test_node_child': ok
+97:in `test_node_child': ok
+101:in `test_node_child': ok
+102:in `test_node_child': ok
+104:in `test_node_child': ok
+105:in `test_node_child': ok
+106:in `test_node_child': ok
+107:in `test_node_child': ok
+109:in `test_node_child': ok
+110:in `test_node_child': ok
+111:in `test_node_child': ok
+112:in `test_node_child': ok
+113:in `test_node_child': ok
+114:in `test_node_child': ok
+115:in `test_node_child': ok
+116:in `test_node_child': ok
+rusty_node_patch.rb:15:in `test_node_children': ok
+!!  test_node_children_by_field_name() stub
+188:in `test_node_parent_of_child_by_field_name': ok
+192:in `test_node_parent_of_child_by_field_name': ok
+207:in `test_node_field_name_for_child': ok
+208:in `test_node_field_name_for_child': ok
+212:in `test_node_field_name_for_child': ok
+217:in `test_node_field_name_for_child': ok
+230:in `test_node_child_by_field_name_with_extra_hidden_children': ok
+231:in `test_node_child_by_field_name_with_extra_hidden_children': ok
+245:in `test_node_named_child': ok
+246:in `test_node_named_child': ok
+247:in `test_node_named_child': ok
+251:in `test_node_named_child': ok
+252:in `test_node_named_child': ok
+254:in `test_node_named_child': ok
+255:in `test_node_named_child': ok
+256:in `test_node_named_child': ok
+260:in `test_node_named_child': ok
+261:in `test_node_named_child': ok
+263:in `test_node_named_child': ok
+264:in `test_node_named_child': ok
+265:in `test_node_named_child': ok
+266:in `test_node_named_child': ok
+268:in `test_node_named_child': ok
+271:in `test_node_named_child': ok
+272:in `test_node_named_child': ok
+273:in `test_node_named_child': ok
+274:in `test_node_named_child': ok
+275:in `test_node_named_child': ok
+280:in `test_node_named_child': ok
+281:in `test_node_named_child': ok
+283:in `test_node_named_child': ok
+287:in `test_node_named_child': ok
+291:in `test_node_named_child': ok
+292:in `test_node_named_child': ok
+294:in `test_node_named_child': ok
+295:in `test_node_named_child': ok
+296:in `test_node_named_child': ok
+297:in `test_node_named_child': ok
+299:in `test_node_named_child': ok
+300:in `test_node_named_child': ok
+301:in `test_node_named_child': ok
+302:in `test_node_named_child': ok
+303:in `test_node_named_child': ok
+304:in `test_node_named_child': ok
+305:in `test_node_named_child': ok
+306:in `test_node_named_child': ok
+!!  test_node_named_child_with_aliases_and_extras() stub
+338:in `test_node_descendant_for_range': ok
+339:in `test_node_descendant_for_range': ok
+340:in `test_node_descendant_for_range': ok
+341:in `test_node_descendant_for_range': ok
+342:in `test_node_descendant_for_range': ok
+347:in `test_node_descendant_for_range': ok
+348:in `test_node_descendant_for_range': ok
+349:in `test_node_descendant_for_range': ok
+350:in `test_node_descendant_for_range': ok
+351:in `test_node_descendant_for_range': ok
+357:in `test_node_descendant_for_range': ok
+358:in `test_node_descendant_for_range': ok
+359:in `test_node_descendant_for_range': ok
+360:in `test_node_descendant_for_range': ok
+361:in `test_node_descendant_for_range': ok
+366:in `test_node_descendant_for_range': ok
+367:in `test_node_descendant_for_range': ok
+368:in `test_node_descendant_for_range': ok
+369:in `test_node_descendant_for_range': ok
+370:in `test_node_descendant_for_range': ok
+376:in `test_node_descendant_for_range': ok
+377:in `test_node_descendant_for_range': ok
+378:in `test_node_descendant_for_range': ok
+379:in `test_node_descendant_for_range': ok
+380:in `test_node_descendant_for_range': ok
+385:in `test_node_descendant_for_range': ok
+386:in `test_node_descendant_for_range': ok
+387:in `test_node_descendant_for_range': ok
+388:in `test_node_descendant_for_range': ok
+389:in `test_node_descendant_for_range': ok
+395:in `test_node_descendant_for_range': ok
+396:in `test_node_descendant_for_range': ok
+397:in `test_node_descendant_for_range': ok
+398:in `test_node_descendant_for_range': ok
+399:in `test_node_descendant_for_range': ok
+404:in `test_node_descendant_for_range': ok
+405:in `test_node_descendant_for_range': ok
+406:in `test_node_descendant_for_range': ok
+407:in `test_node_descendant_for_range': ok
+408:in `test_node_descendant_for_range': ok
+413:in `test_node_descendant_for_range': ok
+414:in `test_node_descendant_for_range': ok
+415:in `test_node_descendant_for_range': ok
+416:in `test_node_descendant_for_range': ok
+417:in `test_node_descendant_for_range': ok
+419:in `test_node_descendant_for_range': ok
+424:in `test_node_descendant_for_range': ok
+425:in `test_node_descendant_for_range': ok
+426:in `test_node_descendant_for_range': ok
+427:in `test_node_descendant_for_range': ok
+428:in `test_node_descendant_for_range': ok
+!!  test_node_edit() stub
+472:in `test_node_is_extra': ok
+473:in `test_node_is_extra': ok
+474:in `test_node_is_extra': ok
+475:in `test_node_is_extra': ok
+486:in `test_node_sexp': ok
+487:in `test_node_sexp': ok
+488:in `test_node_sexp': ok
+489:in `test_node_sexp': ok
+490:in `test_node_sexp': ok
+491:in `test_node_sexp': ok
+!!  test_node_field_names() stub
+!!  test_node_field_calls_in_language_without_fields() stub
+!!  test_node_is_named_but_aliased_as_anonymous() stub
+695:in `test_node_numeric_symbols_respect_simple_aliases': ok
+701:in `test_node_numeric_symbols_respect_simple_aliases': ok
+707:in `test_node_numeric_symbols_respect_simple_aliases': ok
+708:in `test_node_numeric_symbols_respect_simple_aliases': ok
+717:in `test_node_numeric_symbols_respect_simple_aliases': ok
+723:in `test_node_numeric_symbols_respect_simple_aliases': ok
+728:in `test_node_numeric_symbols_respect_simple_aliases': ok
+731:in `test_node_numeric_symbols_respect_simple_aliases': ok
+732:in `test_node_numeric_symbols_respect_simple_aliases': ok
+===
+total asserts: 183
+  ok: 183
+  failed: 0
+
+./gen/rusty/rusty_tree_test.rb
+12:in `test_tree_edit': ok
+34:in `test_tree_edit': ok
+35:in `test_tree_edit': ok
+36:in `test_tree_edit': ok
+37:in `test_tree_edit': ok
+38:in `test_tree_edit': ok
+39:in `test_tree_edit': ok
+40:in `test_tree_edit': ok
+41:in `test_tree_edit': ok
+42:in `test_tree_edit': ok
+62:in `test_tree_edit': ok
+63:in `test_tree_edit': ok
+64:in `test_tree_edit': ok
+65:in `test_tree_edit': ok
+66:in `test_tree_edit': ok
+67:in `test_tree_edit': ok
+68:in `test_tree_edit': ok
+69:in `test_tree_edit': ok
+70:in `test_tree_edit': ok
+90:in `test_tree_edit': ok
+91:in `test_tree_edit': ok
+92:in `test_tree_edit': ok
+93:in `test_tree_edit': ok
+94:in `test_tree_edit': ok
+95:in `test_tree_edit': ok
+96:in `test_tree_edit': ok
+97:in `test_tree_edit': ok
+98:in `test_tree_edit': ok
+118:in `test_tree_edit': ok
+119:in `test_tree_edit': ok
+120:in `test_tree_edit': ok
+121:in `test_tree_edit': ok
+122:in `test_tree_edit': ok
+123:in `test_tree_edit': ok
+124:in `test_tree_edit': ok
+125:in `test_tree_edit': ok
+126:in `test_tree_edit': ok
+147:in `test_tree_edit': ok
+148:in `test_tree_edit': ok
+149:in `test_tree_edit': ok
+150:in `test_tree_edit': ok
+151:in `test_tree_edit': ok
+152:in `test_tree_edit': ok
+153:in `test_tree_edit': ok
+154:in `test_tree_edit': ok
+155:in `test_tree_edit': ok
+156:in `test_tree_edit': ok
+157:in `test_tree_edit': ok
+158:in `test_tree_edit': ok
+179:in `test_tree_edit': ok
+180:in `test_tree_edit': ok
+181:in `test_tree_edit': ok
+182:in `test_tree_edit': ok
+183:in `test_tree_edit': ok
+184:in `test_tree_edit': ok
+185:in `test_tree_edit': ok
+186:in `test_tree_edit': ok
+187:in `test_tree_edit': ok
+207:in `test_tree_cursor': ok
+209:in `test_tree_cursor': ok
+210:in `test_tree_cursor': ok
+212:in `test_tree_cursor': ok
+213:in `test_tree_cursor': ok
+214:in `test_tree_cursor': ok
+216:in `test_tree_cursor': ok
+217:in `test_tree_cursor': ok
+218:in `test_tree_cursor': ok
+220:in `test_tree_cursor': ok
+221:in `test_tree_cursor': ok
+222:in `test_tree_cursor': ok
+233:in `test_tree_cursor_fields': ok
+236:in `test_tree_cursor_fields': ok
+237:in `test_tree_cursor_fields': ok
+240:in `test_tree_cursor_fields': ok
+241:in `test_tree_cursor_fields': ok
+244:in `test_tree_cursor_fields': ok
+245:in `test_tree_cursor_fields': ok
+248:in `test_tree_cursor_fields': ok
+249:in `test_tree_cursor_fields': ok
+252:in `test_tree_cursor_fields': ok
+253:in `test_tree_cursor_fields': ok
+256:in `test_tree_cursor_fields': ok
+257:in `test_tree_cursor_fields': ok
+273:in `test_tree_cursor_child_for_point': ok
+275:in `test_tree_cursor_child_for_point': ok
+276:in `test_tree_cursor_child_for_point': ok
+277:in `test_tree_cursor_child_for_point': ok
+280:in `test_tree_cursor_child_for_point': ok
+281:in `test_tree_cursor_child_for_point': ok
+284:in `test_tree_cursor_child_for_point': ok
+285:in `test_tree_cursor_child_for_point': ok
+286:in `test_tree_cursor_child_for_point': ok
+290:in `test_tree_cursor_child_for_point': ok
+293:in `test_tree_cursor_child_for_point': ok
+294:in `test_tree_cursor_child_for_point': ok
+300:in `test_tree_cursor_child_for_point': ok
+301:in `test_tree_cursor_child_for_point': ok
+305:in `test_tree_cursor_child_for_point': ok
+308:in `test_tree_cursor_child_for_point': ok
+309:in `test_tree_cursor_child_for_point': ok
+313:in `test_tree_cursor_child_for_point': ok
+314:in `test_tree_cursor_child_for_point': ok
+315:in `test_tree_cursor_child_for_point': ok
+319:in `test_tree_cursor_child_for_point': ok
+322:in `test_tree_cursor_child_for_point': ok
+323:in `test_tree_cursor_child_for_point': ok
+327:in `test_tree_cursor_child_for_point': ok
+330:in `test_tree_cursor_child_for_point': ok
+331:in `test_tree_cursor_child_for_point': ok
+335:in `test_tree_cursor_child_for_point': ok
+336:in `test_tree_cursor_child_for_point': ok
+337:in `test_tree_cursor_child_for_point': ok
+341:in `test_tree_cursor_child_for_point': ok
+344:in `test_tree_cursor_child_for_point': ok
+345:in `test_tree_cursor_child_for_point': ok
+349:in `test_tree_cursor_child_for_point': ok
+350:in `test_tree_cursor_child_for_point': ok
+351:in `test_tree_cursor_child_for_point': ok
+355:in `test_tree_cursor_child_for_point': ok
+358:in `test_tree_cursor_child_for_point': ok
+359:in `test_tree_cursor_child_for_point': ok
+371:in `test_tree_node_equality': ok
+372:in `test_tree_node_equality': ok
+373:in `test_tree_node_equality': ok
+===
+total asserts: 124
+  ok: 124
+  failed: 0
+
+./gen/rusty/rusty_query_test.rb
+10:in `test_query_errors_on_invalid_syntax': ok
+11:in `test_query_errors_on_invalid_syntax': ok
+18:in `test_query_errors_on_invalid_syntax': ok
+26:in `test_query_errors_on_invalid_syntax': ok
+38:in `test_query_errors_on_invalid_syntax': ok
+47:in `test_query_errors_on_invalid_syntax': ok
+58:in `test_query_errors_on_invalid_syntax': ok
+68:in `test_query_errors_on_invalid_syntax': ok
+77:in `test_query_errors_on_invalid_syntax': ok
+86:in `test_query_errors_on_invalid_syntax': ok
+95:in `test_query_errors_on_invalid_syntax': ok
+106:in `test_query_errors_on_invalid_syntax': ok
+118:in `test_query_errors_on_invalid_syntax': ok
+129:in `test_query_errors_on_invalid_syntax': ok
+145:in `test_query_errors_on_invalid_symbols': ok
+155:in `test_query_errors_on_invalid_symbols': ok
+165:in `test_query_errors_on_invalid_symbols': ok
+175:in `test_query_errors_on_invalid_symbols': ok
+185:in `test_query_errors_on_invalid_symbols': ok
+195:in `test_query_errors_on_invalid_symbols': ok
+205:in `test_query_errors_on_invalid_symbols': ok
+!!  test_query_errors_on_invalid_predicates() stub
+267:in `test_query_errors_on_impossible_patterns': ok
+289:in `test_query_errors_on_impossible_patterns': ok
+305:in `test_query_errors_on_impossible_patterns': ok
+328:in `test_query_errors_on_impossible_patterns': ok
+350:in `test_query_errors_on_impossible_patterns': ok
+364:in `test_query_errors_on_impossible_patterns': ok
+385:in `test_query_errors_on_impossible_patterns': failed
+  result: <QueryError row: 0, column: 26, offset: 26, message: "_expression", kind: :node_type>
+  expect: <QueryError row: 0, column: 14, offset: 14, message: "(if_statement condition: (_expression))\n              ^", kind: :structure>
+408:in `test_query_verifies_possible_patterns_with_aliased_parent_nodes': ok
+433: ok
+457: ok
+500: ok
+533: ok
+563: ok
+!!  test_query_matches_with_many_results() stub
+!!  test_query_matches_with_many_overlapping_results() stub
+657: ok
+677: ok
+726:in `test_query_matches_with_named_wildcard': ok
+751: ok
+768: ok
+808: ok
+831: ok
+868: ok
+916: ok
+948: ok
+984: failed
+  result: []
+  expect: [[0, [["doc", "# four"], ["doc", "# five"], ["doc", "# six"], ["name", "B"]]], [1, [["doc", "# eight"], ["name", "d"]]]]
+1027: ok
+1051: failed
+  result: []
+  expect: [[0, [["doc", "# a"], ["doc", "// b"], ["doc", "// c"]]], [0, [["doc", "# e"]]]]
+1076: ok
+1100: ok
+!!  test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern() stub
+1181: ok
+1212: failed
+  result: [[0, [["name", "a"]]], [0, [["name", "c"]]], [0, [["name", "e"]]]]
+  expect: [[0, [["name", "a"]]], [0, [["name", "c"]]], [0, [["doc", "# four"], ["doc", "// five"], ["name", "e"]]]]
+1261: ok
+1263: ok
+1298: ok
+1333: ok
+1360: ok
+1402: ok
+1435: ok
+1472: ok
+1500: ok
+1534: ok
+!!  test_query_matches_with_too_many_permutations_to_track() stub
+!!  test_query_matches_with_alternatives_and_too_many_permutations_to_track() stub
+1633: ok
+1665: ok
+1705:in `test_query_matches_within_byte_range': failed
+  result: [[0, [["element", "a"]]], [0, [["element", "b"]]]]
+  expect: [[0, [["element", "a"]]], [0, [["element", "b"]]], [0, [["element", "c"]]]]
+1719:in `test_query_matches_within_byte_range': ok
+1733:in `test_query_matches_within_byte_range': ok
+!!  test_query_matches_within_point_range() stub
+1826:in `test_query_captures_within_byte_range': ok
+1862:in `test_query_matches_with_unrooted_patterns_intersecting_byte_range': ok
+1878:in `test_query_matches_with_unrooted_patterns_intersecting_byte_range': ok
+!!  test_query_captures_within_byte_range_assigned_after_iterating() stub
+2009:in `test_query_matches_different_queries_same_cursor': ok
+2015:in `test_query_matches_different_queries_same_cursor': ok
+2025:in `test_query_matches_different_queries_same_cursor': ok
+!!  test_query_matches_with_multiple_captures_on_a_node() stub
+!!  test_query_matches_with_captured_wildcard_at_root() stub
+2183: ok
+2208: failed
+  result: [[0, [["field", "a"]]]]
+  expect: [[0, [["field", "a"]]], [0, [["field", "b"]]], [0, [["field", "c"]]]]
+2254: failed
+  result: [[3, [["super_call", "a(1)"], ["fn", "a"]]], [0, [["func", "a"], ["args", "(1)"]]], [0, [["func", "a(1).b"], ["args", "(2)"]]], [1, [["receiver", "a(1)"], ["method", "b"]]], [0, [["func", "a(1).b(2).c"], ["args", "(3)"]]], [1, [["receiver", "a(1).b(2)"], ["method", "c"]]], [0, [["func", "a(1).b(2).c(3).d"], ["args", "(4)"]]], [1, [["receiver", "a(1).b(2).c(3)"], ["method", "d"]]], [0, [["func", "a(1).b(2).c(3).d(4).e"], ["args", "(5)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4)"], ["method", "e"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f"], ["args", "(6)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5)"], ["method", "f"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g"], ["args", "(7)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6)"], ["method", "g"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g(7).h"], ["args", "(8)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6).g(7)"], ["method", "h"]]]]
+  expect: [[0, [["func", "a"], ["args", "(1)"]]], [0, [["func", "a(1).b"], ["args", "(2)"]]], [1, [["receiver", "a(1)"], ["method", "b"]]], [0, [["func", "a(1).b(2).c"], ["args", "(3)"]]], [1, [["receiver", "a(1).b(2)"], ["method", "c"]]], [0, [["func", "a(1).b(2).c(3).d"], ["args", "(4)"]]], [1, [["receiver", "a(1).b(2).c(3)"], ["method", "d"]]], [0, [["func", "a(1).b(2).c(3).d(4).e"], ["args", "(5)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4)"], ["method", "e"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f"], ["args", "(6)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5)"], ["method", "f"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g"], ["args", "(7)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6)"], ["method", "g"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g(7).h"], ["args", "(8)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6).g(7)"], ["method", "h"]]]]
+2330: ok
+2397:in `test_query_captures_basic': ok
+2412:in `test_query_captures_basic': ok
+2467:in `test_query_captures_with_text_conditions': failed
+  result: [["constant", "toad"], ["constructor", "toad"], ["function.builtin", "toad"], ["variable", "toad"], ["constant", "load"], ["constructor", "load"], ["function.builtin", "load"], ["variable", "load"], ["constant", "panda"], ["constructor", "panda"], ["function.builtin", "panda"], ["variable", "panda"], ["constant", "lambda"], ["constructor", "lambda"], ["function.builtin", "lambda"], ["variable", "lambda"], ["constant", "ab"], ["constructor", "ab"], ["function.builtin", "ab"], ["variable", "ab"], ["constant", "require"], ["constructor", "require"], ["function.builtin", "require"], ["variable", "require"], ["constant", "Cd"], ["constructor", "Cd"], ["function.builtin", "Cd"], ["variable", "Cd"], ["constant", "EF"], ["constructor", "EF"], ["function.builtin", "EF"], ["variable", "EF"]]
+  expect: [["variable", "toad"], ["variable", "panda"], ["variable", "ab"], ["function.builtin", "require"], ["variable", "require"], ["constructor", "Cd"], ["variable", "Cd"], ["constant", "EF"], ["constructor", "EF"], ["variable", "EF"]]
+!!  test_query_captures_with_predicates() stub
+!!  test_query_captures_with_quoted_predicate_args() stub
+2604:in `test_query_captures_with_duplicates': ok
+!!  test_query_captures_with_many_nested_results_without_fields() stub
+!!  test_query_captures_with_many_nested_results_with_fields() stub
+2806:in `test_query_captures_with_too_many_nested_results': failed
+  result: [["template-call", "b.c0().d0 `😄`;\n "], ["method-name", "c0"], ["method-name", "d0"], ["template-tag", "d0"]]
+  expect: [["template-call", "b.c0().d0 `😄`"], ["method-name", "c0"], ["method-name", "d0"], ["template-tag", "d0"]]
+2815:in `test_query_captures_with_too_many_nested_results': failed
+  result: [["method-name", ".f"]]
+  expect: [["template-call", "b.c9().d9 `😄`"], ["method-name", "c9"], ["method-name", "d9"], ["template-tag", "d9"]]
+2824:in `test_query_captures_with_too_many_nested_results': failed
+  result: nil
+  expect: [["method-name", "e"], ["method-name", "f"]]
+!!  test_query_captures_ordered_by_both_start_and_end_positions() stub
+!!  test_query_captures_with_matches_removed() stub
+!!  test_query_captures_and_matches_iterators_are_fused() stub
+!!  test_query_text_callback_returns_chunks() stub
+3104:in `test_query_start_byte_for_pattern': ok
+3105:in `test_query_start_byte_for_pattern': ok
+3106:in `test_query_start_byte_for_pattern': ok
+!!  test_query_capture_names() stub
+!!  test_query_lifetime_is_separate_from_nodes_lifetime() stub
+!!  test_query_with_no_patterns() stub
+3230:in `test_query_comments': ok
+3264:in `test_query_disable_pattern': ok
+3296: ok
+!!  test_query_step_is_definite() stub
+===
+total asserts: 89
+  ok: 78
+  failed: 11
+  ["385:in `test_query_errors_on_impossible_patterns'", "984", "1051", "1212", "1705:in `test_query_matches_within_byte_range'", "2208", "2254", "2467:in `test_query_captures_with_text_conditions'", "2806:in `test_query_captures_with_too_many_nested_results'", "2815:in `test_query_captures_with_too_many_nested_results'", "2824:in `test_query_captures_with_too_many_nested_results'"]
+
+done.

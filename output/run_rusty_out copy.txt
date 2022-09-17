@@ -1,0 +1,469 @@
+c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :uint32_p], returns: :string
+=== vers: 0.0.4
+./gen/rusty/rusty_node_test.rb
+10: ok
+11: ok
+12: ok
+13: ok
+14: ok
+15: ok
+16: ok
+26: ok
+27: ok
+28: ok
+29: ok
+30: ok
+31: ok
+32: ok
+34: ok
+35: ok
+36: ok
+37: ok
+38: ok
+39: ok
+40: ok
+42: ok
+43: ok
+47: ok
+48: ok
+50: ok
+51: ok
+55: ok
+56: ok
+58: ok
+59: ok
+60: ok
+62: ok
+67: ok
+68: ok
+69: ok
+71: ok
+72: ok
+73: ok
+75: ok
+76: ok
+77: ok
+78: ok
+80: ok
+85: ok
+86: ok
+87: ok
+89: ok
+90: ok
+91: ok
+93: ok
+97: ok
+101: ok
+102: ok
+104: ok
+105: ok
+106: ok
+107: ok
+109: ok
+110: ok
+111: ok
+112: ok
+113: ok
+114: ok
+115: ok
+116: ok
+ test_node_children() stub
+15: ok
+ test_node_children_by_field_name() stub
+188: ok
+192: ok
+207: ok
+208: ok
+212: ok
+217: ok
+230: ok
+231: ok
+245: ok
+246: ok
+247: ok
+251: ok
+252: ok
+254: ok
+255: ok
+256: ok
+260: ok
+261: ok
+263: ok
+264: ok
+265: ok
+266: ok
+268: ok
+271: ok
+272: ok
+273: ok
+274: ok
+275: ok
+280: ok
+281: ok
+283: ok
+287: ok
+291: ok
+292: ok
+294: ok
+295: ok
+296: ok
+297: ok
+299: ok
+300: ok
+301: ok
+302: ok
+303: ok
+304: ok
+305: ok
+306: ok
+ test_node_named_child_with_aliases_and_extras() stub
+338: ok
+339: ok
+340: ok
+341: ok
+342: ok
+347: ok
+348: ok
+349: ok
+350: ok
+351: ok
+357: ok
+358: ok
+359: ok
+360: ok
+361: ok
+366: ok
+367: ok
+368: ok
+369: ok
+370: ok
+376: ok
+377: ok
+378: ok
+379: ok
+380: ok
+385: ok
+386: ok
+387: ok
+388: ok
+389: ok
+395: ok
+396: ok
+397: ok
+398: ok
+399: ok
+404: ok
+405: ok
+406: ok
+407: ok
+408: ok
+413: ok
+414: ok
+415: ok
+416: ok
+417: ok
+419: ok
+424: ok
+425: ok
+426: ok
+427: ok
+428: ok
+ test_node_edit() stub
+472: ok
+473: ok
+474: ok
+475: ok
+486: ok
+487: ok
+488: ok
+489: ok
+490: ok
+491: ok
+ test_node_field_names() stub
+ test_node_field_calls_in_language_without_fields() stub
+ test_node_is_named_but_aliased_as_anonymous() stub
+695: ok
+701: ok
+707: ok
+708: ok
+717: ok
+723: ok
+728: ok
+731: ok
+732: ok
+===
+total asserts: 183
+  ok: 183
+  failed: 0
+
+./gen/rusty/rusty_tree_test.rb
+12: ok
+34: ok
+35: ok
+36: ok
+37: ok
+38: ok
+39: ok
+40: ok
+41: ok
+42: ok
+62: ok
+63: ok
+64: ok
+65: ok
+66: ok
+67: ok
+68: ok
+69: ok
+70: ok
+90: ok
+91: ok
+92: ok
+93: ok
+94: ok
+95: ok
+96: ok
+97: ok
+98: ok
+118: ok
+119: ok
+120: ok
+121: ok
+122: ok
+123: ok
+124: ok
+125: ok
+126: ok
+147: ok
+148: ok
+149: ok
+150: ok
+151: ok
+152: ok
+153: ok
+154: ok
+155: ok
+156: ok
+157: ok
+158: ok
+179: ok
+180: ok
+181: ok
+182: ok
+183: ok
+184: ok
+185: ok
+186: ok
+187: ok
+207: ok
+209: ok
+210: ok
+212: ok
+213: ok
+214: ok
+216: ok
+217: ok
+218: ok
+220: ok
+221: ok
+222: ok
+233: ok
+236: ok
+237: ok
+240: ok
+241: ok
+244: ok
+245: ok
+248: ok
+249: ok
+252: ok
+253: ok
+256: ok
+257: ok
+273: ok
+275: ok
+276: ok
+277: ok
+280: ok
+281: ok
+284: ok
+285: ok
+286: ok
+290: ok
+293: ok
+294: ok
+300: ok
+301: ok
+305: ok
+308: ok
+309: ok
+313: ok
+314: ok
+315: ok
+319: ok
+322: ok
+323: ok
+327: ok
+330: ok
+331: ok
+335: ok
+336: ok
+337: ok
+341: ok
+344: ok
+345: ok
+349: ok
+350: ok
+351: ok
+355: ok
+358: ok
+359: ok
+371: ok
+372: ok
+373: ok
+===
+total asserts: 124
+  ok: 124
+  failed: 0
+
+./gen/rusty/rusty_query_test.rb
+10: ok
+11: ok
+18: ok
+26: ok
+38: ok
+47: ok
+58: ok
+68: ok
+77: ok
+86: ok
+95: ok
+106: ok
+118: ok
+129: ok
+145: ok
+155: ok
+165: ok
+175: ok
+185: ok
+195: ok
+205: ok
+ test_query_errors_on_invalid_predicates() stub
+267: ok
+289: ok
+305: ok
+328: ok
+350: ok
+364: ok
+385: failed
+  result: <QueryError row: 0, column: 26, offset: 26, message: "_expression", kind: :node_type>
+  expect: <QueryError row: 0, column: 14, offset: 14, message: "(if_statement condition: (_expression))\n              ^", kind: :structure>
+408: ok
+433: ok
+457: ok
+500: ok
+533: ok
+563: ok
+ test_query_matches_with_many_results() stub
+ test_query_matches_with_many_overlapping_results() stub
+657: ok
+677: ok
+726: ok
+751: ok
+768: ok
+808: ok
+831: ok
+868: ok
+916: ok
+948: ok
+984: failed
+  result: []
+  expect: [[0, [["doc", "# four"], ["doc", "# five"], ["doc", "# six"], ["name", "B"]]], [1, [["doc", "# eight"], ["name", "d"]]]]
+1027: ok
+1051: failed
+  result: []
+  expect: [[0, [["doc", "# a"], ["doc", "// b"], ["doc", "// c"]]], [0, [["doc", "# e"]]]]
+1076: ok
+1100: ok
+ test_query_matches_with_multiple_repetition_patterns_that_intersect_other_pattern() stub
+1181: ok
+1212: failed
+  result: [[0, [["name", "a"]]], [0, [["name", "c"]]], [0, [["name", "e"]]]]
+  expect: [[0, [["name", "a"]]], [0, [["name", "c"]]], [0, [["doc", "# four"], ["doc", "// five"], ["name", "e"]]]]
+1261: ok
+1263: ok
+1298: ok
+1333: ok
+1360: ok
+1402: ok
+1435: ok
+1472: ok
+1500: ok
+1534: ok
+ test_query_matches_with_too_many_permutations_to_track() stub
+ test_query_matches_with_alternatives_and_too_many_permutations_to_track() stub
+1633: ok
+1665: ok
+1705: failed
+  result: [[0, [["element", "a"]]], [0, [["element", "b"]]]]
+  expect: [[0, [["element", "a"]]], [0, [["element", "b"]]], [0, [["element", "c"]]]]
+1719: ok
+1733: ok
+ test_query_matches_within_point_range() stub
+1826: ok
+1862: ok
+1878: ok
+ test_query_captures_within_byte_range_assigned_after_iterating() stub
+2009: ok
+2015: ok
+2025: ok
+ test_query_matches_with_multiple_captures_on_a_node() stub
+ test_query_matches_with_captured_wildcard_at_root() stub
+2183: ok
+2208: failed
+  result: [[0, [["field", "a"]]]]
+  expect: [[0, [["field", "a"]]], [0, [["field", "b"]]], [0, [["field", "c"]]]]
+2254: failed
+  result: [[3, [["super_call", "a(1)"], ["fn", "a"]]], [0, [["func", "a"], ["args", "(1)"]]], [0, [["func", "a(1).b"], ["args", "(2)"]]], [1, [["receiver", "a(1)"], ["method", "b"]]], [0, [["func", "a(1).b(2).c"], ["args", "(3)"]]], [1, [["receiver", "a(1).b(2)"], ["method", "c"]]], [0, [["func", "a(1).b(2).c(3).d"], ["args", "(4)"]]], [1, [["receiver", "a(1).b(2).c(3)"], ["method", "d"]]], [0, [["func", "a(1).b(2).c(3).d(4).e"], ["args", "(5)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4)"], ["method", "e"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f"], ["args", "(6)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5)"], ["method", "f"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g"], ["args", "(7)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6)"], ["method", "g"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g(7).h"], ["args", "(8)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6).g(7)"], ["method", "h"]]]]
+  expect: [[0, [["func", "a"], ["args", "(1)"]]], [0, [["func", "a(1).b"], ["args", "(2)"]]], [1, [["receiver", "a(1)"], ["method", "b"]]], [0, [["func", "a(1).b(2).c"], ["args", "(3)"]]], [1, [["receiver", "a(1).b(2)"], ["method", "c"]]], [0, [["func", "a(1).b(2).c(3).d"], ["args", "(4)"]]], [1, [["receiver", "a(1).b(2).c(3)"], ["method", "d"]]], [0, [["func", "a(1).b(2).c(3).d(4).e"], ["args", "(5)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4)"], ["method", "e"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f"], ["args", "(6)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5)"], ["method", "f"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g"], ["args", "(7)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6)"], ["method", "g"]]], [0, [["func", "a(1).b(2).c(3).d(4).e(5).f(6).g(7).h"], ["args", "(8)"]]], [1, [["receiver", "a(1).b(2).c(3).d(4).e(5).f(6).g(7)"], ["method", "h"]]]]
+2330: ok
+2397: ok
+2412: ok
+2467: failed
+  result: [["constant", "toad"], ["constructor", "toad"], ["function.builtin", "toad"], ["variable", "toad"], ["constant", "load"], ["constructor", "load"], ["function.builtin", "load"], ["variable", "load"], ["constant", "panda"], ["constructor", "panda"], ["function.builtin", "panda"], ["variable", "panda"], ["constant", "lambda"], ["constructor", "lambda"], ["function.builtin", "lambda"], ["variable", "lambda"], ["constant", "ab"], ["constructor", "ab"], ["function.builtin", "ab"], ["variable", "ab"], ["constant", "require"], ["constructor", "require"], ["function.builtin", "require"], ["variable", "require"], ["constant", "Cd"], ["constructor", "Cd"], ["function.builtin", "Cd"], ["variable", "Cd"], ["constant", "EF"], ["constructor", "EF"], ["function.builtin", "EF"], ["variable", "EF"]]
+  expect: [["variable", "toad"], ["variable", "panda"], ["variable", "ab"], ["function.builtin", "require"], ["variable", "require"], ["constructor", "Cd"], ["variable", "Cd"], ["constant", "EF"], ["constructor", "EF"], ["variable", "EF"]]
+ test_query_captures_with_predicates() stub
+ test_query_captures_with_quoted_predicate_args() stub
+2604: ok
+ test_query_captures_with_many_nested_results_without_fields() stub
+ test_query_captures_with_many_nested_results_with_fields() stub
+2806: failed
+  result: [["template-call", "b.c0().d0 `😄`;\n "], ["method-name", "c0"], ["method-name", "d0"], ["template-tag", "d0"]]
+  expect: [["template-call", "b.c0().d0 `😄`"], ["method-name", "c0"], ["method-name", "d0"], ["template-tag", "d0"]]
+2815: failed
+  result: [["method-name", ".f"]]
+  expect: [["template-call", "b.c9().d9 `😄`"], ["method-name", "c9"], ["method-name", "d9"], ["template-tag", "d9"]]
+2824: failed
+  result: nil
+  expect: [["method-name", "e"], ["method-name", "f"]]
+ test_query_captures_ordered_by_both_start_and_end_positions() stub
+ test_query_captures_with_matches_removed() stub
+ test_query_captures_and_matches_iterators_are_fused() stub
+ test_query_text_callback_returns_chunks() stub
+3104: ok
+3105: ok
+3106: ok
+ test_query_capture_names() stub
+ test_query_lifetime_is_separate_from_nodes_lifetime() stub
+ test_query_with_no_patterns() stub
+3230: ok
+3264: ok
+3296: ok
+ test_query_step_is_definite() stub
+===
+total asserts: 89
+  ok: 78
+  failed: 11
+  ["385", "984", "1051", "1212", "1705", "2208", "2254", "2467", "2806", "2815", "2824"]
+
+done.
