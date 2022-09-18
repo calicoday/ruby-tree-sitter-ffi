@@ -1,7 +1,8 @@
 require 'fileutils'
 require 'erb'
+require 'pathname'
 
-require './src/rusty/rusty_prep_util.rb'
+require './src/rusty/gen_rusty_util.rb'
 require './src/rusty/rusty_prep_node.rb'
 require './src/rusty/rusty_prep_tree.rb'
 require './src/rusty/rusty_prep_query.rb'
@@ -12,13 +13,78 @@ puts "src/rusty/gen_rusty.rb"
 puts "+=+=+ " + `date`
 puts
 
-# ruby -e"require './fresh/gen-step/rusty_gen_00.rb'; gen"
+# argh, must run with this:
+# ruby -e"require './src/rusty/gen_rusty.rb'; gen"
+
+### from pull_repo_refs.rb
+# vers_list = ['0.20.7', '0.20.6', '0.20.0'].map{|e| [e, "tree-sitter-#{e}"]}.to_h # <- to_h
+# 
+#   vers_list.each do |vers, dest|
+#     show.section "Pull repo vers #{vers}..."
+#     RepoRefs.pull_vers(repo_root, subdirs, vers, dest) do |subdir, dest, tidy|
+# #         puts "*** call pull_vers #{[repo_root, subdirs, vers, dest].map(&inspect)}"
+#       show.call(RepoRefs, :tidy, subdir, dest, tidy)
+#     end
+#   end
 
 def gen()
-	devdir = './src/gen'
+	devdir = './src/rusty'
+	gendir = './gen/rusty'
+# 	ts_tests_dir = './dev-ref-keep/tree-sitter-0.19.5/cli/src/tests' # srcdir!!!
+#   vers_list = ['0.19.5'].map{|e| 
+#     [e, "/tree-sitter-#{e}"]}.to_h
+  vers_list = ['0.20.7', '0.20.6', '0.20.0'].map{|e| 
+    [e, "/tree-sitter-#{e}"]}.to_h # <- to_h!!!
+  vers_list.each do |vers, dest|
+    ts_tests_dir = "./dev-ref/pull/tree-sitter-#{vers}/cli/src/tests" # srcdir!!!
+    outdir = gendir + dest
+    g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
+    $log = File.open(outdir + '/rusty-gen-log.rb', 'w')
+    bosslist = ["node", "tree", "query"]
+    g.gen_tests(bosslist)
+   
+  end
+# 	g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
+# 	$log = File.open(outdir + '/rusty-gen-log.rb', 'w')
+# 	bosslist = ["node", "tree", "query"]
+# 	g.gen_tests(bosslist)
+
+	$log.close
+	puts "done."
+end
+
+def pre_vers_gen()
+	devdir = './src/rusty'
+	gendir = './gen/rusty'
+	ts_tests_dir = './dev-ref-keep/tree-sitter-0.19.5/cli/src/tests' # srcdir!!!
+  vers_list = ['0.19.5'].map{|e| 
+    [e, "/tree-sitter-#{e}"]}.to_h
+#   vers_list = ['0.20.7', '0.20.6', '0.20.0'].map{|e| 
+#     [e, gendir + "tree-sitter-#{e}"]}.to_h
+  vers_list.each do |vers, dest|
+#     outdir = gendir + dest
+    outdir = gendir + dest
+    g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
+    $log = File.open(outdir + '/rusty-gen-log.rb', 'w')
+    bosslist = ["node", "tree", "query"]
+    g.gen_tests(bosslist)
+   
+  end
+# 	g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
+# 	$log = File.open(outdir + '/rusty-gen-log.rb', 'w')
+# 	bosslist = ["node", "tree", "query"]
+# 	g.gen_tests(bosslist)
+
+	$log.close
+	puts "done."
+end
+
+def was_gen()
+	devdir = './src/rusty'
 	gendir = './gen'
 	outdir = gendir + '/rusty'
-	ts_tests_dir = './dev-ref/tree-sitter-0.19.5/cli/src/tests'
+# 	ts_tests_dir = './dev-ref/pull/tree-sitter-0.19.5/cli/src/tests'
+	ts_tests_dir = './dev-ref-keep/tree-sitter-0.19.5/cli/src/tests'
 	g = RustyGen.new(ts_tests_dir, gendir, outdir, devdir)
 	$log = File.open(outdir + '/rusty-gen-log.rb', 'w')
 	bosslist = ["node", "tree", "query"]
@@ -40,13 +106,6 @@ class RustyGen
     binding
   end
 	
-# 	def gen_tests(bosslist)
-# 		gen_base(bosslist)
-# 		self # reorg this!!!
-# 	end
-# 
-# 
-# 	# gen_tests(["node", "tree"])
 	def gen_tests(bosslist)
 		@testcalls = []
 
@@ -90,16 +149,8 @@ class RustyGen
 			File.write(outfile, ERB.new(tmplt, trim_mode: "%<>").result(get_binding))
 	
 			# comment out the skips
-			###tests_string = tests.join("\n")
-# 			tests_string = tests.map{|m| 
-# 				boss.skip_fn(m) ? m.split("\n").map{|e| e.gsub(/^/, '# ')}.join("\n") : m
-# 			}.join("\n")
       good_tests = testdefs.reject{|m, guts, skip| skip &&
         skip.include?('internal')}.compact.map{|m, guts, skip| m}
-#       good_tests = testdefs.reject{|m, guts, skip| skip && 
-# 			  skip.is_a?(String) && !skip.include?('internal')}.compact.map{|m, guts, skip| m}
-#       good_tests = testdefs.select{|m, guts, skip| !skip || 
-#         skip.is_a?(String) && skip.include?('internal')}.map{|m, guts, skip| m}
       tests_string = good_tests.join("\n")
 
       # nope, gen rusty_patch_include.rb with require skip stubs files
