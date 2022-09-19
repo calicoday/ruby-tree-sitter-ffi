@@ -4,18 +4,18 @@
 
 require './src/run_rusty_helper.rb'
 <%# tmp here for query dev: %>
-require './src/rusty/query_util.rb'
+require './src/rusty/tmp_query_util.rb'
 <%# comment something something %>
 <% if @patchreqs %>
 
 <% @patchreqs.each do |e| %>
-require '<%= e %>'
+require './<%= e %>'
 <% end %>
 <% end %>
 <% @testcalls.each do |h| %>
 
 
-require '<%= h[:bossreq] %>'
+require './<%= h[:bossreq] %>'
 
 puts '<%= h[:bossreq] %>'
 init_tally()

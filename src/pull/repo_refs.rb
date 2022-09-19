@@ -23,6 +23,17 @@ module RepoRefs
     end    
   end
 
+  def do_one_thing(show, rundir, repo_root, subdirs, vers, dest)
+    show.call_sys("date")
+    ensure_outpath(rundir)
+    show.call(FileUtils, :cd, rundir)
+    
+      show.section "Pull repo vers #{vers}..."
+      RepoRefs.pull_vers(repo_root, subdirs, vers, dest) do |subdir, dest, tidy|
+#         puts "*** call pull_vers #{[repo_root, subdirs, vers, dest].map(&inspect)}"
+        show.call(RepoRefs, :tidy, subdir, dest, tidy)
+      end
+  end
   
   def ensure_outpath(outpath)
     if Dir.exist?(outpath)

@@ -1,0 +1,7 @@
+c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :uint32_p], returns: :string
+=== vers: 0.0.4
+.......................................................................
+
+Finished in 0.00719 seconds (files took 0.13589 seconds to load)
+71 examples, 0 failures
+
