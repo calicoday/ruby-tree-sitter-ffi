@@ -5,8 +5,8 @@
 require './src/run_rusty_helper.rb'
 require './src/rusty/tmp_query_util.rb'
 
-require './gen/dev-tree-sitter-0.20.0/rusty/rusty_node_patch.rb'
-require './gen/dev-tree-sitter-0.20.0/rusty/rusty_query_patch.rb'
+require './src/tree-sitter-0.20.0/rusty/rusty_node_patch.rb'
+require './src/tree-sitter-0.20.0/rusty/rusty_query_patch.rb'
 
 
 require './gen/dev-tree-sitter-0.20.0/rusty/rusty_node_test.rb'

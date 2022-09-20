@@ -128,8 +128,10 @@ class RustyGen
 		# for early testing...
     filer.erb_write(:tmplt, 'rusty_run.rb.erb', get_binding, "run_rusty_stubs.rb")
 
-		# for real, when patch blanks have been filled
-		@patchreqs = patchreqs.map{|e| e.to_s.gsub('_blank', '')}
+		# for real, when patch blanks have been filled, they'll be in src/
+		@patchreqs = patchreqs.map{|e| 
+		  e.to_s.gsub('_blank', '').gsub('gen/dev-', 'src/')}
+# 		@patchreqs = patchreqs.map{|e| e.to_s.gsub('_blank', '')}
 
 		# rusty_run tmplt needs @testcalls {:bossreq, :tests}
     filer.erb_write(:tmplt, 'rusty_run.rb.erb', get_binding, "run_rusty.rb")			  

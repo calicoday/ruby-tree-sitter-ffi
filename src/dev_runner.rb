@@ -1,24 +1,18 @@
+#!/usr/bin/env ruby ### is this actually portable???
+
+require 'fileutils'
+
 require './src/pull/repo_refs.rb'
 require './src/pull/show_runner.rb'
-require 'fileutils'
 require './src/filer.rb'
 require './src/sigs/gen_sigs_prep.rb'
 require './src/rusty/gen_rusty.rb'
 require './src/sigs/gen_sigs.rb'
 
-# gen
-# $ ruby -e"require './src/prep_runner.rb'; PrepRunner.pull('0.20.6')"
-# $ ruby -e"require './src/prep_runner.rb'; PrepRunner.sigs_prep('0.20.6')"
-# $ ruby -e"require './src/prep_runner.rb'; PrepRunner.rusty('0.20.6')"
-# $ ruby -e"require './src/prep_runner.rb'; PrepRunner.sigs('0.20.6')"
-# $ ruby -e"require './src/prep_runner.rb'; PrepRunner.all('0.20.6')"
-
-# run
-# $ ruby gen/dev-tree-sitter-0.20.0/rusty/run_rusty_stubs.rb 2>&1 | tee log/run_rusty_stubs_0.20.0_log.txt
-# $ rspec gen/dev-tree-sitter-0.20.0/sigs 2>&1 | tee log/run_sigs_0.20.0_log.txt
+### also script, 'if File.identical?(__FILE__, $0)' at end
 
 
-module PrepRunner
+module DevRunner
 
   def self.shunt(vers, dev=true)
     devmark = (dev ? 'dev-' : '') # so we can find pulled!!!
@@ -31,16 +25,41 @@ module PrepRunner
   def self.srcdir(vers, dev=true) 
     Pathname.new('src/') + (vers ? shunt(vers, dev) : '') 
   end
-#   def self.gendir(vers, dev=true) Pathname.new('gen/') + shunt(vers, dev) end
-#   def self.srcdir(vers, dev=true) Pathname.new('src/') + shunt(vers, dev) end
-#   def self.srcdir(vers, dev=false) Pathname.new('src/') + shunt(vers, dev) end
   
-  def self.all(vers)
+  def self.was_all(vers)
     pull(vers)
     sigs_prep(vers)
-    rusty(vers)
-    sigs(vers)
+    gen_rusty(vers)
+    gen_sigs(vers)
   end
+  
+  # prob unnec bc need to edit between!!!
+  def self.all(vers)
+    all_prep(vers)
+    all_gen(vers)
+  end
+  
+  def self.all_prep(vers)
+    puts "*** DevRunner all_prep pull(#{vers})..."
+    pull(vers)
+    puts
+    puts "*** DevRunner all_prep sigs_prep(#{vers})..."
+    sigs_prep(vers)
+    puts
+    #rusty_prep(vers)
+  end
+  def self.all_gen(vers)
+    puts "*** DevRunner all_gen rusty(#{vers})..."
+    gen_rusty(vers)
+    puts
+    puts "*** DevRunner all_gen sigs(#{vers})..."
+    gen_sigs(vers)
+    puts
+  end
+#   def self.all_run(vers)
+#     # ??? cmdline w opts??? or just rakefile???
+#   end
+  
   
   def self.pull(vers)
     show = ShowRunner.new
@@ -56,7 +75,7 @@ module PrepRunner
   end
   
 #   def self.sigs_prep_to_edit(vers, dev=true)
-#     puts "PrepRunner.sigs_prep_to_edit..."
+#     puts "DevRunner.sigs_prep_to_edit..."
 #     # copy and rename _blanks to src/
 #     shunt = shunt(vers, dev)
 #     blankdir = gendir(shunt) + 'sigs-prep/'
@@ -98,7 +117,7 @@ module PrepRunner
   # out:
   #   - out: gen/shunt/rusty/*_rusty[_patch_blank]?.rb
   #   tmp -> gen/shunt/rusty/rusty_*_[test|_patch_blank].rb
-  def self.rusty(vers)
+  def self.gen_rusty(vers)
     $log = File.open('log/' + 'gen_rusty_log.txt', 'w') ###TMP!!! use filer!!! FIXME!!!
     # input from pull/ needs dbl shunt
     filer = Filer.new(
@@ -116,30 +135,51 @@ module PrepRunner
     puts "done."
   end
   
-#     devdir = './gen/sigs-prep'
-#     # devdir = './src/sigs'
-#     gendir = './gen'
-#     outdir = gendir + '/sigs'
-#     srcdir = './lib/tree_sitter_ffi'
-  def self.sigs(vers)
+  def self.gen_sigs(vers)
     filer = Filer.new({input: 'lib/tree_sitter_ffi'}, 
       {out: gendir(vers) + 'sigs/'})
     GenSigs.gen_sigs(filer)    
     puts "done."
   end
   
-  
-# class Root
-#     attr_reader :objs
-#     def initialize
-#         @objs = []
-#         Dir.glob('root/*.rb').each do |file|
-#             require file
-#             @objs << eval(File.basename(file, ".rb").capitalize + ".new")
-#         end
-#     end
-# end
+end
 
+def do_the_thing(cmd, vers, tee=true)
+  req = "require './src/dev_runner.rb'"
+  call = "DevRunner.#{cmd}('#{vers}')"
+  ruby_prog = "ruby -e\"#{req}; #{call}\" 2>&1"
+  
+  prog = case cmd
+  when 'run_rusty_stubs'
+    "ruby gen/dev-tree-sitter-#{vers}/rusty/run_rusty_stubs.rb 2>&1" 
+  when 'run_rusty'
+    "ruby gen/dev-tree-sitter-#{vers}/rusty/run_rusty.rb 2>&1" 
+  when 'run_sigs'
+    "rspec gen/dev-tree-sitter-#{vers}/sigs 2>&1" # redirect? 
+  when 'run_sigs_blanks'
+    # not really useful but this is how we'll do it for patch (in src/ not gen/dev-)
+    "rspec gen/dev-tree-sitter-#{vers}/sigs gen/dev-tree-sitter-#{vers}/sigs/*_blank.rb 2>&1" # redirect? 
+  else
+    ruby_prog
+  end
+
+  logfile = "#{cmd}_#{vers}_log.txt"
+  FileUtils.mkdir_p('log/')
+  tee_log = (tee ? " | tee log/#{logfile}" : '')
+  puts "DevRunner calling #{prog + tee_log}..."
+  system(prog + tee_log)
+  puts "done."
+end
+
+# run from cmdline, add getopts???
+if File.identical?(__FILE__, $0)
+  unless ARGV.length > 0
+    puts "Usage: ruby dev_runner.rb cmd [vers]"
+    exit 1
+  end
+  cmd, vers, _ = ARGV
+  vers = '0.20.0' unless vers # or whatever is most likely currently
+  do_the_thing(cmd, vers)
 end
   
   
