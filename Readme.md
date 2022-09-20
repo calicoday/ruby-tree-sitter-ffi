@@ -52,13 +52,7 @@ There are a handful of basic spec files in `spec/` you can run from the project 
 ```
 $ rspec
 ```
-
-In `gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `src/rusty/gen_rusty.rb`. You can run them from the project dir with
-```
-$ ruby gen/rusty/run_rusty.rb
-```
-
-There are generated spec files testing low-level 
+There are a bunch of scripts that generate and run other layers of tests. See [Project notes](#Project-notes)
 
 Not recommended for production use yet but it should be playable on most common platforms. If you get stuck -- or you know how to get unstuck for a given environment -- please note it in the issues.
 
@@ -141,7 +135,45 @@ The Ruby api is implemented in layers:
 - 'bind_rust', matching the rust binding methods used by the tree-sitter cli tests
 
 
+### DevRunner utility
 
+DevRunner commands a bunch of project scripts produce various kinds of support material. To run, from the project directory:
+- `$ ruby src/dev_runner.rb cmd [vers]`
+
+where 
+- `vers` is the applicable tree-sitter verion, eg '0.20.7' (or whatever the current default hardcoded in `src/dev_runner.rb` is, if omitted)
+- `cmd` is one of:
+  - `pull`
+    - runs `src/pull/pull_repo_refs.rb` which calls svn to pull the necessary tree-sitter repo reference files from github ([Repo refs pull system](#Repo-refs-pull-system))
+  - `sigs_prep`
+    - runs `src/sigs/gen_sigs_prep.rb` to generate sigs prep blank files to be copied, filled in and supplied to `gen_sigs` ([Sigs spec system](#Sigs-spec-system))
+  - `gen_sigs`
+    - runs `src/sigs/gen_sigs.rb` to generate sigs spec files, also sigs patch blank files to be copied and filled in for tricky functions ([Sigs spec system](#Sigs-spec-system))
+  - `gen_rusty`
+    - runs `src/rusty/gen_rusty.rb` to generate rusty tests files, also rusty patch blank files to be copied and filled in for tricky tests in the Rust test files ([Rusty tests system](#Rusty-tests-system)). 
+  - `all_prep`
+    - runs `pull` and `sigs_prep`
+  - `all_gen`
+    - runs `gen_sigs` and `gen_rusty`
+  - `run_sigs`
+    - calls rspec to run the generated spec and patch sigs files in `gen/[vers]/sigs/` and `src/[vers]/sigs/`, respectively
+  - `run_sigs_blanks`
+    - (for early dev) calls rspec to run the generated spec and patch blank sigs files in `gen/[vers]/sigs/`
+  - `run_rusty`
+    - runs the `gen/[vers]/rusty/run_rusty.rb` to run the generated and edited rusty tests
+  - `run_rusty_stubs`
+    - runs the `gen/[vers]/rusty/run_rusty_stubs.rb` to run the generated and edited rusty tests (for early dev)
+
+In all cases, a log file named for `cmd` and `vers` is created in `log/`. Eg,
+- `$ ruby src/dev_runner.rb gen_rusty 0.20.7`
+=> `log/gen_rusty_0.20.7_log.txt`
+
+The various utilities themselves were original developed quite separately and differ in style and robustness, though they are gradually getting cleaned up. The DevRunner papers it all over nicely.
+
+Note:
+- all generated files are put in the `gen/` subdirectory
+- no generated file is to be hand-edited
+- generated files meant to be augmented and supplied to subsequent scripts are given the suffix `_blank`. A copy named without `_blank` should be edited and located under `src/`
 
 ### Repo refs pull system
 
@@ -152,10 +184,7 @@ The script `src/pull/pull_repo_refs.rb` uses `svn` to download to `gen/pull/` se
   - `node_test.rs`, `query_test.rs`, `tree_test.rs`
   
 Run with:
-- `$ ruby src/pull/pull_repo_refs.rb &> log/pull_repo_refs_log.txt`
-
-Or, where UNIX `tee` is available:
-- `$ ruby src/pull/pull_repo_refs.rb 2>&1 | tee log/pull_repo_refs_log.txt`
+- `$ ruby src/dev_runner.rb pull [vers]` ([DevRunner utility](#DevRunner-utility))
 
 The script also uses UNIX `tree` to display pulled directories in the log file. If `tree` is not installed the log will show where `tree` couldn't be found.
 
@@ -167,43 +196,32 @@ The pull system has a test script which downloads to `gen/pull/`, run with:
 
 Sigs specs are basic Ruby spec files that check the boundary between Ruby and C. They test only whether a Ruby method passes the expected number and type of arguments and receives the correct type of return value, matching the original C function. It does not matter what the C library does, just how the C functions and data structures are shaped. A small, mechanical bit we can take out of the larger testing equation.
 
-You can run them from the project dir with
-- `$ rspec gen/sigs`
+Much of this can be generated automatically but some functions deal in data types that are created somehow other than a simple `new()` or depend on something else already having been set up, so we need to be able to supply test set up information for any more tricky function. This is put in 'sigs prep' files. The process is generate sigs prep, edit prep, generate sigs specs, edit to patch, run specs:
 
+1. Generate sigs prep blanks:
+- `$ ruby src/dev_runner.rb gen_sigs_prep [vers]` ([DevRunner utility](#DevRunner-utility))
 
-Much of this can be generated automatically but some functions deal in data types that are created somehow other than a simple `new()` or depend on something else already having been set up, so we need to be able to supply test set up information for any more tricky function. This is put in 'sigs prep' files.
+2. Copy the prep blanks to `src/[vers]/sigs-prep/`, rename them without `_blank` and edit.
 
-The process is: generate sigs prep, edit prep, generate sigs specs, edit to patch, run specs. Note:
-- all generated files are put in the `gen/` subdirectory
-- no generated file is to be hand-edited
-- generated files meant to be augmented and supplied to subsequent scripts are given the suffix `_blank`. A copy named without `_blank` should be edited.
+3. Generate sigs specs:
+- `$ ruby src/dev_runner.rb gen_sigs [vers]` ([DevRunner utility](#DevRunner-utility))
 
+4. Copy the patch blanks to `src/[vers]/sigs/`, rename them without `_blank` and edit.
 
-#### When first creating
+Run the resulting spec files:
+- `$ ruby src/dev_runner.rb run_sigs [vers]` ([DevRunner utility](#DevRunner-utility))
 
-1. Generate the sigs_prep blanks
+#### When the Tree-sitter api changes:
 
-- `$ ruby src/sigs/gen_sigs_blank.rb` [shd be gen_sigs_prep to gen/sigs-prep/!!!]
-  - => `gen/sigs/sigs_prep/boss_sigs_blank.rb`
-- `$ cp gen/sigs/sigs_prep/boss_sigs_blank.rb gen/sigs/sigs_prep/boss_sigs.rb`
-  - and EDIT with strings to be inserted in the individual tests
+- Rename the `src/[vers]/sigs_prep/` sigs prep files to prepend `prev_` (in that directory or another)
+- Regenerate the sigs prep blanks (step 1, above)
+- Copy and rename the new sigs prep blanks (step 2, above) and edit to RECONCILE them with the `prev_` sigs preps
+- Similarly, rename `src/[vers]/sigs/` patch files to prepend `prev_` (in that directory or another)
+- Renegerate the sigs specs (step 3, above)
+- Copy and rename the new patch blanks (step 4, above) and edit to RECONCILE them with the `prev_` patch files
 
-2. Generate the sigs specs
-
-- `$ ruby src/sigs/gen_sigs.rb`
-  - => `gen/sigs/boss_sigs_spec.rb` and `gen/sigs/boss_patch_spec_blank.rb`
-- `$ cp gen/sigs/boss_patch_spec_blank.rb gen/sigs/boss_patch_spec.rb`
-  - and EDIT with replacement tests for those that were too problematic to generate properly
-
-
-#### When the TreeSitterFFI class api changes:
-
-- Rename `gen/sigs/sig_prep/boss_sigs.rb` as `prev_boss_sigs.rb` (in that directory or another).
-- Regenerate the sigs_prep blanks, as above. 
-- The new `boss_sigs.rb` (copy of `boss_sigs_blank.rb`) needs to be RECONCILED by hand with the `prev_boss_sigs.rb`.
-- Similarly, rename `gen/sigs/boss_patch_spec.rb` as `prev_boss_patch_spec.rb`. 
-- Renegerate the sigs specs. 
-- The new `boss_patch_spec.rb` (copy of `boss_patch_spec_blank.rb`) needs to be RECONCILED by hand with the `prev_boss_patch_spec.rb`.
+Run the resulting spec files (mind which version):
+- `$ ruby src/dev_runner.rb run_sigs [vers]` ([DevRunner utility](#DevRunner-utility))
 
 
 #### Editing sigs prep files
@@ -234,36 +252,33 @@ The generated patch_blank files have test code similar to the spec files because
 
 ### Rusty tests system
 
-In `gen/rusty/` are test files `rusty_node_test.rb`, `rusty_tree_test.rb` and `rusty_query_test.rb`, translated from the tree-sitter cli tests in Rust by the script `src/rusty/gen_rusty.rb`. You can run them from the project dir with
-```
-$ ruby gen/rusty/run_rusty.rb
-```
-
-The script `src/gen/rusty_gen.rb` reads the tree-sitter cli runtime test files `node_tests.rs`, `tree_tests.rs` and `query_test.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can. If the script hits Rustisms it doesn't know what to do with, it comments out that test function and adds a stub function to the patch_blank file for filling in later.
+The script `src/gen/rusty_gen.rb` reads the tree-sitter cli runtime test files `node_tests.rs`, `tree_tests.rs` and `query_test.rs`, runs a canoeful of gsubs on them and produces as much runnable, non-idiomatic ruby equivalents as it can. If the script hits Rustisms it doesn't know what to do with, it comments out that test function and adds a stub function to the patch blank file for filling in later.
 
 For each Rust test file, there is a rusty_prep file providing any necessary processing specific to that file. Also, a `skip_fn(m)` method, which is called with each test function and returns nil or a String giving the reason the test should be commented out and a stub added to the patch blank. Any non-nil return causes the patch but the String can be anything, though if it `include?('internal')`, the test method is commented out but no stub is created (to discard utility rust functions in the test files that aren't themselves tests). The rusty_prep file is NOT generated, just made by hand with stuff salvaged from the previous rusty gen system.
 
-The process is: generate rusty tests, edit to patch, run tests. Note:
-- all generated files are put in the `gen/` subdirectory
-- no generated file is to be hand-edited
-- generated files meant to be augmented and supplied to subsequent scripts are given the suffix `_blank`. A copy named without `_blank` should be edited.
+The process is generate rusty tests, edit to patch, run tests:
+1. Generate rusty tests:
+- `$ ruby src/dev_runner.rb gen_rusty [vers]` ([DevRunner utility](#DevRunner-utility))
 
+2. Copy the patch blanks to `src/[vers]/rusty/`, rename them without `_blank` and edit with replacement tests for those that were too problematic to generate properly
 
-#### Generate first rusty tests
+Run the resulting tests files:
+- `$ ruby src/dev_runner.rb run_rusty [vers]` ([DevRunner utility](#DevRunner-utility))
 
-- `$ ruby src/rusty/gen_rusty.rb`
-  - => `gen/rusty/rusty_boss_tests.rb` and `gen/rusty/rusty_boss_patch_blank.rb`,
-    also `gen/rusty/run_rusty.rb` for running the tests and patches and `gen/rusty/run_rusty_stubs.rb` for the tests and patch_blanks.
-- `$ cp gen/rusty/rusty_boss_patch_blank.rb `gen/rusty/rusty_boss_patch.rb`
-  - and EDIT with replacement tests for those that were too problematic to generate properly
-  
 During early development, you can run just the easy tests, ignoring to-be-patched functions, with:
-- `$ ruby gen/rusty/run_rusty_stubs.rb`
+- `$ ruby src/dev_runner.rb run_rusty_stubs [vers]` ([DevRunner utility](#DevRunner-utility))
 
 
-#### When the TreeSitterFFI class api or rust tests change:
+#### When the Tree-sitter api changes:
 
-- rename `gen/rusty/rusty_boss_patch.rb` as `prev_rusty_boss_patch.rb`. 
-- Renegerate the rusty tests. 
-- The new `rusty_boss_patch.rb` (copy of `rusty_boss_patch_blank.rb`) needs to be RECONCILED by hand with the `prev_rusty_boss_patch.rb`.
+- Rename `src/[vers]/rusty/` patch files to prepend `prev_` (in that directory or another)
+- Renegerate the rusty tests (step 1, above)
+- Copy and rename the new patch blanks (step 2, above) and edit to RECONCILE them with the `prev_` patch files
+
+Run the resulting spec files (mind which version):
+- `$ ruby src/dev_runner.rb run_rusty [vers]` ([DevRunner utility](#DevRunner-utility))
+
+Or, just easy tests (mind which version):
+- `$ ruby src/dev_runner.rb run_rusty_stubs [vers]` ([DevRunner utility](#DevRunner-utility))
+
 
