@@ -4,6 +4,6 @@ c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :ui
 === vers: 0.0.4
 .......................................................................
 
-Finished in 0.00574 seconds (files took 0.09901 seconds to load)
+Finished in 0.00604 seconds (files took 0.113 seconds to load)
 71 examples, 0 failures
 

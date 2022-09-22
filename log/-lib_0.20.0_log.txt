@@ -1,4 +1,0 @@
-src/rusty/gen_rusty.rb
--e:1:in `<main>': undefined method `lib' for main:Object (NoMethodError)
-+=+=+ Thu 22 Sep 2022 11:29:31 EDT
-
