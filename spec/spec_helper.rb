@@ -1,3 +1,23 @@
+# from dimsome:
+# for distinguishing RubyMotion, DragonRuby. Matching 'end' at eof.
+# unless defined?(NSObject) ### only add this for ruby rspec testing!!!
+# 
+# unless ENV['local']
+# 	# remove "./lib" from the $LOAD_PATH or rename lib/ to be sure we're getting 
+# 	# the gem not local gem source files!!!
+# 	$LOAD_PATH.delete_if { |p| File.expand_path(p) == File.expand_path("./lib") }
+# else
+# 	require 'ruby_dimsome'
+# end
+
+puts "ENV['local']: #{ENV['local'].inspect}"
+unless ENV['local']
+	# remove "./lib" from the $LOAD_PATH or rename lib/ to be sure we're getting 
+	# the gem not local gem source files!!!
+	$LOAD_PATH.delete_if { |p| File.expand_path(p) == File.expand_path("./lib") }
+	puts "Aha!! not local, use gem"
+end
+
 require 'tree_sitter_ffi'
 require 'tree_sitter_ffi_lang'
 require 'spec_util.rb'
@@ -105,3 +125,5 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+# end # unless defined?(NSObject) -- for distinguishing RubyMotion, DragonRuby.

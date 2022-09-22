@@ -1,4 +1,3 @@
-+++ /Users/cal/dev/tang22/ta-tree-sitter-ffi/ruby-tree-sitter-ffi/lib
 c_name: :ts_query_capture_name_for_id, args: [TreeSitterFFI::Query, :uint32, :uint32_p], returns: :string
 === vers: 0.0.4
 gen/dev-tree-sitter-0.20.0/rusty/rusty_node_test.rb

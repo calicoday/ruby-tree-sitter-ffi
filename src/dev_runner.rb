@@ -144,34 +144,38 @@ module DevRunner
   
 end
 
-def do_the_thing(cmd, vers, tee=true)
-  req = "require './src/dev_runner.rb'"
-  call = "DevRunner.#{cmd}('#{vers}')"
-  ruby_prog = "ruby -e\"#{req}; #{call}\" 2>&1"
+# $ ruby src/dev_runner.rb cmd [vers]
+def do_the_thing(cmd, vers)
+  # non-tee, silent option??? colored option???
+  logfile = "#{cmd}_#{vers}_log.txt"
+  # if we want lib not gem, append '_lib' to the cmd name -- mind random ruby named _lib!!
+  cmd, lib = cmd.split(/(_lib)$/)
+  incl_path = (lib ? "-I lib/" : '')
   
   prog = case cmd
   when 'run_rusty_stubs'
-    "ruby gen/dev-tree-sitter-#{vers}/rusty/run_rusty_stubs.rb 2>&1" 
+    "ruby #{incl_path} gen/dev-tree-sitter-#{vers}/rusty/run_rusty_stubs.rb 2>&1" 
   when 'run_rusty'
-    "ruby gen/dev-tree-sitter-#{vers}/rusty/run_rusty.rb 2>&1" 
+    "ruby #{incl_path} gen/dev-tree-sitter-#{vers}/rusty/run_rusty.rb 2>&1" 
   when 'run_sigs'
-    "rspec gen/dev-tree-sitter-#{vers}/sigs 2>&1" # redirect? 
+    "#{lib ? 'local=true' : ''} rspec #{incl_path} gen/dev-tree-sitter-#{vers}/sigs 2>&1" # redirect? 
   when 'run_sigs_blanks'
     # not really useful but this is how we'll do it for patch (in src/ not gen/dev-)
-    "rspec gen/dev-tree-sitter-#{vers}/sigs gen/dev-tree-sitter-#{vers}/sigs/*_blank.rb 2>&1" # redirect? 
+    "#{lib ? 'local=true' : ''} rspec #{incl_path} gen/dev-tree-sitter-#{vers}/sigs gen/dev-tree-sitter-#{vers}/sigs/*_blank.rb 2>&1" # redirect? 
   else
-    ruby_prog
+    req = "require './src/dev_runner.rb'"
+    call = "DevRunner.#{cmd}('#{vers}')"
+    ruby_prog = "ruby #{incl_path} -e\"#{req}; #{call}\" 2>&1"
   end
 
-  logfile = "#{cmd}_#{vers}_log.txt"
   FileUtils.mkdir_p('log/')
-  tee_log = (tee ? " | tee log/#{logfile}" : '')
+  tee_log = " | tee log/#{logfile}"
   puts "DevRunner calling #{prog + tee_log}..."
   system(prog + tee_log)
   puts "done."
 end
 
-# run from cmdline, add getopts???
+# run from cmdline, add getopts??? yeah, def getopts for -lib flag, etc!!! FIXME!!!
 if File.identical?(__FILE__, $0)
   unless ARGV.length > 0
     puts "Usage: ruby dev_runner.rb cmd [vers]"

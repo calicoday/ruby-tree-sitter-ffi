@@ -1,8 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: false
 
-puts "+++ #{File.expand_path(File.dirname(__FILE__))}" # TMP!!! so we can see gem vs lib/
-
 require 'tree_sitter_ffi/version'
 require 'tree_sitter_ffi/unit_memory'
 require 'tree_sitter_ffi/boss'
