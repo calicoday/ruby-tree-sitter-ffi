@@ -3,7 +3,6 @@
 
 ### structs from parser.h for language-specific details???
 
-# require 'ffi'
 require 'tree_sitter_ffi/boss'
 require 'tree_sitter_ffi/raw/types_raw'
 
@@ -22,8 +21,5 @@ module TreeSitterFFI
 			[:ts_language_version, [Language], :uint32],
 			])
 	
-# 		def inspect() 
-# 			"<Language version: #{self[:version]}, sym_count: #{self[:symbol_count]}>" 
-# 		end		
 	end	
 end

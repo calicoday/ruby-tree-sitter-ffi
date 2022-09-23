@@ -3,7 +3,6 @@
 
 ### util enums and structs from api.h (not boss or dependent)
 
-# require 'ffi'
 require 'tree_sitter_ffi/boss' 
 
 

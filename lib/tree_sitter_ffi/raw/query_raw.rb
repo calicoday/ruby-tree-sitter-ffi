@@ -1,7 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: false
 
-# require 'ffi'
 require 'tree_sitter_ffi/boss'
 require 'tree_sitter_ffi/raw/types_raw'
 require 'tree_sitter_ffi/raw/node_raw' 
@@ -46,7 +45,7 @@ module TreeSitterFFI
 # 		def ts_query_string_value_for_id(*args) nope_not_impl(__callee__) end
 # 		def string_value_for_id(*args) nope_not_impl(__callee__) end
 	
-### tidy???
+### tidy
 
 ### chimp
 		# add this to FFI::Enum or EnumUtils???
@@ -159,19 +158,6 @@ module TreeSitterFFI
 	end
 end
 
-### mv to idio
-=begin
-	  ### by hand for now!!!
-	  def inspect()
-	    ### from four11
-	    return 'nil obj' if self.null?
-	    node = (self[:node] && !self[:node].is_null ?
-	      self[:node].string.inspect : self[:node].inspect)
-      "<#{self.class.name.split(':').last}" + 
-        " node: #{node}>"
-	  end
-=end
-
 module TreeSitterFFI
 
 # 	class QueryMatch < BossStruct
@@ -202,15 +188,6 @@ module TreeSitterFFI
 	end
 end
 
-### mv to idio
-=begin
-		def inspect() 
-		  four11(self, [:id, :pattern_index, :capture_count], 
-		    {captures: captures}) 
-		end
-=end
-
-
 module TreeSitterFFI
 
 	class QueryCursor < BossPointer
@@ -235,7 +212,7 @@ module TreeSitterFFI
 				:bool], 
 			])
 
-### tidy???
+### tidy
 
 	  # override init???
 	  def self.make()
@@ -244,66 +221,4 @@ module TreeSitterFFI
 	end
 	
 end
-
-### mv to idio
-=begin
-    ### Rusty!!!
-		# TextProvider??? try String input first...
-		def matches(query, node, input)
-		  self.exec(query, node)
-		  arr = []
-      match = QueryMatch.new
-		  while(next_match(match))
-		    arr << match.make_copy #only single
-		  end
-		  arr
-    end
-	
-    ### Rusty!!!
-		# TextProvider??? try String input first...
-		def was_matches(query, node, input)
-# 		  puts "*** matches all "
-		  self.exec(query, node)
-		  arr = []
-      match = QueryMatch.new
-#       arr << match.make_copy while(next_match(match))
-		  while(next_match(match))
-#         puts "  @@@ next_match"
-#         puts "      match: #{match.inspect}"
-		    cp = match.make_copy()
-# 		    puts "  ***    cp: #{cp.inspect}"
-		    arr << cp
-# 		    arr << match.make_copy()
-        match = QueryMatch.new
-      end
-#       puts "arr: #{arr.inspect}"
-#       puts "*** done matches"
-		  arr
-		end
-		
-		### lib.rs QueryCursor
-#     /// Iterate over all of the matches in the order that they were found.
-#     ///
-#     /// Each match contains the index of the pattern that matched, and a list of captures.
-#     /// Because multiple patterns can match the same set of nodes, one match may contain
-#     /// captures that appear *before* some of the captures from a previous match.
-#     pub fn matches<'a, 'tree: 'a, T: TextProvider<'a> + 'a>(
-#         &'a mut self,
-#         query: &'a Query,
-#         node: Node<'tree>,
-#         text_provider: T,
-#     ) -> QueryMatches<'a, 'tree, T> {
-#         let ptr = self.ptr.as_ptr();
-#         unsafe { ffi::ts_query_cursor_exec(ptr, query.ptr.as_ptr(), node.0) };
-#         QueryMatches {
-#             ptr,
-#             query,
-#             text_provider,
-#             buffer1: Default::default(),
-#             buffer2: Default::default(),
-#             _tree: PhantomData,
-#         }
-#     }
-# 
-=end
 

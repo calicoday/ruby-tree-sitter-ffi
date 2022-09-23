@@ -17,17 +17,6 @@ module TreeSitterFFI
 			TreeSitterFFI.ts_node_child_by_field_name(self, str, str.length)
 		end
 
-### nope, tidy
-=begin
-		### override for better args/rets types
-
-		def string
-			str, ptr = TreeSitterFFI.ts_node_string(self)
-			what_about_this_ref = TreeSitterFFI::AdoptPointer.new(ptr)
-			str
-		end
-=end
-
 		# alias??? use ruby form not ts_???
 		# consider the NullNode/NotANode/whatever!!!
 		def ==(v)
@@ -45,9 +34,6 @@ module TreeSitterFFI
 ### chimp
     ### rusty bindings TMP!!! 
     def utf8_text(input)
-#       puts "$$$ input.inspect: #{input.inspect}"
-#       puts "  self.inspect: #{self.inspect}, null?: #{self.null?}"
-      ###return 'self is null node' if self.null? || self.is_null
       return '' if self.null? || self.is_null
       input[self.start_byte...self.end_byte]
     end

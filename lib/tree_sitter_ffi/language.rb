@@ -9,6 +9,9 @@ require 'tree_sitter_ffi/raw/language_raw'
 module TreeSitterFFI
 
 	class Language < BossPointer #BossStruct
+# 		def inspect() 
+# 			"<Language version: #{self[:version]}, sym_count: #{self[:symbol_count]}>" 
+# 		end		
 
 	end	
 end
