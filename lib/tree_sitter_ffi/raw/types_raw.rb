@@ -5,15 +5,9 @@
 
 # require 'ffi'
 require 'tree_sitter_ffi/boss' 
-require 'tree_sitter_ffi/raw/types_raw'
+
 
 module TreeSitterFFI
-
-
-end
-
-### mv to raw
-=begin
 
 # typedef uint16_t TSSymbol;
 # typedef uint16_t TSFieldId;
@@ -205,4 +199,6 @@ end
 			)
 	end
 	EnumQueryError = enum(:none, 0, :syntax, :node_type, :field, :capture, :structure)
-=end
+
+
+end
