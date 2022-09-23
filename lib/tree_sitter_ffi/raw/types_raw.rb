@@ -187,6 +187,24 @@ module TreeSitterFFI
 			:old_end_point, Point,
 			:new_end_point, Point,
 			)
+
+### tidy??? idio???
+
+    def self.from_hash(h)
+  # 		puts "TreeSitterFFI::InputEdit.from_hash..."
+  # 		ap h
+      self.new.tap do |o|
+        o[:start_byte] = h[:start_byte]
+        o[:old_end_byte] = h[:old_end_byte]
+        o[:new_end_byte] = h[:new_end_byte]
+        o[:start_point] = h[:start_position] # tree_test says start_position but shdv chgd
+        o[:old_end_point] = h[:old_end_position]
+        o[:new_end_point] = h[:new_end_position]
+  #       o[:start_point] = h[:start_point] # tree_test says start_position but shdv chgd
+  #       o[:old_end_point] = h[:old_end_point]
+  #       o[:new_end_point] = h[:new_end_point]
+      end
+    end
 	end
 
 	EnumQueryPredicateStepType = enum(:done, :capture, :string)

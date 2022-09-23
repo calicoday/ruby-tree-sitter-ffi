@@ -1,5 +1,7 @@
 dev
 try
+zhide
+asearch_anchor.txt
 *.bbprojectd
 .repl_history
 build

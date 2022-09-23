@@ -6,7 +6,7 @@ require File.expand_path('lib/tree_sitter_ffi/version', __dir__)
 Gem::Specification.new do |s|
   s.name = 'tree_sitter_ffi'
   s.version = TreeSitterFFI::VERSION
-  s.date = '2021-05-26'
+  s.date = '2022-09-23'
   s.summary = 'Ruby ffi bindings for tree-sitter'
   s.authors = ['Calicoday']
   s.email = 'calicoday@gmail.com'
@@ -15,9 +15,19 @@ Gem::Specification.new do |s|
 
 #   s.extensions = ['ext/simple_clipboard/extconf.rb']
   s.files = [
+    'lib/tree_sitter_ffi/version.rb',
     'lib/tree_sitter_ffi.rb',
     'lib/tree_sitter_ffi/unit_memory.rb',
     'lib/tree_sitter_ffi/boss.rb',
+
+    'lib/tree_sitter_ffi/raw/types_raw.rb',
+    'lib/tree_sitter_ffi/raw/node_raw.rb',
+    'lib/tree_sitter_ffi/raw/tree_raw.rb',
+    'lib/tree_sitter_ffi/raw/language_raw.rb',
+    'lib/tree_sitter_ffi/raw/query_raw.rb',
+    'lib/tree_sitter_ffi/raw/parser_raw.rb',
+    'lib/tree_sitter_ffi/raw.rb',
+    
     'lib/tree_sitter_ffi/types.rb',
     'lib/tree_sitter_ffi/node.rb',
     'lib/tree_sitter_ffi/tree.rb',
@@ -25,7 +35,8 @@ Gem::Specification.new do |s|
     'lib/tree_sitter_ffi/query.rb',
     'lib/tree_sitter_ffi/parser.rb',
     'lib/tree_sitter_ffi/tree_sitter_ffi.rb',
-    'lib/tree_sitter_ffi/version.rb'
+
+    'lib/tree_sitter_ffi/bind/bind_rust.rb',
   ]
   s.require_paths = ['lib']
 

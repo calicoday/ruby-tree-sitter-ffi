@@ -13,3 +13,5 @@ require 'tree_sitter_ffi/language'
 require 'tree_sitter_ffi/query'
 require 'tree_sitter_ffi/parser'
 require 'tree_sitter_ffi/tree_sitter_ffi'
+
+require 'tree_sitter_ffi/bind/bind_rust'

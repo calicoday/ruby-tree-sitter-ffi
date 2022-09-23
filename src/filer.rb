@@ -39,6 +39,9 @@ class Filer
       end
     else
       FileUtils.mkdir_p(outpath)
+      ### conv for bbedit hier search, gitignored
+      File.write(Pathname.new(outpath) + 'agen_search_anchor.txt', 
+        "# conv for bbedit hier search")
     end
     outpath
   end
