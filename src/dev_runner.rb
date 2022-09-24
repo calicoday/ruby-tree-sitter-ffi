@@ -11,6 +11,7 @@ require './src/sigs/gen_sigs.rb'
 
 ### also script, 'if File.identical?(__FILE__, $0)' at end
 
+require 'awesome_print'
 
 module DevRunner
 
@@ -60,6 +61,77 @@ module DevRunner
 #     # ??? cmdline w opts??? or just rakefile???
 #   end
   
+  def self.diff_rep(vers, vers_prev)
+    filer = Filer.new({input: gendir(vers) + 'pull/' + shunt(vers, false),
+      input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false)}, 
+      {out: gendir(vers) + 'diff/'})
+
+    subdirs = {'lib/include/tree_sitter/' => ['api.h'], 
+      'cli/src/tests/' => ['node_test.rs', 'tree_test.rs', 'query_test.rs']
+      }
+    files = subdirs.map{|dir, filelist| filelist.map{|e| Pathname.new(dir) + e}}.flatten
+    
+    results = files.map do |file|
+      path = filer.path(:input) + file
+      path_prev = filer.path(:input_prev) + file
+      # -O to ensure vers_prev file is listed first every time
+      `git diff --no-index -O #{path_prev} #{path_prev} #{path}`
+#       %x[git diff --no-index -O #{path_prev} #{path_prev} #{path}]
+    end
+    
+    diff_rep_name = "diff-rep-#{vers_prev}-#{vers}"
+
+    # raw txt results (only files with changes)
+    guts = results.join
+    diff_rep_txt = "#{diff_rep_name}.txt"
+    filer.write(:out, diff_rep_txt, guts)
+
+
+    # md presentation results, plan blank with full notes and reduced
+    plan = files.zip(results).map do |file, diff|
+      regions = diff.split(/^(@@[^\n@]*@@)/).unshift('').map{|e| 
+        e.gsub(/\s*@@\s*/, '')}.each_slice(2).to_a
+      [file, regions]
+    end
+    
+    guts = plan.map do |file, regions|
+      sections = regions.map do |loc, changes| 
+        break nil unless changes
+        sec_title = (loc.empty? ? '' : "\n#{loc}\n")
+        "#{sec_title}\n```diff\n#{changes}\n```\n"
+      end
+      "### #{file}\n\n#{sections ? sections.join : 'No changes.'}"
+    end 
+
+    diff_rep_md = "#{diff_rep_name}.md"
+    filer.write(:out, diff_rep_md, 
+      "## Difference report #{vers_prev} to #{vers}\n\n\n" + guts.join("\n\n"))
+    
+    tbl_head = %w%tr th loc /th th note /th /tr%.map{|e| "<#{e}>"}.join
+    tbl_row = %w%tr td loc /td td note /td /tr%.map{|e| "<#{e}>\n"}.join
+
+    changed_files = []
+    notes = plan.map do |file, regions|
+      regions.shift # first entry is intro legend, not change region
+      next "### #{file}\n\nNo changes.\n" if regions.empty?
+      changed_files << file
+      head = tbl_head.gsub('<loc>', 'Location').gsub('<note>', '[Status] Notes')
+      rows = regions.map{|loc, _| tbl_row.gsub('<loc>', "#{loc}").gsub('<note>', '')}              
+      ["### #{file}\n", "<table>", head, rows.join("\n"), "</table>\n\n\n"].join("\n")
+    end 
+    
+    head = tbl_head.gsub('<loc>', 'Location(s)').gsub('<note>', '[Status] Notes')
+    row = tbl_row.gsub('<loc>', '').gsub('<note>', '')
+    reduced = changed_files.map do |file|
+      ["### #{file}\n", "<table>", head, row, "</table>\n\n"].join("\n")
+    end      
+    
+    notes_title = "## Upgrade plan #{vers_prev} to #{vers}\n\n\n"
+    reduced_title = "## Upgrade plan #{vers_prev} to #{vers} (Reduced)\n\n\n"
+    filer.write(:out, "plan-#{vers_prev}-#{vers}_blank.md", 
+      reduced_title + reduced.join("\n\n") + 
+      notes_title + notes.join("\n\n"))
+  end
   
   def self.pull(vers)
     show = ShowRunner.new
@@ -97,7 +169,7 @@ module DevRunner
     filer = Filer.new({input: 'lib/tree_sitter_ffi'}, 
       {out: gendir(vers) + 'sigs-prep/'})
     GenSigsPrep.gen_sigs_prep(filer)    
-    puts "done."
+#     puts "done."
   end
   
   # not a thing yet!!!
@@ -132,20 +204,20 @@ module DevRunner
     #
     RustyGen.gen_rusty(filer, ["node", "tree", "query"])
     $log.close
-    puts "done."
+#     puts "done."
   end
   
   def self.gen_sigs(vers)
     filer = Filer.new({input: 'lib/tree_sitter_ffi'}, 
       {out: gendir(vers) + 'sigs/'})
     GenSigs.gen_sigs(filer)    
-    puts "done."
+#     puts "done."
   end
   
 end
 
 # $ ruby src/dev_runner.rb cmd [vers]
-def do_the_thing(cmd, vers)
+def do_the_thing(cmd, vers, more)
   # non-tee, silent option??? colored option???
   logfile = "#{cmd}_#{vers}_log.txt"
   # if we want lib not gem, append '_lib' to the cmd name -- mind random ruby named _lib!!
@@ -153,6 +225,13 @@ def do_the_thing(cmd, vers)
   incl_path = (lib ? "-I lib/" : '')
   
   prog = case cmd
+  when 'diff_rep'
+    vers_prev, _ = more
+    # list files, one eg...
+    logfile = nil # no log, just output to file and "done."
+    req = "require './src/dev_runner.rb'"
+    call = "DevRunner.#{cmd}('#{vers}', '#{vers_prev}')"
+    ruby_prog = "ruby #{incl_path} -e\"#{req}; #{call}\" 2>&1"
   when 'run_rusty_stubs'
     "ruby #{incl_path} gen/dev-tree-sitter-#{vers}/rusty/run_rusty_stubs.rb 2>&1" 
   when 'run_rusty'
@@ -168,8 +247,8 @@ def do_the_thing(cmd, vers)
     ruby_prog = "ruby #{incl_path} -e\"#{req}; #{call}\" 2>&1"
   end
 
-  FileUtils.mkdir_p('log/')
-  tee_log = " | tee log/#{logfile}"
+  tee_log = (logfile ? " | tee log/#{logfile}" : '')
+  FileUtils.mkdir_p('log/') if logfile
   puts "DevRunner calling #{prog + tee_log}..."
   system(prog + tee_log)
   puts "done."
@@ -181,9 +260,9 @@ if File.identical?(__FILE__, $0)
     puts "Usage: ruby dev_runner.rb cmd [vers]"
     exit 1
   end
-  cmd, vers, _ = ARGV
+  cmd, vers, *more = ARGV
   vers = '0.20.0' unless vers # or whatever is most likely currently
-  do_the_thing(cmd, vers)
+  do_the_thing(cmd, vers, more)
 end
   
   

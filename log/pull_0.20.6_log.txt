@@ -1,0 +1,34 @@
+src/rusty/gen_rusty.rb
++=+=+ Sat 24 Sep 2022 09:05:43 EDT
+
+> Object.system("date")
+Sat 24 Sep 2022 09:05:43 EDT
+> FileUtils.cd(#<Pathname:gen/dev-tree-sitter-0.20.6/pull/>)
+
+=== Pull repo vers 0.20.6...
+A    tree-sitter-0.20.6/lib/include/tree_sitter/api.h
+A    tree-sitter-0.20.6/lib/include/tree_sitter/parser.h
+Checked out revision 5938.
+> RepoRefs.tidy("lib/include/tree_sitter/", "tree-sitter-0.20.6", {:scrap=>[".svn"]})
+A    tree-sitter-0.20.6/cli/src/tests/corpus_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers
+A    tree-sitter-0.20.6/cli/src/tests/helpers/allocations.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/dirs.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/edits.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/fixtures.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/mod.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/query_helpers.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/random.rs
+A    tree-sitter-0.20.6/cli/src/tests/helpers/scope_sequence.rs
+A    tree-sitter-0.20.6/cli/src/tests/highlight_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/mod.rs
+A    tree-sitter-0.20.6/cli/src/tests/node_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/parser_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/pathological_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/query_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/tags_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/test_highlight_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/test_tags_test.rs
+A    tree-sitter-0.20.6/cli/src/tests/tree_test.rs
+Checked out revision 5938.
+> RepoRefs.tidy("cli/src/tests/", "tree-sitter-0.20.6", {:keep=>["node_test.rs", "tree_test.rs", "query_test.rs"]})
