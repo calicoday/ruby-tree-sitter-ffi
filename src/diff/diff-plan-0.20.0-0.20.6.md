@@ -4,7 +4,8 @@ Status codes:
 - `ok`, accounted for, no further action needed
 - `auto`, not relevant to generating scripts or their output,  no action needed. Eg comments
 - `api`, change in functions or types
-- `test`, change in test data, results with be different
+- `gen_rusty`, change in test data, generated ruby will be different
+- `run_rusty`, change in generated ruby tests, results will be different
 - `script`, affects generating scripts parsing
 
 Notes
@@ -98,7 +99,7 @@ Notes
 -280,16 +280,16
 </td>
 <td>
-[test] Changed arg values (x7)
+[gen_rusty] Changed arg values (x7)
 <pre lang="diff">
 -    assert_eq!(c.goto_first_child_for_point(Point::new(6, 6)), None);
 +    assert_eq!(c.goto_first_child_for_point(Point::new(6, 7)), None);
@@ -119,7 +120,7 @@ Notes
 -155,6 +167,22
 </td>
 <td>
-[test] Added assert
+[gen_rusty] Added assert
 <pre lang="diff>
 +        assert_eq!(
 +            Query::new(
@@ -143,7 +144,7 @@ Notes
 -3063,6 +3091,53
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_query_captures_with_matches_removed_before_they_finish() {
 ...
@@ -156,7 +157,7 @@ Notes
 -3420,7 +3495,66
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_query_random() {
 ...
@@ -169,7 +170,7 @@ Notes
 -3708,6 +3857,243
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_capture_quantifiers() {
 ...
@@ -178,6 +179,105 @@ Notes
 </tr>
 
 </table>
+
+
+### rusty_query_test.rb
+
+<table>
+<tr>
+<td>
+-135,6 +143,21
+</td>
+<td>
+[run_rusty] Added assert
+</td>
+</tr>
+
+<tr>
+<td>
+-2953,6 +2976,51
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_query_captures_with_matches_removed_before_they_finish() {
+...
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-3302,8 +3370,63
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_query_random() {
+...
+</pre>
+[run_rusty] Renamed test
+<pre lang="diff">
+-fn test_query_step_is_definite() {
++fn test_query_is_pattern_guaranteed_at_step() {
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-3590,7 +3728,242
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_capture_quantifiers() {
+...
+</pre>
+</td>
+</tr>
+
+</table>
+
+
+
+### run_rusty.rb
+
+<table>
+<tr><th>Location(s)</th><th>[Status] Notes</th></tr>
+<tr>
+<td>
+-112,6 +112,7
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++test_query_captures_with_matches_removed_before_they_finish()
+...
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-121,7 +122,9
+</td>
+<td>
+[run_rusty] Renamed test
+<pre lang="diff">
+-fn test_query_step_is_definite() {
++fn test_query_is_pattern_guaranteed_at_step() {
+</pre>
+[run_rusty] Added test (x2)
+<pre lang="diff">
++test_query_random()
++test_capture_quantifiers()
+</pre>
+</td>
+</tr>
+
+</table>
+
+
 
 ## Upgrade plan 0.20.0 to 0.20.6
 
@@ -299,7 +399,7 @@ No changes.
 -280,16 +280,16
 </td>
 <td>
-[test] Changed arg values (x3)
+[gen_rusty] Changed arg values (x3)
 <pre lang="diff">
 -    assert_eq!(c.goto_first_child_for_point(Point::new(6, 6)), None);
 +    assert_eq!(c.goto_first_child_for_point(Point::new(6, 7)), None);
@@ -312,7 +412,7 @@ No changes.
 -312,7 +312,7
 </td>
 <td>
-[test] Same as -280,16 +280,16 (x1)
+[gen_rusty] Same as -280,16 +280,16 (x1)
 </td>
 </tr>
 
@@ -321,7 +421,7 @@ No changes.
 -326,7 +326,7
 </td>
 <td>
-[test] Same as -280,16 +280,16 (x1)
+[gen_rusty] Same as -280,16 +280,16 (x1)
 </td>
 </tr>
 
@@ -330,7 +430,7 @@ No changes.
 -334,7 +334,7
 </td>
 <td>
-[test] Same as -280,16 +280,16 (x1)
+[gen_rusty] Same as -280,16 +280,16 (x1)
 </td>
 </tr>
 
@@ -339,7 +439,7 @@ No changes.
 -354,7 +354,7
 </td>
 <td>
-[test] Same as -280,16 +280,16 (x1)
+[gen_rusty] Same as -280,16 +280,16 (x1)
 </td>
 </tr>
 
@@ -411,7 +511,7 @@ No changes.
 -155,6 +167,22
 </td>
 <td>
-[test] Added assert
+[gen_rusty] Added assert
 <pre lang="diff>
 +        assert_eq!(
 +            Query::new(
@@ -435,12 +535,12 @@ No changes.
 -3063,6 +3091,53
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_query_captures_with_matches_removed_before_they_finish() {
 ...
 </pre>
-[auto] Renamed test
+[gen_rusty] Renamed test
 <pre lang="diff">
 -fn test_query_step_is_definite() {
 +fn test_query_is_pattern_guaranteed_at_step() {
@@ -453,7 +553,7 @@ No changes.
 -3420,7 +3495,66
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_query_random() {
 ...
@@ -466,7 +566,7 @@ No changes.
 -3430,19 +3564,19
 </td>
 <td>
-[auto] Changes to test data descriptions
+[auto] Changes to test data descriptions (x3)
 </td>
 </tr>
 
@@ -475,7 +575,7 @@ No changes.
 -3453,7 +3587,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -484,7 +584,7 @@ No changes.
 -3465,13 +3599,13
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x2)
 </td>
 </tr>
 
@@ -493,7 +593,7 @@ No changes.
 -3488,13 +3622,13
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x2)
 </td>
 </tr>
 
@@ -502,7 +602,7 @@ No changes.
 -3508,7 +3642,7
 </td>
 <td>
-
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -511,7 +611,7 @@ No changes.
 -3518,7 +3652,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -520,7 +620,7 @@ No changes.
 -3528,7 +3662,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -529,7 +629,7 @@ No changes.
 -3544,7 +3678,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -538,7 +638,7 @@ No changes.
 -3558,7 +3692,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -547,7 +647,7 @@ No changes.
 -3569,7 +3703,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -556,7 +656,7 @@ No changes.
 -3585,7 +3719,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -565,7 +665,7 @@ No changes.
 -3602,7 +3736,7
 </td>
 <td>
-[auto] Same as -3430,19 +3564,19
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
 
@@ -574,10 +674,10 @@ No changes.
 -3621,7 +3755,7
 </td>
 <td>
-
+[auto] Same as -3430,19 +3564,19 (x1)
 </td>
 </tr>
-[auto] Same as -3430,19 +3564,19
+
 <tr>
 <td>
 -3676,6 +3810,21
@@ -592,7 +692,7 @@ No changes.
 -3692,7 +3841,7
 </td>
 <td>
-[auto] Call renamed test
+[gen_rusty] Call renamed test
 <pre lang="diff">
 -                    query.step_is_definite(offset),
 +                    query.is_pattern_guaranteed_at_step(offset),
@@ -605,7 +705,7 @@ No changes.
 -3708,6 +3857,243
 </td>
 <td>
-[test] Added test
+[gen_rusty] Added test
 <pre lang="diff">
 +fn test_capture_quantifiers() {
 ...
@@ -614,5 +714,372 @@ No changes.
 </tr>
 
 </table>
+
+
+### rusty_node_test.rb
+
+No changes.
+
+
+### rusty_tree_test.rb
+
+<table>
+<tr><th>Location</th><th>[Status] Notes</th></tr>
+<tr>
+<td>
+-273,16 +273,16
+</td>
+<td>
+[auto] Per tree_test.rs -280,16 +280,16 (Changed arg values (x3))
+</td>
+</tr>
+
+<tr>
+<td>
+-305,7 +305,7
+</td>
+<td>
+[auto] Same as -273,16 +273,16
+</td>
+</tr>
+
+<tr>
+<td>
+-319,7 +319,7
+</td>
+<td>
+[auto] Same as -273,16 +273,16
+</td>
+</tr>
+
+<tr>
+<td>
+-327,7 +327,7
+</td>
+<td>
+[auto] Same as -273,16 +273,16
+</td>
+</tr>
+
+<tr>
+<td>
+-347,7 +347,7
+</td>
+<td>
+[auto] Same as -273,16 +273,16
+</td>
+</tr>
+
+</table>
+
+
+### rusty_query_test.rb
+
+<table>
+<tr><th>Location</th><th>[Status] Notes</th></tr>
+<tr>
+<td>
+-65,6 +65,7
+</td>
+<td>
+[auto] Comment
+</td>
+</tr>
+
+<tr>
+<td>
+-74,6 +75,8
+</td>
+<td>
+[auto] Comment
+</td>
+</tr>
+
+<tr>
+<td>
+-83,6 +86,8
+</td>
+<td>
+[auto] Comment
+</td>
+</tr>
+
+<tr>
+<td>
+-92,6 +97,8
+</td>
+<td>
+[auto] Comment
+</td>
+</tr>
+
+<tr>
+<td>
+-125,6 +132,7
+</td>
+<td>
+[auto] Comment
+</td>
+</tr>
+
+<tr>
+<td>
+-135,6 +143,21
+</td>
+<td>
+[run_rusty] Added assert
+</td>
+</tr>
+
+<tr>
+<td>
+-2953,6 +2976,51
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_query_captures_with_matches_removed_before_they_finish() {
+...
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-3302,8 +3370,63
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_query_random() {
+...
+</pre>
+[run_rusty] Renamed test
+<pre lang="diff">
+-fn test_query_step_is_definite() {
++fn test_query_is_pattern_guaranteed_at_step() {
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-3313,19 +3436,19
+</td>
+<td>
+[auto] Changes to test data descriptions (x3)
+</td>
+</tr>
+
+<tr>
+<td>
+-3336,7 +3459,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3348,13 +3471,13
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x2)
+</td>
+</tr>
+
+<tr>
+<td>
+-3371,13 +3494,13
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x2)
+</td>
+</tr>
+
+<tr>
+<td>
+-3391,7 +3514,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3401,7 +3524,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3411,7 +3534,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3427,7 +3550,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3441,7 +3564,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3452,7 +3575,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3468,7 +3591,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3485,7 +3608,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3504,7 +3627,7
+</td>
+<td>
+[auto] Same as -3313,19 +3436,19 (x1)
+</td>
+</tr>
+
+<tr>
+<td>
+-3559,6 +3682,21
+</td>
+<td>
+[auto] Added test data
+</td>
+</tr>
+
+<tr>
+<td>
+-3575,7 +3713,7
+</td>
+<td>
+[auto] Call renamed test
+<pre lang="diff">
+-                    query.step_is_definite(offset),
++                    query.is_pattern_guaranteed_at_step(offset),
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-3590,7 +3728,242
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++fn test_capture_quantifiers() {
+...
+</pre>
+</td>
+</tr>
+
+</table>
+
+
+### run_rusty.rb
+
+<table>
+<tr><th>Location</th><th>[Status] Notes</th></tr>
+<tr>
+<td>
+-4,13 +4,13
+</td>
+<td>
+[auto] Path version shunts (x3)
+</td>
+</tr>
+
+<tr>
+<td>
+-32,9 +32,9
+</td>
+<td>
+[auto] Path version shunts (x2)
+</td>
+</tr>
+
+<tr>
+<td>
+-44,9 +44,9
+</td>
+<td>
+[auto] Path version shunts (x2)
+</td>
+</tr>
+
+<tr>
+<td>
+-112,6 +112,7
+</td>
+<td>
+[run_rusty] Added test
+<pre lang="diff">
++test_query_captures_with_matches_removed_before_they_finish()
+...
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+-121,7 +122,9
+</td>
+<td>
+[run_rusty] Renamed test
+<pre lang="diff">
+-fn test_query_step_is_definite() {
++fn test_query_is_pattern_guaranteed_at_step() {
+</pre>
+[run_rusty] Added test (x2)
+<pre lang="diff">
++test_query_random()
++test_capture_quantifiers()
+</pre>
+</td>
+</tr>
+
+</table>
+
+
 
 

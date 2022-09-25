@@ -62,27 +62,68 @@ module DevRunner
 #   end
   
   def self.diff_rep(vers, vers_prev)
+#     filer = Filer.new({input: gendir(vers) + 'pull/' + shunt(vers, false),
+#       input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false)}, 
+#       {out: gendir(vers) + 'diff/'})
     filer = Filer.new({input: gendir(vers) + 'pull/' + shunt(vers, false),
-      input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false)}, 
+      input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false), 
+      rusty: gendir(vers) + 'rusty/',
+      rusty_prev: gendir(vers_prev) + 'rusty/',
+#       sigs: input: gendir(vers) + 'sigs/',
+#       sigs_prev: input: gendir(vers_prev) + 'sigs/',
+      },
       {out: gendir(vers) + 'diff/'})
 
+    ### pull
+    
     subdirs = {'lib/include/tree_sitter/' => ['api.h'], 
       'cli/src/tests/' => ['node_test.rs', 'tree_test.rs', 'query_test.rs']
       }
-    files = subdirs.map{|dir, filelist| filelist.map{|e| Pathname.new(dir) + e}}.flatten
+    files_pull = subdirs.map{|dir, filelist| filelist.map{|e| Pathname.new(dir) + e}}.flatten
+    puts "files_pull: #{files_pull.inspect}"
     
-    results = files.map do |file|
+    results_pull = files_pull.map do |file|
       path = filer.path(:input) + file
       path_prev = filer.path(:input_prev) + file
+      puts path
+      puts path_prev
       # -O to ensure vers_prev file is listed first every time
       `git diff --no-index -O #{path_prev} #{path_prev} #{path}`
 #       %x[git diff --no-index -O #{path_prev} #{path_prev} #{path}]
     end
     
+    ### rusty
+ 
+    # nope, bad order and we don't want all of them anyway
+#     files_rusty = Dir.glob("*.rb", base: filer.path(:rusty))   #.map{|e| ['', e]}
+    files_rusty = ['rusty_node_test.rb', 'rusty_tree_test.rb', 'rusty_query_test.rb',
+      'run_rusty.rb'] # might want patch_blanks???
+    
+    puts
+    puts "files_rusty: #{files_rusty.inspect}"
+    
+    # git diff --no-index -O dev-tree-sitter-0.20.0/rusty/rusty_tree_test.rb dev-tree-sitter-0.20.0/rusty/rusty_tree_test.rb dev-tree-sitter-0.20.6/rusty/rusty_tree_test.rb 
+    
+    results_rusty = files_rusty.map do |file|
+      path = filer.path(:rusty) + file
+      path_prev = filer.path(:rusty_prev) + file
+      puts path
+      puts path_prev
+      # -O to ensure vers_prev file is listed first every time
+      `git diff --no-index -O #{path_prev} #{path_prev} #{path}`
+#       %x[git diff --no-index -O #{path_prev} #{path_prev} #{path}]
+    end
+    
+    ### all together now
+    
+    files = files_pull + files_rusty
+    results = results_pull + results_rusty    
+    
+    
     diff_rep_name = "diff-rep-#{vers_prev}-#{vers}"
 
     # raw txt results (only files with changes)
-    guts = results.join
+    guts = results_pull.join
     diff_rep_txt = "#{diff_rep_name}.txt"
     filer.write(:out, diff_rep_txt, guts)
 
@@ -261,7 +302,7 @@ if File.identical?(__FILE__, $0)
     exit 1
   end
   cmd, vers, *more = ARGV
-  vers = '0.20.0' unless vers # or whatever is most likely currently
+  vers = '0.20.6' unless vers # or whatever is most likely currently
   do_the_thing(cmd, vers, more)
 end
   
