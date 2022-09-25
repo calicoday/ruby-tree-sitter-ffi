@@ -128,7 +128,7 @@ module DevRunner
     
     notes_title = "## Upgrade plan #{vers_prev} to #{vers}\n\n\n"
     reduced_title = "## Upgrade plan #{vers_prev} to #{vers} (Reduced)\n\n\n"
-    filer.write(:out, "plan-#{vers_prev}-#{vers}_blank.md", 
+    filer.write(:out, "diff-plan-#{vers_prev}-#{vers}_blank.md", 
       reduced_title + reduced.join("\n\n") + 
       notes_title + notes.join("\n\n"))
   end
