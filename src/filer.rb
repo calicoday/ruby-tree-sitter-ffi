@@ -27,13 +27,13 @@ class Filer
 	  raise "Filer#add_dir already have #{key.inspect} (#{prev})" if prev
 	  return dir[key] = path unless writable
 	  write_dir[key] = ensure_outpath(path)
-	  raise "Filer#add_dir #{path} has stuff in it. exitting." unless write_dir[key]
+	  raise "Filer#add_dir #{path} has stuff in it. exiting." unless write_dir[key]
 	end
 	
   def ensure_outpath(outpath)
     if Dir.exist?(outpath)
       unless Dir.empty?(outpath)
-#         puts "#{outpath} dir has stuff in it. exitting."
+#         puts "#{outpath} dir has stuff in it. exiting."
 #         exit 1
         return nil # exit above
       end

@@ -38,7 +38,7 @@ module RepoRefs
   def ensure_outpath(outpath)
     if Dir.exist?(outpath)
       unless Dir.empty?(outpath)
-        puts "#{outpath} dir has stuff in it. exitting."
+        puts "#{outpath} dir has stuff in it. exiting."
         exit 1
       end
     else

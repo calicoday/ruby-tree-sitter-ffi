@@ -132,22 +132,23 @@ INDENTED_HEREDOC
   def compose_type_check()
   end
 
-  def buf_wrap(s, depth, arg_types, arglist, &b)
-    p_arr = arg_types.map{|e| e.is_a?(Array) ? e : nil}
-
-    memp_arr = p_arr.map{|e| e[0]} # has nils!!!
-    call_args = 
-    # put head
-    block_args = 
-    s += "ret, *got = SpecUtil::bufs(#{memp_arr.inspect}) do |#{}|"
-    yield(s, *memp_arr.reject(&:nil?))
-    p_arr.each_with_index do |e, i|
-      # put guts
-    end
-    # put tail
-    # return s
-    s
-  end
+### mv to try/try_compose_sigs.rb
+#   def buf_wrap(s, depth, arg_types, arglist, &b)
+#     p_arr = arg_types.map{|e| e.is_a?(Array) ? e : nil}
+# 
+#     memp_arr = p_arr.map{|e| e[0]} # has nils!!!
+#     call_args = 
+#     # put head
+#     block_args = 
+#     s += "ret, *got = SpecUtil::bufs(#{memp_arr.inspect}) do |#{}|"
+#     yield(s, *memp_arr.reject(&:nil?))
+#     p_arr.each_with_index do |e, i|
+#       # put guts
+#     end
+#     # put tail
+#     # return s
+#     s
+#   end
 
 
   # [118] pry(main)> def reform_args(gather)
