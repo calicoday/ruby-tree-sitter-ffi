@@ -1,11 +1,19 @@
 require 'tree_sitter_ffi'
-require 'tree_sitter_ffi_lang'
 
 # Create a parser.
 parser = TreeSitterFFI.parser
 
-# Set the parser's language (JSON in this case).
-TreeSitterFFI.ts_parser_set_language(parser, TreeSitterFFI.parser_json)
+# Add the language parser library (JSON in this case) with an absolute path
+# 
+#   TreeSitterFFI.add_lang(:tree_sitter_json, 
+#     '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib')
+# 
+# or let TreeSitterFFI use ENV var TREE_SITTER_LIB_DIR or search common places
+# (will raise if not found).
+TreeSitterFFI.add_lang(:tree_sitter_json)
+
+# Set the parser's language.
+TreeSitterFFI.ts_parser_set_language(parser, TreeSitterFFI.tree_sitter_json)
 
 # Build a syntax tree based on source code stored in a string.
 source_code = '[1, null]'

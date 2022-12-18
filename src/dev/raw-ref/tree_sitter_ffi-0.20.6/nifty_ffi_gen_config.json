@@ -1,0 +1,9 @@
+{
+  "vers": "0.20.6",
+  "header": "/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.6/tree-sitter/lib/include/tree_sitter/api.h",
+  "proj_mod": "TreeSitterFFI",
+  "proj_name": "tree_sitter_ffi",
+  "boss_mod": "BossFFI",
+  "boss_header": "boss_ffi",
+  "ffi_lib": "tree-sitter/libtree-sitter"
+}

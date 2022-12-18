@@ -1,7 +1,6 @@
 # some stuff we need
 
 require 'tree_sitter_ffi'
-require 'tree_sitter_ffi_lang'
 
 ### gather all these run rusty util top-level methods into a module!!!
 
@@ -68,7 +67,11 @@ end
 
 def assert_eq!(result, expect)
   from = caller.first.split('/').last.split(/(\w+_test.rb:)/).last
-	put_note(result, expect, from){|result, expect| result == expect}
+#   puts "^^^ result: #{result.inspect}+++"
+#   puts "  expect: #{expect.inspect}+++"
+  # result seems to be 'invalid memory obj' but we were expecting QueryError anyway!!!
+	put_note(result, expect, from){|result, expect| expect == result}
+# 	put_note(result, expect, from){|result, expect| result == expect}
 end
 
 def assert_ne!(result, expect)
@@ -303,12 +306,14 @@ def compose_capture(query, source, capture)
     capture[:node].utf8_text(source)]
 end
 
-# ref:
-# def parse_json_example()
-#     parser = TreeSitterFFI.parser()
-#     parser.set_language(get_language("json"))
+# for node_test:
+def parse_json_example()
+    parser = TreeSitterFFI.parser()
+    parser.set_language(get_language("json"))
+    # this is rust bindings form of Parser#parse from string, use parse_string explicitly
 #     parser.parse(JSON_EXAMPLE, nil)
-# end
+    parser.parse_string(nil, JSON_EXAMPLE, JSON_EXAMPLE.length)
+end
 
 #         assert_eq!(
 #             collect_captures(captures, query, source),
@@ -449,4 +454,154 @@ module TreeSitterFFI
 	TreeSitterFFI.send :remove_const, "EnumQueryError"
 
 	include Rusty # extend???
+	
 end	
+
+#### tidy/idio stuff here for now (mostly pre-nifty hand-raw), before adding to lib
+
+  ### mv most to lib/tree_sitter_ffi/types_patch.rb
+  
+module TreeSitterFFI
+#   class Point
+# 		def ==(v)
+# 			return false unless !v.nil? && self.class == v.class # subclasses???
+# 			self[:row] == v[:row] && self[:column] == v[:column]
+# 		end
+#   end
+
+  class Node
+		# alias??? use ruby form not ts_???
+		# consider the NullNode/NotANode/whatever!!!
+# 		def ==(v)
+# 			v = TreeSitterFFI::Node.new unless v
+# 			TreeSitterFFI.ts_node_eq(self, v)
+# 		end
+
+### chimp
+    ### rusty bindings TMP!!! 
+    def utf8_text(input)
+      return '' if self.null? || self.is_null
+      input[self.start_byte...self.end_byte]
+    end
+
+# 	  def copy_values(from)
+# 	    puts "&&& copy_values self[:context]: #{self[:context].inspect}+++"
+# #       puts "  self[:context].length: #{self[:context].length}"
+#       puts "  self[:context][0]: #{self[:context][0]}+++"
+#       puts "  from[:context][0]: #{from[:context][0]}+++"
+#       puts "  self[:context][1]: #{self[:context][1]}+++"
+#       puts "  from[:context][1]: #{from[:context][1]}+++"
+# 	    4.times.each{|i| self[:context][i] = from[:context][i]}
+# 	    puts "after 4.times"
+# 	    self[:id] = from[:id]
+# 	    puts "after self[:id]"
+# 	    self[:tree] = from[:tree]
+# 	    puts "after self[:tree]"
+# 	  end
+# 	  def context()
+# 	    puts "*** context() self.class: #{self.class.inspect}"
+# 	    4.times.map{|i| self[:context][i]}
+# 	  end
+# 	  def tree() Tree.new(self[:tree]) end
+		def inspect() four11(self, [:context, :id, :tree]) end
+  end
+  
+  class Query
+### tidy
+
+### chimp
+# 		add this to FFI::Enum or EnumUtils???
+# 		def self.type_enum(v)
+# 			v.is_a?(Symbol) ? QueryError[v] : 
+# 			if v.is_a?(Symbol)
+# 				got = QueryErrorKind.to_native(v, nil) # wants ctx it doesn't use!!!
+# 				got = QueryError.to_native(v) 
+# 				raise "type_enum: unknown #{v.inspect}" unless got
+# 				got
+# 				how to something like this:
+# 				QueryError.to_native(v) || raise "type_enum: unknown #{v.inspect}"
+# 			else
+# 				QueryErrorKind.from_native(v, nil) # wants ctx it doesn't use!!!
+# 				QueryError.from_native(v)
+#       end
+# 		end
+# 		
+# 		## come back when we figure out how to override initialize!!!
+# 		returns a Query or a QueryError
+# 		def self.make(lang, sexp)
+# 		  puts "=== Query.make"
+# 			err_offset_p = FFI::MemoryPointer.new(:uint32, 1)
+# 			err_type_p = FFI::MemoryPointer.new(:uint32, 1) # enum!!!
+# 			query = TreeSitterFFI.ts_query_new(lang, sexp, sexp.length, 
+# 				err_offset_p, err_type_p)
+# 			offset = err_offset_p.get(:uint32, 0)
+# 			type = err_type_p.get(:uint32, 0)
+# 			puts "=== type: #{type}, offset: #{offset}, "
+# 			puts "  query: #{query.inspect}"
+# 			is it possible FFI will return nil??? or only null pointer???
+# 			query.null? ? TreeSitterFFI::QueryError.make(sexp, offset, type) :
+# 				query
+# 		end	
+# 
+# 		def ts_query_capture_name_for_id(*args) nope_not_impl(__callee__) end
+# 		def capture_name_for_id(*args) #:uint32, :uint32_p => :string
+# 		def capture_name_for_id(id) #:uint32 [, add len_p] => :string
+#       ret, *got = BossFFI::bufs([[:uint32_t_p]]) do |uint32_t_p_1|
+#         TreeSitterFFI.ts_query_capture_name_for_id(self, id, uint32_t_p_1)
+#       end
+#       got[0] is string len
+#       ret
+# # 		  nope_not_impl(__callee__) 
+# 			len_p = FFI::MemoryPointer.new(:pointer, 1) # :uint32_p is Pointer
+# # 			ret = yield(len_p)
+#       ret = ts_query_capture_name_for_id(self, id, len_p)
+# 			len = len_p.get(:uint32, 0)
+#       ret
+# 		end
+  end
+  
+  class QueryCapture
+	  include ::BossFFI::UnitMemory
+	  
+    # values of an individual QueryCapture (equiv multiple = 1)
+    # now a deep copy of values of an individual QueryCapture (equiv multiple = 1)
+# 		def copy_values(from)
+# #       puts "QueryCapture#copy_values from: #{from.inspect}"
+#       unless from && from.is_a?(self.class)
+#         raise "#{self.class}#copy_value: to must be class #{self.class} (#{from.inspect})"
+#       end
+#       puts "^^^ copy_values self[:node]: #{self[:node].inspect}+++"
+#       puts "  from[:node]: #{from[:node].inspect}+++"
+#       self[:node].copy_values(from[:node])
+#       self[:index] = from[:index]
+#       self
+# 		end
+
+		### from_array, to_contiguous are module method!!!
+# 		def self.from_array(arr)
+# # 			BossStructArray.to_contiguous(arr) do |e, fresh|
+# 			UnitMemory.to_contiguous(arr) do |e, fresh|
+# 			  fresh.copy_values(e)
+# 			end
+# 		end
+  end
+  
+#   class QueryCursor
+# 	  # override init???
+# 	  def self.make()
+#       TreeSitterFFI.ts_query_cursor_new
+# 	  end
+#     ### Rusty!!!
+# 		# TextProvider??? try String input first...
+# 		def matches(query, node, input)
+# 		  self.exec(query, node)
+# 		  arr = []
+#       match = QueryMatch.new
+# 		  while(next_match(match))
+# 		    arr << match.make_copy #only single
+# 		  end
+# 		  arr
+#     end
+#   end
+  
+end

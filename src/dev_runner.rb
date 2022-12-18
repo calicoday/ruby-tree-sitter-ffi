@@ -1,333 +1,256 @@
-#!/usr/bin/env ruby ### is this actually portable???
+# run from proj: ruby -I lib/ src/dev_runner.rb
 
+require 'json'
 require 'fileutils'
 
-require './src/pull/repo_refs.rb'
-require './src/pull/show_runner.rb'
-require './src/filer.rb'
-require './src/sigs/gen_sigs_prep.rb'
+require './src/util/optimist.rb'
+require './src/util/sunny.rb'
+require './src/util/filer.rb'
 require './src/rusty/gen_rusty.rb'
-require './src/sigs/gen_sigs.rb'
 
-### also script, 'if File.identical?(__FILE__, $0)' at end
 
-require 'awesome_print'
 
-module DevRunner
+class DevRunner < Sunny
 
-  def self.shunt(vers, dev=true)
-    devmark = (dev ? 'dev-' : '') # so we can find pulled!!!
-#     devmark = 'dev-' # always dev!!! mv dir after, if you like!!!
-    shunt = "#{devmark}tree-sitter-#{vers}/" # pathname!!!
-  end
-  def self.gendir(vers, dev=true) 
-    Pathname.new('gen/') + (vers ? shunt(vers, dev) : '') 
-  end
-  def self.srcdir(vers, dev=true) 
-    Pathname.new('src/') + (vers ? shunt(vers, dev) : '') 
-  end
-  
-  def self.was_all(vers)
-    pull(vers)
-    sigs_prep(vers)
-    gen_rusty(vers)
-    gen_sigs(vers)
-  end
-  
-  # prob unnec bc need to edit between!!!
-  def self.all(vers)
-    all_prep(vers)
-    all_gen(vers)
-  end
-  
-  def self.all_prep(vers)
-    puts "*** DevRunner all_prep pull(#{vers})..."
-    pull(vers)
-    puts
-    puts "*** DevRunner all_prep sigs_prep(#{vers})..."
-    sigs_prep(vers)
-    puts
-    #rusty_prep(vers)
-  end
-  def self.all_gen(vers)
-    puts "*** DevRunner all_gen rusty(#{vers})..."
-    gen_rusty(vers)
-    puts
-    puts "*** DevRunner all_gen sigs(#{vers})..."
-    gen_sigs(vers)
-    puts
-  end
-#   def self.all_run(vers)
-#     # ??? cmdline w opts??? or just rakefile???
-#   end
-  
-  def self.diff_rep(vers, vers_prev)
-#     filer = Filer.new({input: gendir(vers) + 'pull/' + shunt(vers, false),
-#       input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false)}, 
-#       {out: gendir(vers) + 'diff/'})
-    filer = Filer.new({input: gendir(vers) + 'pull/' + shunt(vers, false),
-      input_prev: gendir(vers_prev) + 'pull/' + shunt(vers_prev, false), 
-      rusty: gendir(vers) + 'rusty/',
-      rusty_prev: gendir(vers_prev) + 'rusty/',
-#       sigs: input: gendir(vers) + 'sigs/',
-#       sigs_prev: input: gendir(vers_prev) + 'sigs/',
-      },
-      {out: gendir(vers) + 'diff/'})
+  def initialize
+    cmd_list = {
+      "demo" => "run demo/example.rb",
 
-    ### pull
-    
-    subdirs = {'lib/include/tree_sitter/' => ['api.h'], 
-      'cli/src/tests/' => ['node_test.rs', 'tree_test.rs', 'query_test.rs']
+      "gen_rusty" => "generate gen/ rusty tests",
+      "cp_rusty" => "copy rusty_*_test.rb and *_patch_blank.rb to spec/rusty",
+
+      "rspec_raw" => "run rspec on gen/raw-spec.vers/ *_raw_spec.rb",
+      "rspec_raw_patch" => "run rspec on spec/raw-patch.vers/ *_raw_patch_spec.rb",
+      "test_rusty" => "run spec/rusty tests",
+      "test_rusty_patch" => "run spec/rusty patch tests",
+      "run_rusty_stubs" => "run gen/rusty test stubs",
+      "run_rusty_tiny" => "run gen/rusty tiny test",
       }
-    files_pull = subdirs.map{|dir, filelist| filelist.map{|e| Pathname.new(dir) + e}}.flatten
-    puts "files_pull: #{files_pull.inspect}"
-    
-    results_pull = files_pull.map do |file|
-      path = filer.path(:input) + file
-      path_prev = filer.path(:input_prev) + file
-      puts path
-      puts path_prev
-      # -O to ensure vers_prev file is listed first every time
-      `git diff --no-index -O #{path_prev} #{path_prev} #{path}`
-#       %x[git diff --no-index -O #{path_prev} #{path_prev} #{path}]
-    end
-    
-    ### rusty
- 
-    # nope, bad order and we don't want all of them anyway
-#     files_rusty = Dir.glob("*.rb", base: filer.path(:rusty))   #.map{|e| ['', e]}
-    files_rusty = ['rusty_node_test.rb', 'rusty_tree_test.rb', 'rusty_query_test.rb',
-      'run_rusty.rb'] # might want patch_blanks???
-    
-    puts
-    puts "files_rusty: #{files_rusty.inspect}"
-    
-    # git diff --no-index -O dev-tree-sitter-0.20.0/rusty/rusty_tree_test.rb dev-tree-sitter-0.20.0/rusty/rusty_tree_test.rb dev-tree-sitter-0.20.6/rusty/rusty_tree_test.rb 
-    
-    results_rusty = files_rusty.map do |file|
-      path = filer.path(:rusty) + file
-      path_prev = filer.path(:rusty_prev) + file
-      puts path
-      puts path_prev
-      # -O to ensure vers_prev file is listed first every time
-      `git diff --no-index -O #{path_prev} #{path_prev} #{path}`
-#       %x[git diff --no-index -O #{path_prev} #{path_prev} #{path}]
-    end
-    
-    ### all together now
-    
-    files = files_pull + files_rusty
-    results = results_pull + results_rusty    
-    
-    
-    diff_rep_name = "diff-rep-#{vers_prev}-#{vers}"
-
-    # raw txt results (only files with changes)
-    guts = results_pull.join
-    diff_rep_txt = "#{diff_rep_name}.txt"
-    filer.write(:out, diff_rep_txt, guts)
-
-
-    # md presentation results, plan blank with full notes and reduced
-    plan = files.zip(results).map do |file, diff|
-      regions = diff.split(/^(@@[^\n@]*@@)/).unshift('').map{|e| 
-        e.gsub(/\s*@@\s*/, '')}.each_slice(2).to_a
-      [file, regions]
-    end
-    
-    guts = plan.map do |file, regions|
-      sections = regions.map do |loc, changes| 
-        break nil unless changes
-        sec_title = (loc.empty? ? '' : "\n#{loc}\n")
-        "#{sec_title}\n```diff\n#{changes}\n```\n"
-      end
-      "### #{file}\n\n#{sections ? sections.join : 'No changes.'}"
-    end 
-
-    diff_rep_md = "#{diff_rep_name}.md"
-    filer.write(:out, diff_rep_md, 
-      "## Difference report #{vers_prev} to #{vers}\n\n\n" + guts.join("\n\n"))
-    
-    tbl_head = %w%tr th loc /th th note /th /tr%.map{|e| "<#{e}>"}.join
-    tbl_row = %w%tr td loc /td td note /td /tr%.map{|e| "<#{e}>\n"}.join
-
-    changed_files = []
-    notes = plan.map do |file, regions|
-      regions.shift # first entry is intro legend, not change region
-      next "### #{file}\n\nNo changes.\n" if regions.empty?
-      changed_files << file
-      head = tbl_head.gsub('<loc>', 'Location').gsub('<note>', '[Status] Notes')
-      rows = regions.map{|loc, _| tbl_row.gsub('<loc>', "#{loc}").gsub('<note>', '')}              
-      ["### #{file}\n", "<table>", head, rows.join("\n"), "</table>\n\n\n"].join("\n")
-    end 
-    
-    head = tbl_head.gsub('<loc>', 'Location(s)').gsub('<note>', '[Status] Notes')
-    row = tbl_row.gsub('<loc>', '').gsub('<note>', '')
-    reduced = changed_files.map do |file|
-      ["### #{file}\n", "<table>", head, row, "</table>\n\n"].join("\n")
-    end      
-    
-    notes_title = "## Upgrade plan #{vers_prev} to #{vers}\n\n\n"
-    reduced_title = "## Upgrade plan #{vers_prev} to #{vers} (Reduced)\n\n\n"
-    filer.write(:out, "diff-plan-#{vers_prev}-#{vers}_blank.md", 
-      reduced_title + reduced.join("\n\n") + 
-      notes_title + notes.join("\n\n"))
-  end
-  
-  def self.pull(vers)
-    show = ShowRunner.new
-    cwd = FileUtils.pwd ### do better!!!
-    rundir = gendir(vers) + 'pull/'
-    repo_root = "https://github.com/tree-sitter/tree-sitter/" # org + name
-    subdirs = {'lib/include/tree_sitter/' => {scrap: ['.svn']}, 
-      'cli/src/tests/' => {keep: %w%node_test.rs tree_test.rs query_test.rs%}
+    # vet cmd_list for matching method, if we're going to blindly redirect!!!
+    cmd_opts = Proc.new {|cmd|
       }
-    dest = "tree-sitter-#{vers}" # nec??? or just 'tree-sitter'??? FIXME!!!
-    RepoRefs.do_one_thing(show, rundir, repo_root, subdirs, vers, dest)
-    FileUtils.cd(cwd) # bk to start!!!
-  end
-  
-#   def self.sigs_prep_to_edit(vers, dev=true)
-#     puts "DevRunner.sigs_prep_to_edit..."
-#     # copy and rename _blanks to src/
-#     shunt = shunt(vers, dev)
-#     blankdir = gendir(shunt) + 'sigs-prep/'
-#     # ensure prepdir
-#     prepdir = srcdir(shunt) + 'sigs-prep/'
-#     blanks = Dir.children(blankdir).select{|e| e =~ '_blank.rb'}
-#     blanks.each do |e|
-#       FileUtils.cp(e, e.gsub(/_blank\.rb/, ''))
-#     end
-#     puts "done."
-#   end
-  
-  # in:
-  # - lib/tree_sitter_ffi/
-  # out:
-  # - src/shunt/sigs-prep/
-  def self.sigs_prep(vers)
-    ### vers for lib!!! FIXME!!!
-    filer = Filer.new({input: 'lib/tree_sitter_ffi'}, 
-      {out: gendir(vers) + 'sigs-prep/'})
-    GenSigsPrep.gen_sigs_prep(filer)    
-#     puts "done."
-  end
-  
-  # not a thing yet!!!
-#   def self.rusty_prep(vers, dev=true)
-#     shunt = shunt(vers, dev)
-#     
-#     filer = Filer.new({src: srcdir('') + 'sigs-prep/', # for tmplts, no shunt!!!
-#       input: './lib/tree_sitter_ffi'}, 
-#       {out: gendir(shunt) + 'sigs-prep/'})
-#     
-#   end
+    g_opts, cmd, c_opts = ready(cmd_list.keys, cmd_opts) do 
+      version 'dev_runner.rb v0.1.0'
+      banner('Runner of tree-sitter-ffi scripts')
+      banner 'Usage:'
+      banner "  dev_runner.rb [options] [<command> [suboptions]]\n \n"
+      banner 'Options:'
+      # -v, -h get added auto but they land after the subcommands, so put them here
+      opt(:version)
+      opt(:help)
 
+      # tag is req, repo is req for only gen_rusty
+      opt(:tag, 'Tree-sitter version tag (/\d+\.\d+\.\d+/ no \'v\' or other)',
+        :type => String, :required => true)
+      opt(:repo, 'Tree-sitter repo (for rust tests source)', :type => String)
+
+      opt(:gem, 'Use source from gems')
+      opt(:lib, 'Use source from local lib/ not gems', :default => true)
+
+      banner "\nCommands:"
+      cmd_list.each { |cmd, desc| banner format("  %-10s %s", cmd, desc) }
+    end
+    
+    do_the_thing(g_opts, cmd, c_opts)
+  end
+    
+  def do_the_thing(g_opts, cmd, c_opts)
+    # add the --gem flag for gem testing, else always lib/
+    g_opts.lib = false if g_opts.gem
+    add_to_loadpath('lib/') if g_opts.lib
+
+    incl_path = (g_opts.lib ? "-I lib/" : '')
+    local = (g_opts.lib ? 'local=true' : '') # for rspec
+    
+    vers = g_opts.tag
+    logfile = "#{cmd}.#{vers}_log.txt"
+    tee_log = " | tee log/#{logfile}" ### log_dir option???
+#     logfile = "run_#{cmd}_log-#{vers}.txt"
+#     tee_log = (logfile ? " | tee log/#{logfile}" : '')
+    
+    # compose a cmdline and call do_the_thing
+    cmdline = case cmd
+    when 'demo' then demo(g_opts)
+    when 'gen_rusty' then gen_rusty(g_opts, logfile)
+    when 'cp_rusty' then cp_rusty(g_opts)
+    when 'rspec_raw' then rspec_raw(g_opts)
+    when 'rspec_raw_patch' then rspec_raw_patch(g_opts)
+    when 'test_rusty' then test_rusty(g_opts)
+    when 'test_rusty_patch' then test_rusty_patch(g_opts)
+    # these will have dbl 'done.':
+    when 'run_rusty_stubs' then run_rusty_stubs(g_opts)
+    when 'run_rusty_tiny' then run_rusty_tiny(g_opts)
+    end
+    
+    # if cmdline.nil?, command has been run directly, no log
+    puts `#{cmdline}#{tee_log}` if cmdline
+    
+    # run_rusty scripts already have 'done.' in them
+    puts "done." unless ['run_rusty_stubs', 'run_rusty_tiny'].include?(cmd)
+  end
+
+# ruby src/dev_runner.rb -t '0.20.7' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' gen_rusty
+# ruby src/dev_runner.rb -t '0.20.0' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.0/tree-sitter' gen_rusty
+  def gen_rusty(g_opts, logfile)
+    vers = g_opts.tag
   
-  # in:
-  #   - input: gen/devshunt/pull/*_test.rs
-  #   - tmplt: src/rusty/rusty_*.rb.erb
-  # out:
-  #   - out: gen/shunt/rusty/*_rusty[_patch_blank]?.rb
-  #   tmp -> gen/shunt/rusty/rusty_*_[test|_patch_blank].rb
-  def self.gen_rusty(vers)
-    $log = File.open('log/' + 'gen_rusty_log.txt', 'w') ###TMP!!! use filer!!! FIXME!!!
-    # input from pull/ needs dbl shunt
+    logdir = Pathname('log/')
+    $log = File.open(logdir + logfile, 'w')
+#     $log = File.open('log/' + 'gen_rusty_log.txt', 'w') ###TMP!!! use filer!!! FIXME!!!
+    
+    unless g_opts.repo
+      puts "Error: option --repo must be specified.\nTry --help for help."
+      exit 1
+    end
+    repo_dir = Pathname.new(g_opts.repo)
+
     filer = Filer.new(
-      {input: gendir(vers) + 'pull/' + shunt(vers, false) + 'cli/src/tests/', # dbl shunt!!!
-        tmplt: srcdir(nil) + 'rusty/', # no devmark
-        reqs: srcdir(vers, false) + 'rusty-prep/', # for composing requires
+      {input: repo_dir + 'cli/src/tests/',
+        tmplt: Pathname.new('src/') + 'rusty/',
+        reqs: Pathname.new('src/') + "rusty-prep.#{vers}/", # for composing requires
         },
-      {out: gendir(vers) + 'rusty/'})
-      # log: ???
-      
+      {out: Pathname.new('gen/') + "rusty.#{vers}/"})      
     
-    #
     RustyGen.gen_rusty(filer, ["node", "tree", "query"])
     $log.close
-#     puts "done."
+    nil # completed command, no further call nec
   end
   
-  def self.gen_sigs(vers)
-    filer = Filer.new({input: 'lib/tree_sitter_ffi'}, 
-      {out: gendir(vers) + 'sigs/'})
-    GenSigs.gen_sigs(filer)    
-#     puts "done."
+  ### curr req --repo opt!!! ### FIXME!!!
+  # or Error: option --repo must be specified.
+  # ruby src/dev_runner.rb -t '0.20.7' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' cp_rusty
+  def cp_rusty(g_opts)
+    # cp gen/rusty.0.1.2/rusty_*_test.rb to spec/rusty.0.1.2/ 
+    # and gen/rusty.0.1.2/rusty_*_patch_blank.rb to (shd be _stub not _blank!!!)
+    # spec/rusty-patch-fresh.0.1.2/#{was.gsub(/_blank/, '')}
+    # hand cp -patch-fresh to -patch and edit.
+    vers = g_opts.tag
+  
+    gendir = Pathname.new('gen/') + "rusty.#{vers}/"
+    specdir = Pathname.new('spec/') + "rusty.#{vers}/"
+    patchdir = Pathname.new('spec/') + "rusty-patch-fresh.#{vers}/"
+
+
+    if Dir.exist?(specdir) && !Dir.children(specdir).empty?
+      "#{specdir} has stuff in it. Exiting."
+      exit 1
+    end
+    FileUtils.mkdir_p(specdir)
+    if Dir.exist?(patchdir) && !Dir.children(patchdir).empty?
+      "#{patchdir} has stuff in it. Exiting."
+      exit 1
+    end
+    FileUtils.mkdir_p(patchdir)
+    
+    # run_rusty.rb first, rewrite gen/ paths as spec/
+    run_rusty = File.read(gendir + "run_rusty.rb").split("\n").map do |line|
+      line.gsub(/#{gendir}(.*)_patch\.rb/, "spec/rusty-patch.#{vers}/\\1_patch.rb").
+        gsub(/#{gendir}(.*)\.rb/, "#{specdir}\\1.rb")
+    end.join("\n")
+    File.write(specdir + "run_rusty.rb", run_rusty)
+    
+    tests = Dir.glob("*_test.rb", base: gendir)
+    puts "tests: #{tests.inspect}"
+    tests.each do |test|
+      File.write(specdir + test, File.read(gendir + test))
+    end
+    
+#     patches = Dir.glob("*_prep_stub.rb", base: gendir)
+    patches = Dir.glob("*_patch_blank.rb", base: gendir)
+    puts "patches: #{patches.inspect}"
+    patches.each do |patch_stub|
+#       patch = patch_stub.gsub(/_stub/, '')
+      patch = patch_stub.gsub(/_blank/, '')
+      File.write(patchdir + patch, File.read(gendir + patch_stub))
+    end
+    
+    nil # completed command, no further call nec
+  end
+
+# ruby src/dev_runner.rb -t '0.20.7' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' demo
+# ruby src/dev_runner.rb -t '0.20.0' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.0/tree-sitter' demo
+
+  def demo(g_opts)
+    vers = g_opts.tag
+    ENV['TREE_SITTER_RUNTIME'] = vers
+    prog = "demo/example.rb"
+    incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
+    "ruby #{incl_path} #{prog}"
+  end
+
+#   def test_all(g_opts)
+#     rspec_raw(g_opts)
+#     rspec_raw_patch(g_opts)
+#     test_rusty(g_opts)
+#     test_rusty_patch(g_opts)
+#   end
+  
+  def rspec_raw(g_opts)
+    vers = g_opts.tag
+    ENV['TREE_SITTER_RUNTIME'] = vers
+    specs = Pathname.new('gen/') + "raw-spec.#{vers}/*_spec.rb"
+    puts "specs: #{specs}+++"
+    incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
+    "local=true rspec #{incl_path} #{specs}"
+  end
+  
+  def rspec_raw_patch(g_opts)
+    vers = g_opts.tag
+    ENV['TREE_SITTER_RUNTIME'] = vers
+    specs = Pathname.new('spec/') + "raw-patch.#{vers}/*_spec.rb"
+    puts "specs: #{specs}+++"
+    incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
+    "local=true rspec #{incl_path} #{specs}"
+  end
+  
+  def test_rusty(g_opts)
+    vers = g_opts.tag
+    ENV['TREE_SITTER_RUNTIME'] = vers
+#     tests = Pathname.new('spec/') + "rusty.#{vers}/*_test.rb"
+    prog = "spec/rusty.#{vers}/run_rusty.rb"
+    incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
+    "ruby #{incl_path} #{prog}"
+  end
+  
+  # if we ever get far enough to HAVE patch code to test repeatedly... Sigh.
+  def test_rusty_patch(g_opts)
+    vers = g_opts.tag
+    ENV['TREE_SITTER_RUNTIME'] = vers
+#     tests = Pathname.new('spec/') + "rusty-patch.#{vers}/*_test.rb"
+    prog = "spec/rusty-patch.#{vers}/run_rusty.rb" ###??? don't have this yet!!!
+    incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
+    "ruby #{incl_path} #{prog}"
+  end
+
+# TREE_SITTER_RUNTIME='0.20.7' ruby -I lib/ gen/rusty.0.20.7/run_rusty_stubs.rb
+# TREE_SITTER_RUNTIME='0.20.0' ruby -I lib/ gen/rusty.0.20.0/run_rusty_stubs.rb
+  
+# ruby src/dev_runner.rb -t '0.20.7' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' run_rusty_stubs
+# ruby src/dev_runner.rb -t '0.20.0' run_rusty_stubs
+# ruby src/dev_runner.rb -t '0.20.0' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.0/tree-sitter' run_rusty_stubs
+  def run_rusty_stubs(g_opts)
+    vers = g_opts.tag
+#     ENV['TREE_SITTER_RUNTIME'] = vers
+#     tests = Pathname.new('spec/') + "rusty-patch.#{vers}/*_test.rb"
+    prog = "gen/rusty.#{vers}/run_rusty_stubs.rb"
+    incl_path = "-I lib/"
+    "ruby #{incl_path} #{prog}"
+  end
+  
+  def run_rusty_tiny(g_opts)
+    vers = g_opts.tag
+    prog = "gen/rusty.#{vers}/run_rusty_tiny.rb"
+    incl_path = "-I lib/"
+    "ruby #{incl_path} #{prog}"
+  end
+  
+  # run all cmd -- mv all outdirs and supply prep and spec/patchs first!!!
+  def all_dev_runner(g_opts)
+    vers = g_opts.tag
+    
   end
   
 end
 
-# $ ruby src/dev_runner.rb cmd [vers]
-def do_the_thing(cmd, vers, more)
-  # non-tee, silent option??? colored option???
-  logfile = "#{cmd}_#{vers}_log.txt"
-  # if we want lib not gem, append '_lib' to the cmd name -- mind random ruby named _lib!!
-  cmd, lib = cmd.split(/(_lib)$/)
-  incl_path = (lib ? "-I lib/" : '')
-  
-  prog = case cmd
-  when 'diff_rep'
-    vers_prev, _ = more
-    # list files, one eg...
-    logfile = nil # no log, just output to file and "done."
-    req = "require './src/dev_runner.rb'"
-    call = "DevRunner.#{cmd}('#{vers}', '#{vers_prev}')"
-    ruby_prog = "ruby #{incl_path} -e\"#{req}; #{call}\" 2>&1"
-  when 'run_rusty_stubs'
-    "ruby #{incl_path} gen/dev-tree-sitter-#{vers}/rusty/run_rusty_stubs.rb 2>&1" 
-  when 'run_rusty'
-    "ruby #{incl_path} gen/dev-tree-sitter-#{vers}/rusty/run_rusty.rb 2>&1" 
-  when 'run_sigs'
-    "#{lib ? 'local=true' : ''} rspec #{incl_path} gen/dev-tree-sitter-#{vers}/sigs 2>&1" # redirect? 
-  when 'run_sigs_blanks'
-    # not really useful but this is how we'll do it for patch (in src/ not gen/dev-)
-    "#{lib ? 'local=true' : ''} rspec #{incl_path} gen/dev-tree-sitter-#{vers}/sigs gen/dev-tree-sitter-#{vers}/sigs/*_blank.rb 2>&1" # redirect? 
-  else
-    req = "require './src/dev_runner.rb'"
-    call = "DevRunner.#{cmd}('#{vers}')"
-    ruby_prog = "ruby #{incl_path} -e\"#{req}; #{call}\" 2>&1"
-  end
+DevRunner.go(__FILE__)
 
-  tee_log = (logfile ? " | tee log/#{logfile}" : '')
-  FileUtils.mkdir_p('log/') if logfile
-  puts "DevRunner calling #{prog + tee_log}..."
-  system(prog + tee_log)
-  puts "done."
-end
-
-# run from cmdline, add getopts??? yeah, def getopts for -lib flag, etc!!! FIXME!!!
-if File.identical?(__FILE__, $0)
-  unless ARGV.length > 0
-    puts "Usage: ruby dev_runner.rb cmd [vers]"
-    exit 1
-  end
-  cmd, vers, *more = ARGV
-  vers = '0.20.6' unless vers # or whatever is most likely currently
-  do_the_thing(cmd, vers, more)
-end
-  
-  
-  
-# gen/
-#   dev-tree-sitter-0.20.7/
-#     pull/
-#     rusty/
-#     rusty-prep/ _blanks
-#     sigs/
-#     sigs-prep/ _blanks
-#     log/
-#       
-#   dev-tree-sitter-nightly/
-#   tree-sitter-0.20.6/
-#   
-# src/
-#   dev-tree-sitter-0.20.7/
-#     pull/
-#     rusty/
-#     rusty-prep/ copied _blanks -- to EDIT, ensure
-#     sigs/
-#     sigs-prep/ copied _blanks -- to EDIT, ensure
-#   
-#   
-# some ops can only be done on dev- runbases
-# - pull - any

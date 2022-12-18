@@ -1,4 +1,3 @@
-### this shd be gem tidy_util.rb
 
 # built-in type symbols:
   # List of type definitions
@@ -103,4 +102,51 @@ module SpecUtil
     ret = yield *(p_arr.map{|e| e[0]})
     [ret, p_arr.map{|e, type| e.get(type, 0)}].flatten
   end
+end
+
+require 'boss_ffi'
+
+module TreeSitterFFI
+  class SpecObjBuild < ::BossFFI::SpecObjBuild
+    # in super: attr_reader :plan, :extra_types
+    
+    # set up plan in subclass!!!
+    def initialize
+      @pars = TreeSitterFFI.parser
+      json = TreeSitterFFI.parser_json
+#       @pars.set_language(json).should == true
+#        @pars.set_language(json)
+      raise "set_language(json) failed." unless @pars.set_language(json)
+      @input = "[1, null]"
+      @tree = @pars.parse_string(nil, @input, @input.length)
+      @root_node = @tree.root_node
+      @array_node = @root_node.named_child(0)
+      @number_node = @array_node.named_child(0)
+
+      # from query_raw_spec.rb
+      @sexp = '(document (array (number) (null)))'
+      @err_offset_p = FFI::MemoryPointer.new(:uint32, 1)
+      @err_type_p = FFI::MemoryPointer.new(:uint32, 1) # enum!!!
+      # 		@err_type_p = FFI::MemoryPointer.new(TreeSitterFFI::EnumQueryError, 1) # enum!!!
+      @query = TreeSitterFFI.ts_query_new(@json, @sexp, @sexp.length,
+      @err_offset_p, @err_type_p)
+
+      #(plan, value_types)
+#       @plan = plan
+#       @extra_types = value_types.map{|value, name| [name, value]}.to_h
+#       @extra_types = [[:uint16, :symbol], [:uint16, :field_id]]
+      value_types = [[:uint16, :symbol], [:uint16, :field_id]]
+      add_extra_types(value_types)
+#       @plan = {}
+#       add_plan_entry(TreeSitterFFI::Parser){@pars}
+#       add_plan_entry(TreeSitterFFI::Tree){@tree}
+#       add_plan_entry(TreeSitterFFI::Node){@number_node}
+
+      add_plan_obj(TreeSitterFFI::Parser, @pars)
+      add_plan_obj(TreeSitterFFI::Tree, @tree)
+      add_plan_obj(TreeSitterFFI::Node, @number_node)
+      add_plan_obj(TreeSitterFFI::Query, @query)
+    end
+  end
+    
 end

@@ -1,7 +1,6 @@
 # various rewrites of the input sample JSON_EXAMPLE by using a TreeCursor
 
 require 'tree_sitter_ffi'
-require 'tree_sitter_ffi_lang'
 
 require './demo/runner.rb'
 
