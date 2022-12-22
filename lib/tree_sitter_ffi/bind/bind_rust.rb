@@ -5,6 +5,18 @@ module BindRust
 	# alias_method :aka, :nee
 ### TMP!!! mk version_roster.json!!! FIXME!!!
 	def get_language(lang)
+	  lang = "tree_sitter_#{lang}" unless lang.to_s =~ /^tree_sitter_/
+	  lang = lang.to_sym # be sure
+	  lib = TreeSitterFFI.find_lang(lang)
+	  TreeSitterFFI.add_lang(lang, lib)
+    puts "=== lang: #{lang.inspect}+++"
+    puts "  lib_vers: #{lib_vers}+++"
+    puts "  lib: #{lib.inspect}+++"
+    TreeSitterFFI.add_lang("tree_sitter_#{lang}".to_sym, lib)
+    lang_obj = TreeSitterFFI.send("tree_sitter_#{lang}")
+  end
+  
+	def was_get_language(lang)
 	  vers_roster = {
       bash: '0.19.0',
       c_sharp: '0.20.0',
@@ -29,21 +41,6 @@ module BindRust
     lang_obj = TreeSitterFFI.send("tree_sitter_#{lang}")
   end
   
-	def was_get_language(lang)
-		case lang
-		when "json" then TreeSitterFFI.parser_json
-		when "javascript" then TreeSitterFFI.parser_javascript
-		when "python" then TreeSitterFFI.parser_python
-		when "ruby" then TreeSitterFFI.parser_ruby
-		when "c" then TreeSitterFFI.parser_c
-		when "html" then TreeSitterFFI.parser_html
-		when "java" then TreeSitterFFI.parser_java
-		when "rust" then TreeSitterFFI.parser_rust
-		else
-			raise "don't know how to get_language(#{lang.inspect})."
-		end
-	end
-	
 	class TreeSitterFFI::InputEdit
 	  # why class method???
     def self.from_hash(h)
@@ -77,7 +74,7 @@ module BindRust
 	
 	class TreeSitterFFI::Parser
 	  # shd alias!!! FIXME!!! What is the rust bindings something arg???
-	  def parse(input, something)
+	  def parse(input, something=nil)
       parse_string(nil, input, input.length)
     end
 	end

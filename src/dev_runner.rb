@@ -48,7 +48,15 @@ class DevRunner < Sunny
       opt(:lib, 'Use source from local lib/ not gems', :default => true)
 
       banner "\nCommands:"
-      cmd_list.each { |cmd, desc| banner format("  %-10s %s", cmd, desc) }
+#       cmd_list.each { |cmd, desc| banner format("  %-20s %s", cmd, desc) }
+      # Optimist doesn't wrap desc, use max 80
+      offset = 2 + 20 + 1
+      col2_w = 80 - (offset)
+      cmd_list.each do |cmd, desc| 
+        # strip frags so \n takes the place of any trailing \w
+        frags = desc.scan(/.{1,#{col2_w}}\W/).map(&:strip)
+        banner format("  %-20s %s", cmd, frags.join("\n#{' '*offset}"))        
+      end
     end
     
     do_the_thing(g_opts, cmd, c_opts)
@@ -172,7 +180,7 @@ class DevRunner < Sunny
 
   def demo(g_opts)
     vers = g_opts.tag
-    ENV['TREE_SITTER_RUNTIME'] = vers
+    ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
     prog = "demo/example.rb"
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
     "ruby #{incl_path} #{prog}"
@@ -187,7 +195,7 @@ class DevRunner < Sunny
   
   def rspec_raw(g_opts)
     vers = g_opts.tag
-    ENV['TREE_SITTER_RUNTIME'] = vers
+    ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
     specs = Pathname.new('gen/') + "raw-spec.#{vers}/*_spec.rb"
     puts "specs: #{specs}+++"
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
@@ -196,7 +204,7 @@ class DevRunner < Sunny
   
   def rspec_raw_patch(g_opts)
     vers = g_opts.tag
-    ENV['TREE_SITTER_RUNTIME'] = vers
+    ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
     specs = Pathname.new('spec/') + "raw-patch.#{vers}/*_spec.rb"
     puts "specs: #{specs}+++"
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
@@ -205,7 +213,7 @@ class DevRunner < Sunny
   
   def test_rusty(g_opts)
     vers = g_opts.tag
-    ENV['TREE_SITTER_RUNTIME'] = vers
+    ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
 #     tests = Pathname.new('spec/') + "rusty.#{vers}/*_test.rb"
     prog = "spec/rusty.#{vers}/run_rusty.rb"
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
@@ -215,22 +223,22 @@ class DevRunner < Sunny
   # if we ever get far enough to HAVE patch code to test repeatedly... Sigh.
   def test_rusty_patch(g_opts)
     vers = g_opts.tag
-    ENV['TREE_SITTER_RUNTIME'] = vers
+    ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
 #     tests = Pathname.new('spec/') + "rusty-patch.#{vers}/*_test.rb"
     prog = "spec/rusty-patch.#{vers}/run_rusty.rb" ###??? don't have this yet!!!
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
     "ruby #{incl_path} #{prog}"
   end
 
-# TREE_SITTER_RUNTIME='0.20.7' ruby -I lib/ gen/rusty.0.20.7/run_rusty_stubs.rb
-# TREE_SITTER_RUNTIME='0.20.0' ruby -I lib/ gen/rusty.0.20.0/run_rusty_stubs.rb
+# TREE_SITTER_RUNTIME_VERSION='0.20.7' ruby -I lib/ gen/rusty.0.20.7/run_rusty_stubs.rb
+# TREE_SITTER_RUNTIME_VERSION='0.20.0' ruby -I lib/ gen/rusty.0.20.0/run_rusty_stubs.rb
   
 # ruby src/dev_runner.rb -t '0.20.7' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' run_rusty_stubs
 # ruby src/dev_runner.rb -t '0.20.0' run_rusty_stubs
 # ruby src/dev_runner.rb -t '0.20.0' -r '/Users/cal/dev/tang22/tree-sitter-repos/repos/tree-sitter.0.20.0/tree-sitter' run_rusty_stubs
   def run_rusty_stubs(g_opts)
     vers = g_opts.tag
-#     ENV['TREE_SITTER_RUNTIME'] = vers
+#     ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
 #     tests = Pathname.new('spec/') + "rusty-patch.#{vers}/*_test.rb"
     prog = "gen/rusty.#{vers}/run_rusty_stubs.rb"
     incl_path = "-I lib/"

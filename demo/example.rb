@@ -1,16 +1,14 @@
 require 'tree_sitter_ffi'
 
+# Add the runtime library with an absolute path
+TreeSitterFFI.add_runtime('/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib')
+
 # Create a parser.
 parser = TreeSitterFFI.parser
 
 # Add the language parser library (JSON in this case) with an absolute path
-# 
-#   TreeSitterFFI.add_lang(:tree_sitter_json, 
-#     '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib')
-# 
-# or let TreeSitterFFI use ENV var TREE_SITTER_LIB_DIR or search common places
-# (will raise if not found).
-TreeSitterFFI.add_lang(:tree_sitter_json)
+TreeSitterFFI.add_lang(:tree_sitter_json, 
+  '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib')
 
 # Set the parser's language.
 parser.set_language(TreeSitterFFI.parser_json)
