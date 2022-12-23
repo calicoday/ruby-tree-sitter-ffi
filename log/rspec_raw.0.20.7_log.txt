@@ -1,0 +1,7 @@
+ENV['local']: "true"
++++ /Users/cal/.rbenv/versions/2.6.8/lib/ruby/gems/2.6.0/gems/tree_sitter_ffi-0.0.5/lib
+......................................................................
+
+Finished in 0.00698 seconds (files took 0.11719 seconds to load)
+70 examples, 0 failures
+

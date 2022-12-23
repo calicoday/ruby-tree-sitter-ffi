@@ -46,6 +46,8 @@ module TreeSitterFFI
     def initialize
       @pars = TreeSitterFFI.parser
 #       json = TreeSitterFFI.parser_json
+      TreeSitterFFI.add_lang(:tree_sitter_json, 
+        '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib')
       json = TreeSitterFFI.tree_sitter_json
 #       @pars.set_language(json).should == true
 #        @pars.set_language(json)

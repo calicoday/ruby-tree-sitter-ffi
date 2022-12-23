@@ -196,7 +196,7 @@ class DevRunner < Sunny
   def rspec_raw(g_opts)
     vers = g_opts.tag
     ENV['TREE_SITTER_RUNTIME_VERSION'] = vers
-    specs = Pathname.new('gen/') + "raw-spec.#{vers}/*_spec.rb"
+    specs = Pathname.new('spec/') + "raw-spec.#{vers}/*_spec.rb"
     puts "specs: #{specs}+++"
     incl_path = "-I lib/ -I #{File.expand_path('./gen')}"
     "local=true rspec #{incl_path} #{specs}"

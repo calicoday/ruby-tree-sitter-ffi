@@ -1,0 +1,256 @@
+ENV['local']: "true"
++++ /Users/cal/.rbenv/versions/2.6.8/lib/ruby/gems/2.6.0/gems/tree_sitter_ffi-0.0.5/lib
+FFFFFFFFFFFFFFFFFFFFFFFF
+
+Failures:
+
+  1) 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_count, [Language], :uint32_t
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  2) 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_name, [Language, :symbol], :string
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  3) 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_for_name, [Language, :string, :uint32_t, :bool], :symbol
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  4) 0.20.7 language_raw_patch_spec.rb :ts_language_field_count, [Language], :uint32_t
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  5) 0.20.7 language_raw_patch_spec.rb :ts_language_field_name_for_id, [Language, :field_id], :string
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  6) 0.20.7 language_raw_patch_spec.rb :ts_language_field_id_for_name, [Language, :string, :uint32_t], :field_id
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  7) 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_type, [Language, :symbol], EnumSymbolType
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  8) 0.20.7 language_raw_patch_spec.rb :ts_language_version, [Language], :uint32_t
+     Failure/Error: @language_1 = @build.obj(TreeSitterFFI::Language, 1)
+
+     ArgumentError:
+       wrong number of arguments (given 0, expected 1..2)
+     # ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  9) 0.20.7 parser_raw_patch_spec.rb :ts_parser_included_ranges, [Parser, :uint32_t_p], Range.by_ref
+     Failure/Error: :ts_parser_included_ranges.should == :FIXME
+
+       expected: :FIXME
+            got: :ts_parser_included_ranges (using ==)
+       Diff:
+       @@ -1 +1 @@
+       -:FIXME
+       +:ts_parser_included_ranges
+     # ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:12:in `block (2 levels) in <top (required)>'
+
+  10) 0.20.7 parser_raw_patch_spec.rb :ts_parser_parse, [Parser, Tree, Input.by_value], Tree
+      Failure/Error: :ts_parser_parse.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_parser_parse (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_parser_parse
+      # ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:21:in `block (2 levels) in <top (required)>'
+
+  11) 0.20.7 parser_raw_patch_spec.rb :ts_parser_set_cancellation_flag, [Parser, :size_t_p], :void
+      Failure/Error: :ts_parser_set_cancellation_flag.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_parser_set_cancellation_flag (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_parser_set_cancellation_flag
+      # ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:28:in `block (2 levels) in <top (required)>'
+
+  12) 0.20.7 parser_raw_patch_spec.rb :ts_parser_set_logger, [Parser, Logger.by_value], :void
+      Failure/Error: :ts_parser_set_logger.should == :FIXME # :not_impl
+
+        expected: :FIXME
+             got: :ts_parser_set_logger (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_parser_set_logger
+      # ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:37:in `block (2 levels) in <top (required)>'
+
+  13) 0.20.7 parser_raw_patch_spec.rb :ts_parser_logger, [Parser], Logger.by_value
+      Failure/Error: :ts_parser_logger.should == :FIXME # :not_impl
+
+        expected: :FIXME
+             got: :ts_parser_logger (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_parser_logger
+      # ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:44:in `block (2 levels) in <top (required)>'
+
+  14) 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_set_point_range, [QueryCursor, Point.by_value, Point.by_value], :void
+      Failure/Error: @query_cursor_1 = @build.obj(TreeSitterFFI::QueryCursor, 1)
+
+      ArgumentError:
+        wrong number of arguments (given 0, expected 1..2)
+      # ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  15) 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_next_match, [QueryCursor, QueryMatch.by_ref], :bool
+      Failure/Error: @query_cursor_1 = @build.obj(TreeSitterFFI::QueryCursor, 1)
+
+      ArgumentError:
+        wrong number of arguments (given 0, expected 1..2)
+      # ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  16) 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_next_capture, [QueryCursor, QueryMatch.by_ref, :uint32_t_p], :bool
+      Failure/Error: @query_cursor_1 = @build.obj(TreeSitterFFI::QueryCursor, 1)
+
+      ArgumentError:
+        wrong number of arguments (given 0, expected 1..2)
+      # ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:4:in `block (2 levels) in <top (required)>'
+
+  17) 0.20.7 query_raw_patch_spec.rb :ts_query_predicates_for_pattern, [Query, :uint32_t, :uint32_t_p], QueryPredicateStep.by_ref
+      Failure/Error: :ts_query_predicates_for_pattern.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_query_predicates_for_pattern (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_predicates_for_pattern
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:10:in `block (2 levels) in <top (required)>'
+
+  18) 0.20.7 query_raw_patch_spec.rb :ts_query_is_pattern_rooted, [Query, :uint32_t], :bool
+      Failure/Error: :ts_query_is_pattern_rooted.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_query_is_pattern_rooted (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_is_pattern_rooted
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:19:in `block (2 levels) in <top (required)>'
+
+  19) 0.20.7 query_raw_patch_spec.rb :ts_query_is_pattern_guaranteed_at_step, [Query, :uint32_t], :bool
+      Failure/Error: :ts_query_is_pattern_guaranteed_at_step.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_query_is_pattern_guaranteed_at_step (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_is_pattern_guaranteed_at_step
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:25:in `block (2 levels) in <top (required)>'
+
+  20) 0.20.7 query_raw_patch_spec.rb :ts_query_capture_name_for_id, [Query, :uint32_t, :uint32_t_p], :string
+      Failure/Error: :ts_query_capture_name_for_id.should == :FIXME # :not_impl
+
+        expected: :FIXME
+             got: :ts_query_capture_name_for_id (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_capture_name_for_id
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:32:in `block (2 levels) in <top (required)>'
+
+  21) 0.20.7 query_raw_patch_spec.rb :ts_query_capture_quantifier_for_id, [Query, :uint32_t, :uint32_t], EnumQuantifier
+      Failure/Error: :ts_query_capture_quantifier_for_id.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_query_capture_quantifier_for_id (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_capture_quantifier_for_id
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:41:in `block (2 levels) in <top (required)>'
+
+  22) 0.20.7 query_raw_patch_spec.rb :ts_query_string_value_for_id, [Query, :uint32_t, :uint32_t_p], :string
+      Failure/Error: :ts_query_string_value_for_id.should == :FIXME # :not_impl
+
+        expected: :FIXME
+             got: :ts_query_string_value_for_id (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_query_string_value_for_id
+      # ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:49:in `block (2 levels) in <top (required)>'
+
+  23) 0.20.7 tree_raw_patch_spec.rb :ts_tree_get_changed_ranges, [Tree, Tree, :uint32_t_p], Range.by_ref
+      Failure/Error: :ts_tree_get_changed_ranges.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_tree_get_changed_ranges (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_tree_get_changed_ranges
+      # ./spec/raw-patch.0.20.7/tree_raw_patch_spec.rb:9:in `block (2 levels) in <top (required)>'
+
+  24) 0.20.7 tree_raw_patch_spec.rb :ts_tree_print_dot_graph, [Tree, :waitwhatFILE_p], :void
+      Failure/Error: :ts_tree_print_dot_graph.should == :FIXME
+
+        expected: :FIXME
+             got: :ts_tree_print_dot_graph (using ==)
+        Diff:
+        @@ -1 +1 @@
+        -:FIXME
+        +:ts_tree_print_dot_graph
+      # ./spec/raw-patch.0.20.7/tree_raw_patch_spec.rb:20:in `block (2 levels) in <top (required)>'
+
+Finished in 0.01338 seconds (files took 0.09193 seconds to load)
+24 examples, 24 failures
+
+Failed examples:
+
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:12 # 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_count, [Language], :uint32_t
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:19 # 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_name, [Language, :symbol], :string
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:26 # 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_for_name, [Language, :string, :uint32_t, :bool], :symbol
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:33 # 0.20.7 language_raw_patch_spec.rb :ts_language_field_count, [Language], :uint32_t
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:40 # 0.20.7 language_raw_patch_spec.rb :ts_language_field_name_for_id, [Language, :field_id], :string
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:47 # 0.20.7 language_raw_patch_spec.rb :ts_language_field_id_for_name, [Language, :string, :uint32_t], :field_id
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:54 # 0.20.7 language_raw_patch_spec.rb :ts_language_symbol_type, [Language, :symbol], EnumSymbolType
+rspec ./spec/raw-patch.0.20.7/language_raw_patch_spec.rb:61 # 0.20.7 language_raw_patch_spec.rb :ts_language_version, [Language], :uint32_t
+rspec ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:11 # 0.20.7 parser_raw_patch_spec.rb :ts_parser_included_ranges, [Parser, :uint32_t_p], Range.by_ref
+rspec ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:20 # 0.20.7 parser_raw_patch_spec.rb :ts_parser_parse, [Parser, Tree, Input.by_value], Tree
+rspec ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:27 # 0.20.7 parser_raw_patch_spec.rb :ts_parser_set_cancellation_flag, [Parser, :size_t_p], :void
+rspec ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:36 # 0.20.7 parser_raw_patch_spec.rb :ts_parser_set_logger, [Parser, Logger.by_value], :void
+rspec ./spec/raw-patch.0.20.7/parser_raw_patch_spec.rb:43 # 0.20.7 parser_raw_patch_spec.rb :ts_parser_logger, [Parser], Logger.by_value
+rspec ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:10 # 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_set_point_range, [QueryCursor, Point.by_value, Point.by_value], :void
+rspec ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:17 # 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_next_match, [QueryCursor, QueryMatch.by_ref], :bool
+rspec ./spec/raw-patch.0.20.7/query_cursor_raw_patch_spec.rb:24 # 0.20.7 query_cursor_raw_patch_spec.rb :ts_query_cursor_next_capture, [QueryCursor, QueryMatch.by_ref, :uint32_t_p], :bool
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:9 # 0.20.7 query_raw_patch_spec.rb :ts_query_predicates_for_pattern, [Query, :uint32_t, :uint32_t_p], QueryPredicateStep.by_ref
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:18 # 0.20.7 query_raw_patch_spec.rb :ts_query_is_pattern_rooted, [Query, :uint32_t], :bool
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:24 # 0.20.7 query_raw_patch_spec.rb :ts_query_is_pattern_guaranteed_at_step, [Query, :uint32_t], :bool
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:31 # 0.20.7 query_raw_patch_spec.rb :ts_query_capture_name_for_id, [Query, :uint32_t, :uint32_t_p], :string
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:40 # 0.20.7 query_raw_patch_spec.rb :ts_query_capture_quantifier_for_id, [Query, :uint32_t, :uint32_t], EnumQuantifier
+rspec ./spec/raw-patch.0.20.7/query_raw_patch_spec.rb:48 # 0.20.7 query_raw_patch_spec.rb :ts_query_string_value_for_id, [Query, :uint32_t, :uint32_t_p], :string
+rspec ./spec/raw-patch.0.20.7/tree_raw_patch_spec.rb:8 # 0.20.7 tree_raw_patch_spec.rb :ts_tree_get_changed_ranges, [Tree, Tree, :uint32_t_p], Range.by_ref
+rspec ./spec/raw-patch.0.20.7/tree_raw_patch_spec.rb:19 # 0.20.7 tree_raw_patch_spec.rb :ts_tree_print_dot_graph, [Tree, :waitwhatFILE_p], :void
+

@@ -74,22 +74,26 @@ There are a bunch of scripts that generate and run other layers of tests. See [P
 
 Not recommended for production use yet but it should be playable on most common platforms. If you get stuck -- or you know how to get unstuck for a given environment -- please note it in the issues.
 
-[what works currently??? what can they play with???]
+This most recent update includes a huge overhaul of the project structure to handle addressing different versions of the Tree-sitter runtime. The runtime API doesn't change all that often but I wanted to get a process in place for readily updating bindings when necessary. The present scheme works, though using it is more awkward than it will be. In particular, the runtime library to be loaded must be passed in an ENV variable because the current class design needs it for set up not just when it's used but when the class files are first read. I'll fix that.
 
-[versioning!!!]
+You should probably not expect the Ruby bindings for any version but 0.20.7 to work properly for you (bits and bobs in this repo for other versions are necessary for developing the version handling). Also, Tree-sitter 0.20.7 sets a minimum language version of 13 and some of the languages out there are at 12, so they won't be compatible (you might raise an issue in that language's repo). 
+
+
+api-cheatsheet
+
+
 
 
 ## To do
 
 
-- better docs, demos, version handling.
+- better version handling.
+- better docs, demos, especially easy, intro-to-tree-sitter stuff people can play with.
 - more functional testing, less trashy test phrasing.
 - flesh out ruby convenience layer.
 - ponder cross-platform and how to determine whether there might be issues there.
-- something to check memory use and review garbage-collected/freestyle mem boundary issues.
+- better checks of memory use and garbage-collected/freestyle mem boundary issues.
 - Bundler, Rubocop
-- make a better plan for hooking up the language parser/scanners.
-- make notes on Ruby FFI knowledge gathered.
 
 
 ## Project notes
