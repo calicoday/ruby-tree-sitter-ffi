@@ -1,6 +1,6 @@
 # ruby-tree-sitter-ffi
 
-This gem provides Ruby bindings for the tree-sitter runtime library, `libtree-sitter`. You  need to have the runtime library and a language parser for each language you want to use, in shared/dynamic library form, and know the full, absolute paths to them on your system. I'll use the current paths on my Mac in the examples below. You may find my [tree-sitter-repos](https://github.com/calicoday/tree-sitter-repos) project convenient for cloning and building the necessary Tree-sitter libraries.
+This gem provides Ruby bindings for the tree-sitter runtime library, `libtree-sitter`. You  need to have the runtime library and a language parser for each language you want to use, in shared/dynamic library form, and know the full paths to them on your system (absolute path or relative to the directory you run from). I'll use the current paths on my Mac in the examples below. You may find my [tree-sitter-repos](https://github.com/calicoday/tree-sitter-repos) project convenient for cloning and building the necessary Tree-sitter libraries.
 
 This gem depends on the ruby `FFI` gem. `FFI` is compiled for your platform when it's
 installed, then gems that use it can be installed without further compiling. Some advantages of using `FFI` rather than handcoding C extensions:
@@ -26,14 +26,14 @@ gem build tree_sitter_ffi.gemspec
 ```
 (or run with an added ruby -I include option to the lib/ directory).
 
-For the moment, the full, absolute path to the Tree-sitter runtime library (including extension) must be passed at startup via the environment variable TREE_SITTER_RUNTIME_LIB. This is enough to be able display the `tree_sitter_ffi` gem version:
+For the moment, the path to the Tree-sitter runtime library (including extension) must be passed at startup via the environment variable TREE_SITTER_RUNTIME_LIB. This is enough to be able display the `tree_sitter_ffi` gem version:
 ```
 TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' ruby -e"require 'tree_sitter_ffi'; puts TreeSitterFFI::VERSION"`
 => 0.0.5
 ```
 
 
-To do pretty much anything else, you need to load the desired language libraries before use by calling `TreeSitterFFI.add_lang` with a full, absolute path to the library (including extension). Subsequent calls for the same language do nothing. There is no way to unload a language, currently.
+To do pretty much anything else, you need to load the desired language libraries before use by calling `TreeSitterFFI.add_lang` with a path to the library (including extension). Subsequent calls for the same language do nothing. There is no way to unload a language, currently.
 
 To run in pry (or irb), invoke with:
 ```

@@ -9,6 +9,12 @@ class FFI::Struct
   alias_method :orig_aset, :[]=
 end
 
+# monkeypatch missing typedefs for aarch64-linux (prob need more)
+FFI.typedef(:__uint16_t, :uint16_t)
+FFI.typedef(:__uint32_t, :uint32_t)
+FFI.typedef(:__uint64_t, :uint64_t)
+
+
 module BossFFI
 
 #   def version() VERSION end #???

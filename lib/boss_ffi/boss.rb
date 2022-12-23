@@ -2,13 +2,9 @@
 # frozen_string_literal: false
 
 require 'ffi'
-require 'ffi/LibC'
 require 'boss_ffi/unit_memory'
 
 module BossFFI
-
-	# wd like a ts_mem_free(p) in libtree-sitter!!!
-	def self.libc_free(ptr) FFI::LibC.free(ptr) end
 
 	module Attach
 	  module_function
