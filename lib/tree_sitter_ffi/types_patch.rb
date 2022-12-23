@@ -217,5 +217,8 @@ module TreeSitterFFI
   class TreeCursor
   end
   
+  ### shd be gen to tree_sitter_raw.rb (with parser(), etc)!!!
+	def self.tree_cursor(node) TreeSitterFFI.ts_tree_cursor_new(node) end
+
   
 end

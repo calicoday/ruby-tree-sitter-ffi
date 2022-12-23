@@ -6,8 +6,8 @@ This gem depends on the ruby `FFI` gem. `FFI` is compiled for your platform when
 installed, then gems that use it can be installed without further compiling. Some advantages of using `FFI` rather than handcoding C extensions:
 - a C compiler (and so root access on some systems) is only necessary for installing the `FFI` gem itself. 
 - because we're instructing `FFI` to create the necessary objects and methods, rather than coding them directly, it is convenient to add other processing, such as generating tests or notes.
-- `FFI` takes care of much of the type and memory handling necessary at the C-Ruby boundary.
-- `FFI` supports a number of Ruby implementations beside (MRI) Ruby, including some non-C ones, like JRuby and TruffleRuby and the client Ruby code works on all without changes.
+- `FFI` takes care of much of the type and memory handling necessary at the Ruby-C boundary.
+- `FFI` supports a number of Ruby implementations beside (MRI) CRuby, including some non-C ones, like JRuby and TruffleRuby and the client Ruby code works on all without changes.
 - for a Ruby implementation that is not supported, such as mruby, `FFI` calls provide a succinct description of what the bindings C extensions are expected to be.
 
 The main (slight) disadvantage is the `FFI` gem gives access to a native library, specifically, not just loose compiled C object code, and you need the path to the installed lib.
@@ -63,10 +63,22 @@ There are a few sample ruby programs in `demo/` (you must edit the library paths
 - `node_walk.rb`, walks a JSON syntax tree and prints it out various ways
 - `tree_cursor_walk.rb`, same but using TreeCursor for traversing
 
-There are a handful of basic spec files in `spec/` you can run (after editing the language library paths in `spec/spec_util.rb`) from the project dir with:
+Run `example.rb` with:
+```
+TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' ruby demo/example.rb
+```
+
+There are a handful of basic spec files in `spec/` you can run (after editing the language library paths in `spec/spec_util.rb`) from the project directory with:
 ```
 TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' rspec
 ```
+
+which runs all `*_spec.rb` files, including `*_patch_spec.rb` files which are marked to fail until edited appropriately. To run only the `*_spec.rb` files expected to pass, use:
+```
+TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' rspec spec/*_spec.rb spec/raw-spec.0.20.7 spec/rusty.0.20.7
+```
+
+
 There are a bunch of scripts that generate and run other layers of tests. See [Project notes](#Project-notes)
 
 
@@ -74,19 +86,15 @@ There are a bunch of scripts that generate and run other layers of tests. See [P
 
 Not recommended for production use yet but it should be playable on most common platforms. If you get stuck -- or you know how to get unstuck for a given environment -- please note it in the issues.
 
-This most recent update includes a huge overhaul of the project structure to handle addressing different versions of the Tree-sitter runtime. The runtime API doesn't change all that often but I wanted to get a process in place for readily updating bindings when necessary. The present scheme works, though using it is more awkward than it will be. In particular, the runtime library to be loaded must be passed in an ENV variable because the current class design needs it for set up not just when it's used but when the class files are first read. I'll fix that.
+This most recent update involved a huge overhaul of the project structure to handle addressing different versions of the Tree-sitter runtime. The runtime API doesn't change all that often but I wanted to get a process in place for readily updating bindings when necessary. The present scheme works, though using it is more awkward than it will be. In particular, the runtime library to be loaded must be passed in an ENV variable because the current class design needs it for set up not just when it's used but when the class files are first read. I'll fix that.
 
 You should probably not expect the Ruby bindings for any version but 0.20.7 to work properly for you (bits and bobs in this repo for other versions are necessary for developing the version handling). Also, Tree-sitter 0.20.7 sets a minimum language version of 13 and some of the languages out there are at 12, so they won't be compatible (you might raise an issue in that language's repo). 
-
-
-api-cheatsheet
-
-
 
 
 ## To do
 
 
+- api-cheatsheet
 - better version handling.
 - better docs, demos, especially easy, intro-to-tree-sitter stuff people can play with.
 - more functional testing, less trashy test phrasing.
@@ -96,7 +104,7 @@ api-cheatsheet
 - Bundler, Rubocop
 
 
-## Project notes
+## Project Notes
 
 The general project structure is:
 - `lib/`, the Ruby bindings code. Using the FFI gem means the project doesn't have C source portions in `cext/` or other directory.
@@ -126,7 +134,7 @@ The Ruby api is implemented in layers:
 - 'idio', idiomatic ruby, TBD
 - 'bind_rust', matching the rust binding methods used by the tree-sitter cli tests
 
-The raw-level Ruby classes and basic specs are now generated directly from the Tree-sitter C header file, `api.h` (separate project; repo not up yet). [patch???]
+The raw-level Ruby classes and basic specs are now generated directly from the Tree-sitter C header file, `api.h` (separate project; repo not up yet). 
 
 
 ### DevRunner utility
@@ -160,6 +168,7 @@ Commands:
 
 Commands `gen_rusty`, `test_rusty` and `rspec_raw` create a log file in `log/`, named for the command and api version, eg `log/gen_rusty.0.20.7_log.txt`.
 
+At the moment, DevRunner --tag option gets resolved to hardcoded paths on my machine to the appropriate runtime. Yeah, that's not great.
 
 ### Rusty tests system
 
@@ -170,3 +179,105 @@ For each Rust test file, there is a rusty_prep file providing any necessary proc
 The DevRunner command `cp_rusty` copies the generated rusty tests to `spec/rusty` and the patch stubs to `spec/rusty-patch-fresh`, renaming each file to remove '_blank'. The `spec/rusty-patch-fresh` should be renamed `spec/rusty-patch` and the files edited as appropriate.
 
 
+## Skeleton runthrough
+
+### User form (0.20.7 classes only)
+
+#### Demos
+
+For each of `example.rb`, `ts_example.rb`, `node_walk.rb`, `tree_cursor_walk.rb`
+
+lib: 
+```
+TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' ruby -I lib/ demo/example.rb
+```
+
+[hide `lib/` as `lib-hide/` to ensure gem]
+gem: 
+```
+TREE_SITTER_RUNTIME_LIB='/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib' ruby demo/example.rb
+```
+
+=> expect: demo output
+
+
+### dev form (with --tag option to hardcoded paths)
+
+#### Raw series
+
+lib: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -l rspec_raw
+```
+
+[hide `lib/` as `lib-hide/` to ensure gem]
+gem: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -g rspec_raw
+```
+
+=> expect: all ok
+
+[rename `spec/raw-patch-fresh.0.20.7` as `raw-patch.0.20.7`]
+lib: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -l rspec_raw_patch
+```
+
+[rename `spec/raw-patch-fresh.0.20.7` as `raw-patch.0.20.7`]
+[hide `lib/` as `lib-hide/` to ensure gem]
+gem: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -g rspec_raw_patch
+```
+=> expect: all fail :FIXME 
+
+
+#### Rusty series
+
+[`log/` must exist]
+[hide `gen/rusty.0.20.7` as `gen/rusty.0.20.7-hide`]
+lib: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -l -r '../../ta-tree-sitter-repos/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' gen_rusty
+```
+[`log/` must exist]
+[hide `gen/rusty.0.20.7` as `gen/rusty.0.20.7-hide`]
+[hide `lib/` as `lib-hide/` to ensure gem]
+gem: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -g -r '../../ta-tree-sitter-repos/tree-sitter-repos/repos/tree-sitter.0.20.7/tree-sitter' gen_rusty [hide gen/rusty.0.20.7 as gen/rusty.0.20.7-hide]
+```
+
+=> expect: create `gen/rusty.0.20.7/` `run_rusty.rb`, `rusty_*_test.rb`, `rusty_*_patch_blank.rb`
+
+
+lib: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -l cp_rusty
+```
+
+gem: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -g cp_rusty
+```
+
+=> expect: create `spec/rusty.0.20.7`/ `run_rusty.rb`, `rusty_*_test.rb`
+  create `spec/rusty-patch-fresh.0.20.7/` `rusty_*_patch.rb`
+  
+[rename `spec/rusty-patch-fresh.0.20.7` to `rusty-patch.0.20.7`]
+lib: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -l test_rusty
+```
+
+[rename `spec/rusty-patch-fresh.0.20.7` to `rusty-patch.0.20.7`]
+[hide `lib/` as `lib-hide/` to ensure gem]
+gem: 
+```
+ruby src/dev_runner.rb -t '0.20.7' -g test_rusty
+```
+  
+=> expect: all ok
+
+[not_impl: `test_rusty_patch`, missing `run_rusty_patch.rb` or other]

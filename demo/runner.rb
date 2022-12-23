@@ -3,11 +3,11 @@
 module Runner
 	module_function
 	
-	def parse(lang, str)
-    TreeSitterFFI.add_lang(lang)
-    lang = TreeSitterFFI.send(lang)
+	def parse(lang, lang_lib, str)
+    TreeSitterFFI.add_lang(lang, lang_lib)
+    lang_obj = TreeSitterFFI.send(lang)
 		pars = TreeSitterFFI.parser
-		pars.set_language(lang)
+		pars.set_language(lang_obj)
 		tree = pars.parse(str)
 	end
 

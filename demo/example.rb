@@ -1,8 +1,5 @@
 require 'tree_sitter_ffi'
 
-# Add the runtime library with an absolute path
-TreeSitterFFI.add_runtime('/usr/local/lib/tree-sitter/libtree-sitter.0.20.7.dylib')
-
 # Create a parser.
 parser = TreeSitterFFI.parser
 
@@ -10,8 +7,11 @@ parser = TreeSitterFFI.parser
 TreeSitterFFI.add_lang(:tree_sitter_json, 
   '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib')
 
+# Create the language object
+json_obj = TreeSitterFFI.tree_sitter_json
+
 # Set the parser's language.
-parser.set_language(TreeSitterFFI.parser_json)
+parser.set_language(json_obj)
 
 # Build a syntax tree based on source code stored in a string.
 source_code = '[1, null]'

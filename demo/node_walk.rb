@@ -18,7 +18,7 @@ JSON_EXAMPLE = <<-INDENTED_HEREDOC
 
 
 # parse the input
-tree = Runner.parse(:json, JSON_EXAMPLE)
+tree = Runner.parse(:tree_sitter_json, '/usr/local/lib/tree-sitter-json/libtree-sitter-json.0.19.0.dylib', JSON_EXAMPLE)
 
 puts "0. Demo input (note initial blank lines): "
 puts JSON_EXAMPLE
